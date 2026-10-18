@@ -1,0 +1,2733 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark" data-edition="w11-pro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>microOS 11 — Sandbox</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#0078d4;--accent-rgb:0,120,212;--tb-h:46px;--radius:10px}
+html[data-theme="dark"]{--bg:#0d0d0d;--text:#fff;--dim:#a8a8a8;--win-bg:rgba(32,32,32,.9);--win-solid:#202020;--panel:rgba(28,28,28,.8);--border:rgba(255,255,255,.09);--hover:rgba(255,255,255,.07);--input:rgba(255,255,255,.06);--shadow:0 12px 40px rgba(0,0,0,.55);--shadow-sm:0 2px 10px rgba(0,0,0,.35)}
+html[data-theme="light"]{--bg:#f3f3f3;--text:#1b1b1b;--dim:#5c5c5c;--win-bg:rgba(250,250,250,.92);--win-solid:#fafafa;--panel:rgba(243,243,243,.85);--border:rgba(0,0,0,.1);--hover:rgba(0,0,0,.06);--input:rgba(0,0,0,.05);--shadow:0 12px 40px rgba(0,0,0,.25);--shadow-sm:0 2px 10px rgba(0,0,0,.12)}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;user-select:none}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+input,textarea,select{background:var(--input);border:1px solid var(--border);border-radius:6px;padding:6px 10px;outline:none;transition:border-color .2s}
+input:focus{border-color:var(--accent)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(128,128,128,.45);border-radius:6px}
+.hidden{display:none!important}
+.switch{width:40px;height:22px;border-radius:11px;background:rgba(128,128,128,.45);position:relative;cursor:pointer;transition:background .2s;flex:none}
+.switch::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:4px;left:4px;transition:transform .2s}
+.switch.on{background:var(--accent)}
+.switch.on::after{transform:translateX(18px)}
+
+/* Edition styles */
+html[data-edition^="w10"]{--radius:2px;--accent:#0078D7;--accent-rgb:0,120,215;--shadow:0 4px 16px rgba(0,0,0,.35)}
+html[data-edition^="w10"] .window{border-radius:2px}
+html[data-edition^="w10"] .panel,html[data-edition^="w10"] .dialog,html[data-edition^="w10"] .ctx,html[data-edition^="w10"] .notif{border-radius:0}
+html[data-edition^="w10"] #tbCenter{position:static;transform:none;margin-left:8px;justify-content:flex-start}
+html[data-edition^="w10"] #taskbar{justify-content:flex-start}
+html[data-edition^="w10"] #tbTray{margin-left:auto}
+html[data-edition^="w10"] #startMenu{left:8px;transform:none;width:420px;height:auto;max-height:600px;padding:12px 12px 0}
+html[data-edition^="w10"] #startMenu.closed{transform:translateY(16px) scale(.97)}
+html[data-edition^="w10"] #smPinnedWrap .sm-pinned{grid-template-columns:repeat(4,1fr)}
+html[data-edition^="w10"] .lock-content{position:absolute;bottom:80px;left:60px;text-align:left}
+html[data-edition^="w10"] .lock-user{align-items:flex-start}
+html[data-edition^="w10"] #bsod .qrw{display:none!important}
+html[data-edition^="w10"] #bsod .frown{font-size:110px}
+
+/* Desktop */
+#wallpaper{position:fixed;inset:0;background-size:cover;background-position:center;z-index:0;transition:background .4s,filter .3s}
+#desktop{position:fixed;inset:0;z-index:1}
+#icons{position:absolute;inset:0}
+.dicon{position:absolute;width:84px;padding:8px 4px;border-radius:6px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:background .15s;text-align:center;cursor:default}
+.dicon:hover{background:var(--hover)}
+.dicon.sel{background:rgba(var(--accent-rgb),.28);outline:1px solid rgba(var(--accent-rgb),.5)}
+.dicon .em{font-size:34px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.dicon .lb{font-size:12px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);word-break:break-word;max-width:80px;line-height:1.2}
+.dicon.virus .em{animation:pulseRed 1s infinite}
+.dicon.unavailable .em{filter:grayscale(1) opacity(.4)}
+.dicon.unavailable .lb{opacity:.6;text-decoration:line-through}
+@keyframes pulseRed{50%{filter:drop-shadow(0 0 10px #f00) hue-rotate(-30deg)}}
+
+/* Windows */
+#winLayer{position:fixed;inset:0;z-index:10;pointer-events:none}
+.window{position:absolute;pointer-events:auto;display:flex;flex-direction:column;background:var(--win-bg);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;min-width:340px;min-height:220px;transition:opacity .18s,transform .18s,box-shadow .18s}
+.window.active{box-shadow:var(--shadow);border-color:rgba(var(--accent-rgb),.35)}
+.window.opening{animation:winIn .2s cubic-bezier(.2,.9,.3,1)}
+@keyframes winIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+.window.closing{opacity:0;transform:scale(.94) translateY(10px)}
+.window.minimized{opacity:0;transform:scale(.7) translateY(60vh);pointer-events:none}
+.win-tb{height:36px;display:flex;align-items:center;gap:8px;padding:0 4px 0 12px;border-bottom:1px solid var(--border);flex:none;cursor:default}
+.win-ic{font-size:15px}
+.win-title{flex:1;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hang-title{color:#f39c12!important;font-style:italic}
+.win-ctr{display:flex;gap:2px}
+.win-btn{width:36px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;transition:background .15s}
+.win-btn:hover{background:var(--hover)}
+.win-btn.close:hover{background:#e81123;color:#fff}
+.win-body{flex:1;overflow:auto;display:flex;flex-direction:column;min-height:0;position:relative}
+.rz{position:absolute;z-index:5}
+.rz.n{top:-3px;left:8px;right:8px;height:6px;cursor:ns-resize}
+.rz.s{bottom:-3px;left:8px;right:8px;height:6px;cursor:ns-resize}
+.rz.e{right:-3px;top:8px;bottom:8px;width:6px;cursor:ew-resize}
+.rz.w{left:-3px;top:8px;bottom:8px;width:6px;cursor:ew-resize}
+.rz.se,.rz.sw,.rz.ne,.rz.nw{width:14px;height:14px}
+.rz.se{bottom:-3px;right:-3px;cursor:nwse-resize}
+.rz.sw{bottom:-3px;left:-3px;cursor:nesw-resize}
+.rz.ne{top:-3px;right:-3px;cursor:nesw-resize}
+.rz.nw{top:-3px;left:-3px;cursor:nwse-resize}
+#snapPreview{position:fixed;z-index:9;border-radius:10px;pointer-events:none;background:rgba(var(--accent-rgb),.22);border:2px solid rgba(var(--accent-rgb),.7);transition:all .12s;display:none}
+
+/* Taskbar */
+#taskbar{position:fixed;left:0;right:0;bottom:0;height:var(--tb-h);z-index:100;background:var(--panel);backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 8px}
+#tbCenter{display:flex;align-items:center;gap:4px;position:absolute;left:50%;transform:translateX(-50%)}
+.tb-btn{width:44px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;transition:background .15s}
+.tb-btn:hover{background:var(--hover)}
+.tb-btn.running::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:6px;height:3px;border-radius:2px;background:var(--accent);transition:width .2s}
+.tb-btn.focused::after{width:16px}
+.tb-btn.unavailable{opacity:.35;cursor:not-allowed}
+.tb-logo{width:22px;height:22px;display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.tb-logo i{background:var(--accent);border-radius:1px;display:block}
+#tbTray{margin-left:auto;display:flex;align-items:center;gap:2px}
+.tray-btn{height:34px;min-width:32px;padding:0 8px;border-radius:6px;display:flex;align-items:center;gap:6px;font-size:13px;transition:background .15s}
+.tray-btn:hover{background:var(--hover)}
+#trayClock{flex-direction:column;font-size:11px;line-height:1.15;padding:0 8px}
+#trayClock .t{font-weight:500}
+#trayClock .d{font-size:10px;color:var(--dim)}
+.tray-btn.err{color:#ff5555}
+
+/* Panels */
+.panel{position:fixed;z-index:200;background:var(--panel);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);transition:opacity .18s,transform .18s;transform-origin:bottom center}
+.panel.closed{opacity:0;transform:translateY(16px) scale(.97);pointer-events:none}
+#startMenu{left:50%;bottom:calc(var(--tb-h) + 8px);transform:translateX(-50%);width:620px;max-width:calc(100vw - 24px);height:620px;max-height:calc(100vh - 90px);padding:18px 20px 0;display:flex;flex-direction:column}
+#startMenu.closed{transform:translateX(-50%) translateY(16px) scale(.97)}
+.sm-search input{width:100%;padding:9px 14px;border-radius:20px;margin-bottom:14px;font-size:13px}
+.sm-scroll{flex:1;overflow-y:auto;margin-bottom:8px}
+.sm-h{font-size:12px;font-weight:600;color:var(--dim);margin:10px 0 8px}
+.sm-pinned{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.sm-app{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:8px;font-size:11px;transition:background .15s;text-align:center}
+.sm-app:hover{background:var(--hover)}
+.sm-app .em{font-size:26px;line-height:1}
+.sm-app.unavailable{opacity:.5}
+.sm-app.unavailable .em{filter:grayscale(1)}
+.sm-row{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:6px;font-size:13px;transition:background .15s}
+.sm-row:hover{background:var(--hover)}
+.sm-row.unavailable{opacity:.5}
+.sm-row .em{font-size:19px;width:24px;text-align:center}
+.sm-footer{display:flex;align-items:center;gap:8px;padding:12px 0;margin:0 -20px;padding-left:20px;padding-right:20px;border-top:1px solid var(--border);background:rgba(128,128,128,.07)}
+.sm-user{display:flex;align-items:center;gap:10px;flex:1;padding:4px 8px;border-radius:6px}
+.sm-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;overflow:hidden}
+.sm-avatar img{width:100%;height:100%;object-fit:cover}
+.sm-power{width:36px;height:36px;border-radius:6px;font-size:16px;display:flex;align-items:center;justify-content:center}
+.sm-power:hover{background:var(--hover)}
+#notifs{position:fixed;right:10px;bottom:calc(var(--tb-h) + 10px);z-index:300;display:flex;flex-direction:column;gap:8px;width:340px;pointer-events:none}
+.notif{background:var(--panel);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--border);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);animation:notifIn .24s cubic-bezier(.2,.9,.3,1);display:flex;gap:10px;pointer-events:auto;font-size:12.5px}
+.notif.out{animation:notifOut .2s forwards}
+.notif .em{font-size:20px}
+.notif b{display:block;font-size:13px;margin-bottom:2px}
+@keyframes notifIn{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
+@keyframes notifOut{to{opacity:0;transform:translateX(60px)}}
+
+/* Context */
+.ctx{position:fixed;z-index:500;min-width:200px;padding:5px;background:var(--panel);backdrop-filter:blur(28px);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);animation:ctxIn .12s ease}
+@keyframes ctxIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.ctx-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:5px;font-size:13px;transition:background .12s}
+.ctx-item:hover{background:var(--hover)}
+
+/* Control Panel */
+#controlPanel{position:fixed;right:8px;top:8px;bottom:calc(var(--tb-h) + 8px);width:310px;z-index:150;background:var(--panel);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .25s cubic-bezier(.4,0,.2,1),opacity .25s;overflow:hidden}
+#controlPanel.collapsed{transform:translateX(calc(100% - 44px))}
+#controlPanel.left{right:auto;left:8px}
+#controlPanel.left.collapsed{transform:translateX(calc(-100% + 44px))}
+#cpHeader{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap}
+#cpHeader h3{font-size:12.5px;font-weight:600;flex:1;min-width:100px}
+#cpStatus{width:10px;height:10px;border-radius:50%;background:#2ecc71;box-shadow:0 0 8px currentColor;transition:background .3s}
+#cpEditionBadge{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(var(--accent-rgb),.25);color:var(--accent);font-weight:600}
+#cpToggle{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
+#cpToggle:hover{background:var(--hover)}
+#cpSearchWrap{padding:10px 12px;border-bottom:1px solid var(--border);flex:none}
+#cpSearchWrap input{width:100%;padding:6px 10px;border-radius:6px;font-size:12px}
+#cpFilter{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;color:var(--dim);cursor:pointer}
+#cpFilter input{width:14px;height:14px;accent-color:var(--accent);cursor:pointer}
+#cpBody{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:10px}
+.cp-section-title{font-size:10.5px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin:4px 0}
+.cp-cat{background:rgba(128,128,128,.05);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.cp-cat-header{padding:8px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;font-weight:600;transition:background .15s}
+.cp-cat-header:hover{background:var(--hover)}
+.cp-cat-header .arrow{margin-left:auto;font-size:10px;opacity:.6;transition:transform .2s}
+.cp-cat.collapsed .arrow{transform:rotate(-90deg)}
+.cp-cat-body{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:0 6px 6px;max-height:400px;overflow-y:auto}
+.cp-cat.collapsed .cp-cat-body{display:none}
+.cp-card{background:rgba(128,128,128,.08);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.cp-metric{margin-bottom:9px}
+.cp-metric:last-child{margin-bottom:0}
+.cp-row{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px}
+.cp-row .v{font-weight:600;font-variant-numeric:tabular-nums}
+.cp-bar{height:6px;border-radius:3px;background:rgba(128,128,128,.2);overflow:hidden}
+.cp-bar > div{height:100%;background:var(--accent);width:0;transition:width .3s,background .3s;border-radius:3px}
+.cp-bar.warn > div{background:#f39c12}
+.cp-bar.danger > div{background:#e74c3c;animation:barPulse 1s infinite}
+@keyframes barPulse{50%{opacity:.5}}
+.cp-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.cp-btn{display:flex;align-items:center;gap:6px;padding:7px 7px;border-radius:6px;background:rgba(128,128,128,.1);border:1px solid var(--border);font-size:10.5px;transition:background .15s,transform .1s;text-align:left;line-height:1.2}
+.cp-btn:hover{background:rgba(var(--accent-rgb),.18)}
+.cp-btn:active{transform:scale(.97)}
+.cp-btn .em{font-size:14px;flex:none}
+.cp-btn.wide{grid-column:1/-1;font-size:11.5px;padding:8px}
+.cp-btn.danger{background:rgba(231,76,60,.15);border-color:rgba(231,76,60,.3)}
+.cp-btn.danger:hover{background:rgba(231,76,60,.28)}
+.cp-btn.success{background:rgba(46,204,113,.15);border-color:rgba(46,204,113,.3)}
+.cp-btn.success:hover{background:rgba(46,204,113,.28)}
+.cp-btn.active{background:rgba(231,76,60,.35);border-color:#e74c3c;animation:pulseBtn 1s infinite}
+.cp-btn.locked{opacity:.35;cursor:not-allowed;background:rgba(128,128,128,.05)}
+.cp-btn.locked:hover{background:rgba(128,128,128,.05);transform:none}
+@keyframes pulseBtn{50%{box-shadow:0 0 12px rgba(231,76,60,.6)}}
+.cp-btn small{color:var(--dim);font-size:9px;display:block;margin-top:1px}
+#cpSettingsToggle{padding:8px 12px;border-top:1px solid var(--border);font-size:11px;text-align:center;color:var(--dim);cursor:pointer;flex:none}
+#cpSettingsToggle:hover{background:var(--hover)}
+#cpSettings{padding:0 12px;max-height:0;overflow:hidden;transition:max-height .25s;flex:none}
+#cpSettings.open{max-height:200px;padding:10px 12px;overflow-y:auto}
+#cpSettings label{display:flex;align-items:center;gap:8px;font-size:11px;padding:3px 0;justify-content:space-between}
+#cpSettings select,#cpSettings input[type=range]{padding:2px 5px;font-size:11px}
+
+/* Dialog / BSOD */
+.dialog-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;animation:fadeIn .15s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.dialog{background:var(--win-solid);border:1px solid var(--border);border-radius:10px;min-width:380px;max-width:540px;box-shadow:var(--shadow);overflow:hidden;animation:dlgIn .2s cubic-bezier(.2,.9,.3,1);color:var(--text)}
+@keyframes dlgIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
+.dialog-tb{padding:10px 14px;background:rgba(128,128,128,.1);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.dialog-bd{padding:16px 20px;display:flex;gap:14px;font-size:13px;line-height:1.5;max-height:60vh;overflow-y:auto}
+.dialog-ic{font-size:32px;line-height:1;flex:none}
+.dialog-ft{padding:10px 14px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border);background:rgba(128,128,128,.05)}
+.dialog-ft button{padding:6px 18px;border-radius:5px;background:var(--input);border:1px solid var(--border);font-size:12.5px;transition:background .15s}
+.dialog-ft button:hover{background:var(--hover)}
+.dialog-ft button.primary{background:var(--accent);color:#fff;border-color:transparent}
+.dialog.ransomware{border:2px solid #8b0000}
+.dialog.ransomware .dialog-tb{background:#8b0000;color:#fff}
+.dialog.ransomware .dialog-bd{background:#0d0000;color:#ff6666}
+.dialog.ransomware .dialog-ft{background:#1a0000;border-color:#3a0000}
+.dialog.ransomware .dialog-ft button{background:#330000;color:#ff8888;border-color:#5a0000}
+#bsod{position:fixed;inset:0;z-index:1000;background:#0078d7;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:8vh 10vw;gap:16px;font-family:'Segoe UI',sans-serif}
+#bsod .frown{font-size:88px;line-height:1;font-weight:300}
+#bsod .msg{font-size:22px;line-height:1.4;max-width:700px}
+#bsod .code{font-size:15px;opacity:.9;margin-top:8px}
+#bsod .qrw{display:flex;gap:30px;align-items:center;margin-top:18px;font-size:13px}
+#bsod .progress{width:200px;height:6px;background:rgba(255,255,255,.25);border-radius:3px;overflow:hidden;margin-top:8px}
+#bsod .progress > div{height:100%;background:#fff;width:0;transition:width .15s}
+#bsod .pct{margin-top:6px;font-size:12px;opacity:.85}
+#bsod .foot{position:absolute;bottom:6vh;left:10vw;font-size:11px;opacity:.7}
+#powerScreen{position:fixed;inset:0;z-index:1100;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#fff}
+#powerScreen .logo{font-size:44px;font-weight:300;letter-spacing:-1px}
+#powerScreen .sub{font-size:13px;opacity:.6}
+#powerScreen .spinner{width:34px;height:34px;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#powerScreen button{margin-top:16px;padding:10px 36px;border-radius:22px;background:#fff;color:#000;font-weight:600}
+#fadeBlack{position:fixed;inset:0;z-index:900;background:#000;opacity:0;pointer-events:none;transition:opacity .15s}
+
+/* Incident effects */
+body.shaking #desktop,body.shaking #winLayer{animation:shake .15s infinite}
+@keyframes shake{25%{transform:translate(-2px,1px)}50%{transform:translate(2px,-1px)}75%{transform:translate(1px,2px)}}
+body.redPulse::after{content:'';position:fixed;inset:0;z-index:60;pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent 40%,rgba(255,0,0,.35) 100%);animation:redPulse 1.2s infinite}
+@keyframes redPulse{50%{opacity:.3}}
+#glitchLayer{position:fixed;inset:0;z-index:55;pointer-events:none;opacity:0;transition:opacity .2s;background:repeating-linear-gradient(0deg,rgba(255,0,255,.14) 0,rgba(255,0,255,.14) 2px,transparent 2px,transparent 5px)}
+body.glitching #glitchLayer{opacity:1}
+body.invert{filter:invert(1) hue-rotate(180deg)}
+body.grayscale #winLayer,body.grayscale #desktop,body.grayscale #taskbar,body.grayscale #controlPanel{filter:grayscale(1)}
+body.netLost #trayWifi{color:#ff5555}
+body.frozen #winLayer,body.frozen #desktop{filter:hue-rotate(180deg) brightness(1.15)}
+body.frozen::after{content:'';position:fixed;inset:0;z-index:70;pointer-events:none;background:radial-gradient(circle at center,transparent 20%,rgba(150,200,255,.4) 100%);box-shadow:inset 0 0 200px rgba(150,200,255,.55)}
+body.screenFlicker #winLayer,body.screenFlicker #desktop{animation:flickerAnim .15s infinite}
+@keyframes flickerAnim{50%{opacity:.85}}
+#kbOverlay{position:fixed;bottom:calc(var(--tb-h)+8px);left:50%;transform:translateX(-50%);z-index:350;display:none;padding:8px 16px;background:#e74c3c;color:#fff;border-radius:6px;font-size:12px;font-weight:600}
+body.kbFail #kbOverlay{display:block}
+#mouseBlock{position:fixed;inset:0;z-index:80;display:none;cursor:not-allowed}
+#mouseBlock::after{content:'🖱  Устройство указывающее не отвечает';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);padding:10px 20px;background:rgba(231,76,60,.9);color:#fff;border-radius:8px;font-size:13px;font-weight:600}
+body.mouseFail #mouseBlock{display:block}
+
+/* Apps */
+.toolbar{display:flex;align-items:center;gap:4px;padding:6px 8px;flex-wrap:wrap;border-bottom:1px solid var(--border);flex:none;background:rgba(128,128,128,.05)}
+.tbtn{min-width:30px;height:28px;padding:0 8px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12.5px;transition:background .15s}
+.tbtn:hover{background:var(--hover)}
+.btn{padding:7px 16px;border-radius:6px;background:var(--accent);color:#fff;font-size:13px;font-weight:500;transition:filter .15s}
+.btn:hover{filter:brightness(1.12)}
+.btn.sec{background:var(--input);color:var(--text);border:1px solid var(--border)}
+.btn.sec:hover{background:var(--hover)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 4px;border-bottom:1px solid var(--border);font-size:13px}
+.card{background:var(--input);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.sep{width:1px;height:20px;background:var(--border);margin:0 4px}
+.explorer{display:flex;flex-direction:column;height:100%}
+.exp-crumb{padding:8px 12px;border-bottom:1px solid var(--border);font-size:12.5px;display:flex;gap:4px;flex-wrap:wrap;flex:none}
+.exp-crumb span{padding:3px 6px;border-radius:4px;cursor:pointer}
+.exp-crumb span:hover{background:var(--hover)}
+.exp-grid{flex:1;overflow-y:auto;padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px;align-content:start}
+.fitem{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:6px;font-size:12px;text-align:center;transition:background .15s;cursor:default}
+.fitem:hover{background:var(--hover)}
+.fitem .em{font-size:32px}
+.fitem .nm{word-break:break-word;line-height:1.2;max-height:2.4em;overflow:hidden}
+.fitem.corrupt .em{color:#e74c3c}
+.exp-empty{grid-column:1/-1;text-align:center;color:var(--dim);padding:40px;font-size:13px}
+.settings{display:flex;height:100%}
+.set-nav{width:190px;flex:none;border-right:1px solid var(--border);padding:10px 8px;overflow-y:auto}
+.set-nav .it{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:6px;font-size:13px;margin-bottom:1px;transition:background .15s;cursor:pointer}
+.set-nav .it:hover{background:var(--hover)}
+.set-nav .it.sel{background:rgba(var(--accent-rgb),.22);font-weight:500}
+.set-body{flex:1;overflow-y:auto;padding:22px 26px}
+.set-body h2{font-size:18px;margin-bottom:14px}
+.set-body h3{font-size:14px;margin:16px 0 8px}
+.wp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0}
+.wp{aspect-ratio:16/10;border-radius:8px;border:2px solid transparent;cursor:pointer;background-size:cover;background-position:center}
+.wp.sel{border-color:var(--accent)}
+.color-dot{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+.color-dot.sel{border-color:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.4)}
+.progress{height:8px;border-radius:4px;background:var(--input);overflow:hidden;margin:12px 0}
+.progress > div{height:100%;width:0;background:var(--accent);transition:width .25s}
+.np-editor{flex:1;padding:14px 18px;outline:none;overflow-y:auto;font-size:14px;line-height:1.55;user-select:text;background:transparent}
+.np-status{font-size:11.5px;color:var(--dim);padding:4px 12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex:none}
+.calc{flex:1;display:flex;flex-direction:column;background:var(--win-solid)}
+.calc-disp{padding:16px 18px 10px;text-align:right;flex:none}
+.calc-expr{font-size:12.5px;color:var(--dim);min-height:16px;word-break:break-all}
+.calc-val{font-size:32px;font-weight:300;word-break:break-all;line-height:1.15}
+.calc-keys{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:8px 10px 12px;min-height:0}
+.ckey{border-radius:6px;background:var(--input);font-size:16px;transition:background .12s;display:flex;align-items:center;justify-content:center;min-height:38px}
+.ckey:hover{background:var(--hover)}
+.ckey.op{background:rgba(128,128,128,.18)}
+.ckey.eq{background:var(--accent);color:#fff}
+.ckey.fn{font-size:11.5px}
+.term{flex:1;background:#0c0c0c;color:#ccc;font-family:Consolas,monospace;font-size:13px;padding:12px 14px;overflow-y:auto;user-select:text;line-height:1.5}
+.term .line{white-space:pre-wrap;word-break:break-word}
+.term .prompt{color:#4ec9b0}
+.term .err{color:#f48771}
+.term .ok{color:#b5cea8}
+.term-input{background:transparent;border:none;color:#ccc;font-family:inherit;font-size:13px;padding:0;width:70%;outline:none}
+.browser{display:flex;flex-direction:column;height:100%}
+.br-frame{flex:1;border:none;background:#fff;width:100%}
+.br-home{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px;text-align:center}
+.br-home h1{font-size:32px;font-weight:300;letter-spacing:-1px}
+.br-home input{width:min(460px,100%);padding:11px 18px;border-radius:22px}
+.br-links{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.br-links button{padding:8px 14px;border-radius:8px;background:var(--input);font-size:12.5px;border:1px solid var(--border)}
+.tm-row{display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:12.5px;border-bottom:1px solid var(--border)}
+.tm-row:hover{background:var(--hover)}
+.tm-row .nm{flex:1;display:flex;align-items:center;gap:8px}
+.tm-row .pct{min-width:50px;text-align:right;font-variant-numeric:tabular-nums;color:var(--dim)}
+.tm-row button{padding:3px 10px;border-radius:4px;background:var(--input);border:1px solid var(--border);font-size:11.5px}
+.store-hero{padding:24px;text-align:center;background:linear-gradient(135deg,rgba(var(--accent-rgb),.3),transparent);border-radius:8px;margin-bottom:16px}
+.store-hero h2{font-size:20px;margin-bottom:8px}
+.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.store-item{background:var(--input);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;font-size:12px;cursor:pointer;transition:transform .15s}
+.store-item:hover{transform:translateY(-2px)}
+.store-item .em{font-size:32px;display:block;margin-bottom:6px}
+.bin-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;font-size:13px}
+.bin-item:hover{background:var(--hover)}
+.bin-item .em{font-size:20px}
+.bin-item .meta{flex:1}
+.bin-item .meta small{display:block;color:var(--dim);font-size:11px}
+.bin-empty{text-align:center;color:var(--dim);padding:60px 20px;font-size:13px}
+
+/* OOBE */
+#oobe{position:fixed;inset:0;z-index:2000;background:radial-gradient(circle at 30% 40%,#1a5eb8 0%,#0e3a7a 50%,#051a3f 100%);color:#fff;display:flex;flex-direction:column;font-family:'Segoe UI',sans-serif;transition:opacity .5s}
+#oobe.hidden{display:none}
+.oobe-dots{display:flex;gap:8px;position:absolute;top:24px;left:50%;transform:translateX(-50%);z-index:5}
+.oobe-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.25);transition:all .25s}
+.oobe-dot.active{background:#fff;transform:scale(1.25);box-shadow:0 0 12px rgba(255,255,255,.7)}
+.oobe-dot.done{background:rgba(255,255,255,.6)}
+.oobe-skip{position:absolute;top:20px;right:24px;z-index:6;padding:8px 18px;border-radius:20px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:12.5px;transition:background .2s;backdrop-filter:blur(10px);cursor:pointer}
+.oobe-skip:hover{background:rgba(255,255,255,.22)}
+.oobe-screens{flex:1;position:relative;overflow:hidden;padding:40px 60px 20px}
+.oobe-screen{position:absolute;inset:40px 60px 20px;display:none;overflow-y:auto;padding:20px}
+.oobe-screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;animation:oobeSlide .32s cubic-bezier(.4,0,.2,1)}
+@keyframes oobeSlide{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+.oobe-center{max-width:720px;width:100%;text-align:center;padding:20px 0}
+.oobe-center h1{font-size:34px;font-weight:300;margin-bottom:12px}
+.oobe-center p{font-size:15px;opacity:.85;margin-bottom:20px}
+.oobe-form{max-width:420px;margin:0 auto;text-align:left}
+.oobe-form-wide{max-width:520px}
+.oobe-form label{display:block;font-size:12px;opacity:.85;margin:14px 0 6px;font-weight:500}
+.oobe-form input[type=text],.oobe-form input[type=password],.oobe-form select{width:100%;padding:11px 14px;border-radius:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:14px;outline:none}
+.oobe-form input:focus,.oobe-form select:focus{border-color:#4aa3ff;background:rgba(255,255,255,.18)}
+.oobe-form select option{background:#1a3a72;color:#fff}
+.oobe-form input::placeholder{color:rgba(255,255,255,.5)}
+.oobe-err{color:#ffb1b1;font-size:11.5px;margin-top:4px;min-height:14px}
+.oobe-radios{display:flex;gap:16px;font-size:13px;margin-top:4px}
+.oobe-radios label{display:flex;align-items:center;gap:6px;margin:0;cursor:pointer;opacity:1}
+.oobe-btn{padding:11px 28px;border-radius:8px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.25);font-size:14px;cursor:pointer;transition:all .2s;backdrop-filter:blur(10px)}
+.oobe-btn:hover{background:rgba(255,255,255,.24)}
+.oobe-btn.primary{background:#0078d4;border-color:#0078d4;font-weight:500}
+.oobe-btn.primary:hover{background:#1a8ae4;box-shadow:0 4px 20px rgba(0,120,212,.5)}
+.oobe-btn.primary.big{padding:14px 44px;font-size:15px}
+.oobe-btn:disabled{opacity:.4;cursor:not-allowed}
+.oobe-link{background:none;border:none;color:#7cc4ff;font-size:13px;cursor:pointer;text-decoration:underline;margin-top:16px;padding:4px}
+.oobe-footer{padding:20px 40px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-top:1px solid rgba(255,255,255,.1)}
+.oobe-footer .oobe-btn{min-width:120px}
+.oobe-wifi-list{display:flex;flex-direction:column;gap:8px;margin:20px auto;max-width:440px;width:100%}
+.oobe-wifi{display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;cursor:pointer;transition:all .2s}
+.oobe-wifi:hover{background:rgba(255,255,255,.16)}
+.oobe-wifi.connected{background:rgba(74,163,255,.25);border-color:#4aa3ff}
+.oobe-wifi .em{font-size:20px}
+.oobe-wifi .nm{flex:1;text-align:left;font-size:13px}
+.oobe-wifi .st{font-size:11.5px;opacity:.75}
+.oobe-eula{max-width:640px;height:260px;overflow-y:auto;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:16px;font-size:12px;line-height:1.6;text-align:left;margin-bottom:16px}
+.oobe-eula h4{font-size:13px;margin:12px 0 6px;color:#7cc4ff}
+.oobe-eula p{margin-bottom:8px;opacity:.9}
+.oobe-checkbox{display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;justify-content:center;margin-top:8px}
+.oobe-checkbox input{width:18px;height:18px;accent-color:#0078d4;cursor:pointer}
+.oobe-avatars{display:grid;grid-template-columns:repeat(9,1fr);gap:8px;margin-top:6px}
+.oobe-avatar{aspect-ratio:1;border-radius:50%;cursor:pointer;transition:transform .15s;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid transparent}
+.oobe-avatar:hover{transform:scale(1.12)}
+.oobe-avatar.sel{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+.oobe-avatar.upload{background:rgba(255,255,255,.15);border:2px dashed rgba(255,255,255,.4);font-size:18px;background-size:cover;background-position:center}
+.oobe-themes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.oobe-theme{cursor:pointer;border:2px solid transparent;border-radius:8px;padding:6px;background:rgba(255,255,255,.06)}
+.oobe-theme.active{border-color:#4aa3ff}
+.oobe-theme-prev{aspect-ratio:16/10;border-radius:5px;display:flex;flex-direction:column;padding:8px}
+.oobe-theme span{display:block;text-align:center;font-size:12px;margin-top:6px}
+.oobe-wallpapers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+.oobe-wallpaper{aspect-ratio:16/10;border-radius:6px;cursor:pointer;border:2px solid transparent;background-size:cover;background-position:center}
+.oobe-wallpaper.sel{border-color:#4aa3ff}
+.oobe-accents{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.oobe-accent{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+.oobe-accent.sel{border-color:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
+.oobe-switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.oobe-switch-row b{font-size:13px;display:block;font-weight:600}
+.oobe-switch-row small{font-size:11.5px;opacity:.7;display:block;margin-top:2px}
+.oobe-summary{max-width:440px;margin:0 auto 24px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:16px 20px;font-size:13px;text-align:left}
+.oobe-summary div{padding:6px 0;display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08)}
+.oobe-summary div:last-child{border-bottom:none}
+.oobe-summary .v{font-weight:600}
+
+/* Edition selection cards */
+.edition-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px auto;max-width:1100px;width:100%}
+@media(max-width:900px){.edition-grid{grid-template-columns:1fr 1fr}}
+.edition-card{position:relative;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;text-align:left;display:flex;flex-direction:column;gap:8px}
+.edition-card:hover{background:rgba(255,255,255,.1);transform:translateY(-2px);border-color:rgba(255,255,255,.3)}
+.edition-card.selected{border-color:#4aa3ff;background:rgba(74,163,255,.15);box-shadow:0 0 0 3px rgba(74,163,255,.3),0 8px 30px rgba(74,163,255,.4)}
+.edition-card.selected::after{content:'✓';position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:#4aa3ff;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.edition-card .ed-logo{width:40px;height:40px;display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.edition-card .ed-logo i{background:#0078D7;border-radius:1px}
+.edition-card .ed-logo.w11 i{background:#00a4ef}
+.edition-card .ed-logo.base i{background:#7a9ac4}
+.edition-card h3{font-size:14px;font-weight:600;margin:0}
+.edition-card .ed-ver{font-size:10px;color:#7cc4ff;text-transform:uppercase;letter-spacing:.5px}
+.edition-card .ed-desc{font-size:11px;opacity:.75;line-height:1.5;min-height:48px}
+.edition-card .ed-features{list-style:none;padding:0;margin:0;font-size:10.5px;line-height:1.7}
+.edition-card .ed-features li{display:flex;align-items:center;gap:5px}
+.edition-card .ed-features .ok{color:#6be07b}
+.edition-card .ed-features .no{color:#a0a0a0;opacity:.7}
+.edition-card .ed-more{background:none;border:none;color:#7cc4ff;font-size:11px;cursor:pointer;text-decoration:underline;padding:4px 0;text-align:left}
+.edition-card .ed-more:hover{color:#fff}
+
+/* Lock Screen */
+#lockScreen{position:fixed;inset:0;z-index:1500;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#1a5eb8 0%,#0a2040 70%,#020814 100%);color:#fff;transition:opacity .35s,transform .35s}
+#lockScreen.hidden{opacity:0;transform:scale(1.05);pointer-events:none}
+.lock-content{text-align:center;animation:lockIn .6s cubic-bezier(.2,.9,.3,1)}
+@keyframes lockIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.lock-time{font-size:96px;font-weight:200;letter-spacing:-3px;line-height:1;text-shadow:0 4px 30px rgba(0,0,0,.5)}
+.lock-date{font-size:18px;opacity:.85;margin-top:8px;margin-bottom:60px}
+.lock-user{display:flex;flex-direction:column;align-items:center;gap:12px}
+.lock-avatar{width:92px;height:92px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden}
+.lock-avatar img{width:100%;height:100%;object-fit:cover}
+.lock-avatar.shake{animation:lockShake .4s}
+@keyframes lockShake{25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+.lock-name{font-size:22px;font-weight:400}
+.lock-pass-wrap{display:flex;gap:6px;margin-top:8px}
+.lock-pass-wrap input{width:240px;padding:10px 16px;border-radius:20px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:14px;outline:none}
+.lock-pass-wrap input:focus{background:rgba(255,255,255,.25);border-color:#fff}
+.lock-pass-wrap button{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:18px;cursor:pointer}
+.lock-enter{padding:10px 34px;border-radius:22px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:14px;cursor:pointer;backdrop-filter:blur(10px)}
+.lock-err{color:#ff8b8b;font-size:12.5px;min-height:16px;margin-top:4px}
+.lock-hint{font-size:12px;opacity:.6;margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- OOBE -->
+<div id="oobe" class="hidden">
+  <button class="oobe-skip" id="oobeSkip">⚡ Быстрая настройка</button>
+  <div class="oobe-dots" id="oobeDots"></div>
+  <div class="oobe-screens" id="oobeScreens"></div>
+  <div class="oobe-footer">
+    <button class="oobe-btn" id="oobeBack">← Назад</button>
+    <button class="oobe-btn primary" id="oobeNext">Далее →</button>
+  </div>
+</div>
+
+<!-- Lock Screen -->
+<div id="lockScreen" class="hidden">
+  <div class="lock-content">
+    <div class="lock-time" id="lockTime">00:00</div>
+    <div class="lock-date" id="lockDate"></div>
+    <div class="lock-user">
+      <div class="lock-avatar" id="lockAvatar">👤</div>
+      <div class="lock-name" id="lockName">Пользователь</div>
+      <div class="lock-pass-wrap hidden" id="lockPassWrap">
+        <input type="password" id="lockPass" placeholder="Введите пароль">
+        <button id="lockSubmit">→</button>
+      </div>
+      <button class="lock-enter" id="lockEnter">Войти</button>
+      <div class="lock-err" id="lockErr"></div>
+      <div class="lock-hint" id="lockHint"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Desktop -->
+<div id="wallpaper"></div>
+<div id="desktop"><div id="icons"></div></div>
+<div id="winLayer"></div>
+<div id="glitchLayer"></div>
+<div id="snapPreview"></div>
+<div id="kbOverlay">⌨  Клавиатура не найдена — ввод недоступен</div>
+<div id="mouseBlock"></div>
+
+<!-- Taskbar -->
+<div id="taskbar">
+  <div id="tbCenter"></div>
+  <div id="tbTray">
+    <button class="tray-btn" id="trayWifi" title="Сеть">📶</button>
+    <button class="tray-btn" id="trayVol" title="Звук">🔊</button>
+    <button class="tray-btn" id="trayClock"><span class="t"></span><span class="d"></span></button>
+  </div>
+</div>
+
+<!-- Start Menu -->
+<div class="panel closed" id="startMenu">
+  <div class="sm-search"><input type="text" id="smSearch" placeholder="🔍  Поиск приложений"></div>
+  <div class="sm-scroll">
+    <div id="smPinnedWrap"><div class="sm-h">Закреплённые</div><div class="sm-pinned" id="smPinned"></div></div>
+    <div class="sm-h">Все приложения</div>
+    <div id="smAll"></div>
+  </div>
+  <div class="sm-footer">
+    <div class="sm-user"><div class="sm-avatar" id="smAvatar">U</div><span id="smUserName">Пользователь</span></div>
+    <button class="sm-power" id="smPower" title="Питание">⏻</button>
+  </div>
+</div>
+
+<!-- Control Panel -->
+<div id="controlPanel">
+  <div id="cpHeader">
+    <div id="cpStatus"></div>
+    <h3>Панель управления</h3>
+    <span id="cpEditionBadge">11 Pro</span>
+    <button id="cpToggle" title="Свернуть">⟩</button>
+  </div>
+  <div id="cpSearchWrap">
+    <input type="text" id="cpSearch" placeholder="🔍 Поиск сбоя…">
+    <label id="cpFilter"><input type="checkbox" id="cpFilterCb"> Только доступные в редакции</label>
+  </div>
+  <div id="cpBody"></div>
+  <div id="cpSettings"></div>
+  <div id="cpSettingsToggle">⚙ Настройки панели</div>
+</div>
+
+<div id="notifs"></div>
+<div id="bsod" class="hidden"></div>
+<div id="powerScreen" class="hidden"></div>
+<div id="fadeBlack"></div>
+
+<script>
+'use strict';
+window.microOS = {};
+(function(M){
+
+const U = M.Util = {
+  $:(s,r=document)=>r.querySelector(s),
+  $$:(s,r=document)=>Array.from(r.querySelectorAll(s)),
+  el(t,c,txt){ const e=document.createElement(t); if(c)e.className=c; if(txt!=null)e.textContent=txt; return e; },
+  lsGet(k,d){ try{ const v=localStorage.getItem('microOS.'+k); return v==null?d:JSON.parse(v);}catch(e){return d;} },
+  lsSet(k,v){ try{ localStorage.setItem('microOS.'+k,JSON.stringify(v)); return true;}catch(e){return false;} },
+  clamp(v,a,b){ return Math.max(a,Math.min(b,v)); },
+  rand(a,b){ return a+Math.random()*(b-a); },
+  pad(n){ return String(n).padStart(2,'0'); },
+  debounce(fn,ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; }
+};
+
+const WALLPAPERS = M.WALLPAPERS = {
+  a:'radial-gradient(circle at 22% 18%,#2f7fdc 0%,#123a72 40%,#06162e 100%)',
+  b:'radial-gradient(circle at 72% 28%,#8e46b8 0%,#331467 48%,#0a0620 100%)',
+  c:'radial-gradient(circle at 50% 52%,#1e9078 0%,#0d4340 55%,#04191a 100%)',
+  d:'radial-gradient(circle at 80% 22%,#e08a2e 0%,#7a320c 50%,#1a0a03 100%)',
+  e:'radial-gradient(circle at 50% 20%,#ff6b9d 0%,#7a1a4a 55%,#1a0208 100%)',
+  f:'radial-gradient(circle at 30% 70%,#00bcd4 0%,#005a6e 55%,#001a1e 100%)',
+  g:'radial-gradient(circle at 60% 40%,#4a4a4a 0%,#1a1a1a 60%,#000 100%)',
+  h:'linear-gradient(135deg,#667eea 0%,#764ba2 100%)'
+};
+
+const EDITIONS = M.EDITIONS = {
+  'w10-base':{name:'microOS 10 (Базовая)',short:'10 Base',ver:'10',logoClass:'base',desc:'Простая версия для слабых ПК.',features:[{ok:true,text:'Светлая тема'},{ok:true,text:'Базовые приложения'},{ok:false,text:'Тёмная тема'},{ok:false,text:'Терминал, Магазин'}],accent:'#0078D7',apps:['explorer','notepad','calculator','browser','recycle'],terminal:false,store:false,taskmgr:false,snap:false,maxWindows:3,themes:['light'],build:'19045.3803',pro:false},
+  'w10-home':{name:'microOS 10 Домашняя',short:'10 Home',ver:'10',logoClass:'w10',desc:'Для дома. Базовые функции Windows 10.',features:[{ok:true,text:'Светлая / тёмная'},{ok:true,text:'Диспетчер задач'},{ok:true,text:'Терминал (ограничен)'},{ok:false,text:'Магазин'}],accent:'#0078D7',apps:['explorer','notepad','calculator','browser','recycle','taskmgr','terminal'],terminal:'limited',store:false,taskmgr:true,snap:false,maxWindows:5,themes:['light','dark'],build:'19045.3803',pro:false},
+  'w10-pro':{name:'microOS 10 Pro',short:'10 Pro',ver:'10',logoClass:'w10',desc:'Профессиональная редакция.',features:[{ok:true,text:'Все приложения'},{ok:true,text:'Полный терминал'},{ok:true,text:'Магазин + Snap'},{ok:true,text:'Все происшествия'}],accent:'#0078D7',apps:['explorer','notepad','calculator','browser','recycle','taskmgr','terminal','store','settings'],terminal:'full',store:true,taskmgr:true,snap:true,maxWindows:99,themes:['light','dark'],build:'19045.3803',pro:true},
+  'w11-home':{name:'microOS 11 Домашняя',short:'11 Home',ver:'11',logoClass:'w11',desc:'Современный дизайн Windows 11.',features:[{ok:true,text:'Fluent Design'},{ok:true,text:'Snap Layouts'},{ok:false,text:'Терминал, Магазин'},{ok:false,text:'Диспетчер (ограничен)'}],accent:'#0078D4',apps:['explorer','notepad','calculator','browser','recycle','taskmgr'],terminal:false,store:false,taskmgr:'lite',snap:true,maxWindows:99,themes:['light','dark'],build:'22631.4317',pro:false},
+  'w11-pro':{name:'microOS 11 Pro',short:'11 Pro',ver:'11',logoClass:'w11',desc:'Полная Windows 11.',features:[{ok:true,text:'Все приложения'},{ok:true,text:'Полный терминал'},{ok:true,text:'Все происшествия'},{ok:true,text:'Snap + магазин'}],accent:'#0078D4',apps:['explorer','notepad','calculator','browser','recycle','taskmgr','terminal','store','settings'],terminal:'full',store:true,taskmgr:true,snap:true,maxWindows:99,themes:['light','dark'],build:'22631.4317',pro:true}
+};
+
+const Edition = M.Edition = {
+  current:'w11-pro',
+  load(){ this.current=U.lsGet('edition','w11-pro'); if(!EDITIONS[this.current]) this.current='w11-pro'; this.apply(); },
+  get(){ return EDITIONS[this.current]; },
+  getId(){ return this.current; },
+  set(id){ if(!EDITIONS[id]) return; this.current=id; U.lsSet('edition',id); this.apply(); },
+  apply(){
+    document.documentElement.dataset.edition=this.current;
+    const ed=this.get();
+    if(ed.accent){
+      document.documentElement.style.setProperty('--accent',ed.accent);
+      const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(ed.accent);
+      if(m) document.documentElement.style.setProperty('--accent-rgb',`${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)}`);
+    }
+    if(this.current==='w10-base') document.documentElement.dataset.theme='light';
+    if(M.Taskbar) M.Taskbar.render();
+    if(M.StartMenu) M.StartMenu.render();
+    if(M.Desktop) M.Desktop.render();
+    if(M.ControlPanel) M.ControlPanel.render();
+    const badge=U.$('#cpEditionBadge');
+    if(badge) badge.textContent=ed.short;
+  },
+  isAppAllowed(id){ const ed=this.get(); return !ed.apps || ed.apps.includes(id); },
+  isIncidentAllowed(inc){ return !inc.editions || inc.editions.includes(this.current); },
+  getBuild(){ return this.get().build; }
+};
+
+const Settings = M.Settings = {
+  defaults:{theme:'dark',wallpaper:'a',customWallpaper:null,accent:'#0078d4',lang:'ru',region:'RU',keyboard:'ru',brightness:100,volume:70,wifi:true,bluetooth:false,dnd:false,notif:true,taskbarPos:'bottom',privacy:{diagnostics:true,ads:true,speech:true,location:true,sync:true}},
+  data:{},
+  load(){ const r=U.lsGet('settings',null); this.data=Object.assign({},this.defaults,r||{}); this.data.privacy=Object.assign({},this.defaults.privacy,(r&&r.privacy)||{}); },
+  save(){ U.lsSet('settings',this.data); },
+  get(k){ return this.data[k]; },
+  set(k,v){ this.data[k]=v; this.save(); this.apply(); },
+  apply(){
+    const d=this.data;
+    document.documentElement.dataset.theme=d.theme;
+    if(d.accent && !Edition.get().accent){
+      document.documentElement.style.setProperty('--accent',d.accent);
+    }
+    const wp=document.getElementById('wallpaper');
+    if(!wp) return;
+    if(d.wallpaper==='custom'&&d.customWallpaper) wp.style.backgroundImage=`url(${d.customWallpaper})`;
+    else wp.style.backgroundImage=WALLPAPERS[d.wallpaper]||WALLPAPERS.a;
+    wp.style.filter=`brightness(${d.brightness/100})`;
+  }
+};
+
+const SystemState = M.SystemState = {
+  cpu:12,ramMB:2400,ramMaxMB:8192,diskGB:45,diskMaxGB:100,tempC:42,viruses:0,stability:100,
+  listeners:[],tickHandle:null,
+  start(){ if(this.tickHandle)return; this.tickHandle=setInterval(()=>this.tick(),800); },
+  stop(){ if(this.tickHandle){ clearInterval(this.tickHandle); this.tickHandle=null; } },
+  tick(){
+    if(!M.IncidentMgr.has('cpuFire')){
+      this.tempC+=(42-this.tempC)*0.08;
+      this.cpu+=((10+M.WM.wins.length*3)-this.cpu)*0.12+(Math.random()-0.5)*4;
+    }
+    if(!M.IncidentMgr.has('ramFill')&&!M.IncidentMgr.has('memoryLeak')){
+      const base=2200+M.WM.wins.length*180;
+      this.ramMB+=(base-this.ramMB)*0.1;
+    }
+    if(!M.IncidentMgr.has('diskFill')) this.diskGB+=(45-this.diskGB)*0.05;
+    this.cpu=U.clamp(this.cpu,2,100); this.ramMB=U.clamp(this.ramMB,500,this.ramMaxMB);
+    this.diskGB=U.clamp(this.diskGB,5,this.diskMaxGB); this.tempC=U.clamp(this.tempC,25,105);
+    this.recalcStability(); this.emit();
+  },
+  recalcStability(){
+    let s=100;
+    s-=Math.max(0,this.tempC-60)*0.9;
+    s-=Math.max(0,this.cpu-70)*0.3;
+    s-=Math.max(0,this.ramMB/this.ramMaxMB-0.7)*90;
+    s-=Math.max(0,this.diskGB-85)*0.9;
+    s-=this.viruses*9;
+    this.stability=U.clamp(s,0,100);
+  },
+  emit(){ this.listeners.forEach(fn=>{try{fn(this);}catch(e){}}); },
+  onChange(fn){ this.listeners.push(fn); }
+};
+
+const AudioMgr = M.AudioMgr = {
+  ctx:null,fanNode:null,
+  ensure(){ if(this.ctx)return true; try{ this.ctx=new (window.AudioContext||window.webkitAudioContext)(); return true;}catch(e){return false;} },
+  beep(f=800,d=0.1,t='square',v=0.04){
+    if(!this.ensure())return;
+    try{
+      const o=this.ctx.createOscillator(),g=this.ctx.createGain();
+      o.type=t; o.frequency.value=f;
+      g.gain.setValueAtTime(v,this.ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001,this.ctx.currentTime+d);
+      o.connect(g); g.connect(this.ctx.destination); o.start(); o.stop(this.ctx.currentTime+d+0.02);
+    }catch(e){}
+  },
+  error(){ this.beep(220,0.12,'sawtooth',0.05); setTimeout(()=>this.beep(160,0.18,'sawtooth',0.05),150); },
+  alert(){ this.beep(880,0.1,'square',0.05); setTimeout(()=>this.beep(660,0.1,'square',0.05),130); setTimeout(()=>this.beep(440,0.16,'square',0.05),260); },
+  bsod(){ this.beep(120,0.6,'sine',0.06); setTimeout(()=>this.beep(90,0.8,'sine',0.06),500); },
+  greet(){ this.beep(660,0.15,'sine',0.05); setTimeout(()=>this.beep(880,0.2,'sine',0.05),180); setTimeout(()=>this.beep(1100,0.3,'sine',0.05),380); },
+  fan(on){
+    if(!this.ensure())return;
+    if(on){
+      if(this.fanNode)return;
+      try{
+        const sr=this.ctx.sampleRate;
+        const buf=this.ctx.createBuffer(1,sr*2,sr);
+        const d=buf.getChannelData(0);
+        for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*0.5;
+        const src=this.ctx.createBufferSource(); src.buffer=buf; src.loop=true;
+        const filt=this.ctx.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=700;
+        const g=this.ctx.createGain(); g.gain.value=0.08;
+        src.connect(filt).connect(g).connect(this.ctx.destination);
+        src.start(); this.fanNode=src;
+      }catch(e){}
+    } else if(this.fanNode){ try{ this.fanNode.stop(); }catch(e){} this.fanNode=null; }
+  }
+};
+
+const Notify = M.Notify = {
+  push(title,text,icon='🔔'){
+    const box=U.$('#notifs'); if(!box)return;
+    const card=U.el('div','notif');
+    card.append(U.el('div','em',icon));
+    const c=U.el('div'); c.append(U.el('b',null,title),U.el('div',null,text));
+    card.appendChild(c); box.appendChild(card);
+    const kill=()=>{ card.classList.add('out'); setTimeout(()=>card.remove(),210); };
+    card.addEventListener('click',kill);
+    setTimeout(kill,6000);
+  }
+};
+
+const ErrorMgr = M.ErrorMgr = {
+  dialogCount:0,
+  dialog(opts){
+    if(this.dialogCount>6)return;
+    this.dialogCount++;
+    AudioMgr.error();
+    const ov=U.el('div','dialog-overlay');
+    const dlg=U.el('div','dialog');
+    if(opts.className) dlg.classList.add(opts.className);
+    const tb=U.el('div','dialog-tb');
+    tb.append(U.el('span',null,opts.icon||'⚠️'),U.el('span',null,opts.title||'Ошибка'));
+    const bd=U.el('div','dialog-bd');
+    if(opts.html){ bd.style.display='block'; bd.appendChild(opts.html); }
+    else{
+      bd.append(U.el('div','dialog-ic',opts.icon||'⚠️'));
+      const t=U.el('div');
+      t.append(U.el('div',null,opts.message||''));
+      if(opts.detail){
+        const sm=U.el('div',null,opts.detail);
+        sm.style.cssText='font-size:11.5px;color:var(--dim);margin-top:8px;white-space:pre-line';
+        t.appendChild(sm);
+      }
+      bd.appendChild(t);
+    }
+    const ft=U.el('div','dialog-ft');
+    const close=()=>{ ov.remove(); this.dialogCount--; opts.onClose&&opts.onClose(); };
+    (opts.buttons||[{label:'ОК',primary:true}]).forEach(b=>{
+      const btn=U.el('button',b.primary?'primary':'',b.label);
+      btn.addEventListener('click',()=>{ ov.remove(); this.dialogCount--; b.onClose&&b.onClose(); b.action&&b.action(); });
+      ft.appendChild(btn);
+    });
+    dlg.append(tb,bd,ft); ov.appendChild(dlg);
+    ov.addEventListener('click',e=>{ if(e.target===ov) close(); });
+    document.body.appendChild(ov);
+  },
+  bsod(code,opts){
+    opts=opts||{};
+    AudioMgr.bsod(); AudioMgr.fan(false);
+    const isW10=Edition.getId().startsWith('w10');
+    const el=U.$('#bsod'); el.innerHTML=''; el.classList.remove('hidden');
+    el.append(
+      U.el('div','frown',':('),
+      U.el('div','msg','Ваш компьютер столкнулся с проблемой и будет перезагружен. Сбор данных об ошибке…'),
+      U.el('div','code','Код ошибки: '+code)
+    );
+    if(!isW10){
+      const qr=U.el('div','qrw');
+      qr.appendChild(this.makeQR(110));
+      const info=U.el('div');
+      info.append(U.el('div',null,'Для получения доп. информации'),U.el('div',null,'посетите microsoft.com/stopcode'),U.el('div',null,'Код ошибки: '+code));
+      const prog=U.el('div','progress'); const fill=U.el('div'); prog.appendChild(fill);
+      const pct=U.el('div','pct','0% завершено');
+      info.append(prog,pct); qr.appendChild(info); el.appendChild(qr);
+      let p=0;
+      const int=setInterval(()=>{
+        p+=U.rand(3,11);
+        if(p>=100){ p=100; clearInterval(int); setTimeout(()=>{ el.classList.add('hidden'); if(opts.onComplete)opts.onComplete(); },600); }
+        fill.style.width=p+'%'; pct.textContent=Math.floor(p)+'% завершено';
+      },180);
+    } else {
+      const pct=U.el('div');
+      pct.style.cssText='margin-top:20px;font-size:14px;opacity:.9';
+      pct.textContent='0% завершено';
+      el.appendChild(pct);
+      let p=0;
+      const int=setInterval(()=>{
+        p+=U.rand(5,15);
+        if(p>=100){ p=100; clearInterval(int); setTimeout(()=>{ el.classList.add('hidden'); if(opts.onComplete)opts.onComplete(); },600); }
+        pct.textContent=Math.floor(p)+'% завершено';
+      },250);
+    }
+    const edName=Edition.getId().startsWith('w10')?'microOS 10':'microOS 11';
+    el.appendChild(U.el('div','foot',edName+' · build '+Edition.getBuild()+' · '+new Date().toLocaleString('ru-RU')));
+  },
+  makeQR(size){
+    const NS='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(NS,'svg');
+    svg.setAttribute('viewBox','0 0 21 21'); svg.setAttribute('width',size); svg.setAttribute('height',size);
+    svg.style.background='#fff';
+    for(let y=0;y<21;y++)for(let x=0;x<21;x++){
+      if((x<7&&y<7)||(x>=14&&y<7)||(x<7&&y>=14))continue;
+      if(Math.random()>0.55){
+        const r=document.createElementNS(NS,'rect');
+        r.setAttribute('x',x); r.setAttribute('y',y);
+        r.setAttribute('width',1); r.setAttribute('height',1);
+        r.setAttribute('fill','#000'); svg.appendChild(r);
+      }
+    }
+    [[0,0],[14,0],[0,14]].forEach(([fx,fy])=>{
+      const a=document.createElementNS(NS,'rect');
+      a.setAttribute('x',fx); a.setAttribute('y',fy);
+      a.setAttribute('width',7); a.setAttribute('height',7); a.setAttribute('fill','#000');
+      const b=document.createElementNS(NS,'rect');
+      b.setAttribute('x',fx+1); b.setAttribute('y',fy+1);
+      b.setAttribute('width',5); b.setAttribute('height',5); b.setAttribute('fill','#fff');
+      const c=document.createElementNS(NS,'rect');
+      c.setAttribute('x',fx+2); c.setAttribute('y',fy+2);
+      c.setAttribute('width',3); c.setAttribute('height',3); c.setAttribute('fill','#000');
+      svg.append(a,b,c);
+    });
+    return svg;
+  }
+};
+
+const WM = M.WM = {
+  wins:[],zTop:100,counter:0,activeId:null,
+  create(opts){
+    const id='w'+(++this.counter);
+    const W=Math.min(opts.width||720,window.innerWidth-40);
+    const H=Math.min(opts.height||480,window.innerHeight-110);
+    const n=this.wins.length;
+    const left=Math.max(16,Math.round((window.innerWidth-W)/2)+(n%6)*30-75);
+    const top=Math.max(16,Math.round((window.innerHeight-46-H)/2)+(n%6)*26-65);
+    const win=U.el('div','window opening');
+    win.dataset.appId=opts.appId||''; win.dataset.winId=id;
+    win.style.left=left+'px'; win.style.top=top+'px';
+    win.style.width=W+'px'; win.style.height=H+'px';
+    const tb=U.el('div','win-tb');
+    tb.append(U.el('div','win-ic',opts.icon||'🗔'),U.el('div','win-title',opts.title||'Окно'));
+    const ctr=U.el('div','win-ctr');
+    const bMin=U.el('button','win-btn','─');
+    const bMax=U.el('button','win-btn','□');
+    const bCls=U.el('button','win-btn close','✕');
+    ctr.append(bMin,bMax,bCls); tb.appendChild(ctr);
+    const body=U.el('div','win-body');
+    ['n','s','e','w','ne','nw','se','sw'].forEach(dir=>{
+      const h=U.el('div','rz '+dir);
+      h.addEventListener('mousedown',e=>startResize(e,dir,win,api));
+      win.appendChild(h);
+    });
+    win.append(tb,body);
+    const api={id,el:win,body,appId:opts.appId,title:opts.title,minimized:false,maximized:false,prevRect:null,
+      focus:()=>this.focus(id),close:()=>this.close(id),minimize:()=>this.minimize(id),maximize:()=>this.maximize(id),
+      setTitle:t=>{ const ti=win.querySelector('.win-title'); if(ti)ti.textContent=t; api.title=t; }};
+    U.$('#winLayer').appendChild(win);
+    this.wins.push(api);
+    win.addEventListener('mousedown',()=>this.focus(id),true);
+    tb.addEventListener('mousedown',e=>{ if(e.target.closest('.win-btn'))return; startDrag(e,win,api); });
+    tb.addEventListener('dblclick',e=>{ if(e.target.closest('.win-btn'))return; this.maximize(id); });
+    bMin.addEventListener('click',e=>{ e.stopPropagation(); this.minimize(id); });
+    bMax.addEventListener('click',e=>{ e.stopPropagation(); this.maximize(id); });
+    bCls.addEventListener('click',e=>{ e.stopPropagation(); this.close(id); });
+    this.focus(id);
+    setTimeout(()=>win.classList.remove('opening'),240);
+    M.Taskbar.render();
+    if(typeof opts.build==='function') opts.build(body,api);
+    return api;
+  },
+  focus(id){
+    const w=this.wins.find(x=>x.id===id); if(!w)return;
+    if(w.minimized) this.restore(id);
+    this.activeId=id; this.zTop++;
+    w.el.style.zIndex=this.zTop;
+    this.wins.forEach(x=>x.el.classList.toggle('active',x.id===id));
+    M.Taskbar.render();
+  },
+  close(id){
+    const i=this.wins.findIndex(x=>x.id===id); if(i<0)return;
+    const w=this.wins[i]; w.el.classList.add('closing');
+    setTimeout(()=>{
+      w.el.remove(); this.wins.splice(i,1);
+      if(this.activeId===id){
+        const next=this.wins.filter(x=>!x.minimized).pop();
+        this.activeId=next?next.id:null;
+        if(next) this.focus(next.id);
+      }
+      M.Taskbar.render();
+    },180);
+  },
+  minimize(id){
+    const w=this.wins.find(x=>x.id===id); if(!w)return;
+    w.minimized=true; w.el.classList.add('minimized');
+    if(this.activeId===id){
+      const next=this.wins.filter(x=>!x.minimized&&x.id!==id).pop();
+      this.activeId=next?next.id:null;
+      if(next) this.focus(next.id);
+    }
+    M.Taskbar.render();
+  },
+  restore(id){ const w=this.wins.find(x=>x.id===id); if(w){ w.minimized=false; w.el.classList.remove('minimized'); } },
+  maximize(id){
+    const w=this.wins.find(x=>x.id===id); if(!w)return;
+    if(w.maximized){
+      const r=w.prevRect;
+      w.el.style.left=r.left+'px'; w.el.style.top=r.top+'px';
+      w.el.style.width=r.width+'px'; w.el.style.height=r.height+'px';
+      w.maximized=false;
+    } else {
+      w.prevRect={left:parseFloat(w.el.style.left),top:parseFloat(w.el.style.top),width:parseFloat(w.el.style.width),height:parseFloat(w.el.style.height)};
+      w.el.style.left='0px'; w.el.style.top='0px';
+      w.el.style.width=window.innerWidth+'px';
+      w.el.style.height=(window.innerHeight-46)+'px';
+      w.maximized=true;
+    }
+    this.focus(id);
+  },
+  cycle(){
+    const list=this.wins.filter(w=>!w.minimized); if(!list.length)return;
+    const cur=list.findIndex(w=>w.id===this.activeId);
+    this.focus(list[(cur+1)%list.length].id);
+  },
+  findApp(appId){ return this.wins.find(w=>w.appId===appId); }
+};
+function startDrag(e,win,api){
+  if(api.maximized)return; e.preventDefault();
+  const sx=e.clientX,sy=e.clientY;
+  const sl=parseFloat(win.style.left),st=parseFloat(win.style.top);
+  const preview=U.$('#snapPreview'); let snapped=null;
+  const move=ev=>{
+    win.style.left=(sl+ev.clientX-sx)+'px';
+    win.style.top=Math.max(0,st+ev.clientY-sy)+'px';
+    const ed=Edition.get();
+    if(ed.snap){
+      const nearL=ev.clientX<8,nearR=ev.clientX>window.innerWidth-8;
+      if(nearL||nearR){
+        snapped=nearL?'left':'right';
+        preview.style.display='block'; preview.style.top='0px';
+        preview.style.height=(window.innerHeight-46)+'px';
+        preview.style.width=(window.innerWidth/2)+'px';
+        preview.style.left=nearL?'0px':(window.innerWidth/2)+'px';
+      } else { snapped=null; preview.style.display='none'; }
+    }
+  };
+  const up=()=>{
+    document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up);
+    preview.style.display='none';
+    if(snapped){
+      win.style.top='0px';
+      win.style.width=(window.innerWidth/2)+'px';
+      win.style.height=(window.innerHeight-46)+'px';
+      win.style.left=snapped==='left'?'0px':(window.innerWidth/2)+'px';
+    }
+  };
+  document.addEventListener('mousemove',move); document.addEventListener('mouseup',up);
+}
+function startResize(e,dir,win,api){
+  e.preventDefault(); e.stopPropagation();
+  if(api.maximized)return;
+  const sx=e.clientX,sy=e.clientY;
+  const r=win.getBoundingClientRect();
+  const sl=parseFloat(win.style.left),st=parseFloat(win.style.top);
+  const move=ev=>{
+    const dx=ev.clientX-sx,dy=ev.clientY-sy;
+    let L=sl,T=st,W=r.width,H=r.height;
+    if(dir.includes('e'))W=Math.max(340,r.width+dx);
+    if(dir.includes('s'))H=Math.max(220,r.height+dy);
+    if(dir.includes('w')){ W=Math.max(340,r.width-dx); L=sl+(r.width-W); }
+    if(dir.includes('n')){ H=Math.max(220,r.height-dy); T=st+(r.height-H); }
+    win.style.left=L+'px'; win.style.top=T+'px';
+    win.style.width=W+'px'; win.style.height=H+'px';
+  };
+  const up=()=>{ document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up); };
+  document.addEventListener('mousemove',move); document.addEventListener('mouseup',up);
+}
+
+const Apps = M.Apps = {
+  registry:{},
+  register(a){ this.registry[a.id]=a; },
+  list(){ return Object.values(this.registry); },
+  get(id){ return this.registry[id]; },
+  open(id,arg){
+    const a=this.registry[id]; if(!a)return;
+    if(!Edition.isAppAllowed(id)){
+      ErrorMgr.dialog({title:'Недоступно',icon:'🔒',message:`Приложение «${a.name}» недоступно в редакции «${Edition.get().name}».`,detail:'Обновитесь до Pro-редакции.',buttons:[{label:'Понятно',primary:true}]});
+      return;
+    }
+    const ed=Edition.get();
+    if(ed.maxWindows && ed.maxWindows<99 && WM.wins.length>=ed.maxWindows){
+      ErrorMgr.dialog({title:'Достигнут лимит редакции',icon:'⚠️',message:`Редакция «${ed.name}» поддерживает не более ${ed.maxWindows} окон.`,detail:'Закройте окно или обновитесь до Pro.',buttons:[{label:'ОК',primary:true}]});
+      return;
+    }
+    const existing=WM.findApp(id);
+    if(existing){ WM.focus(existing.id); return; }
+    a.open(arg);
+  }
+};
+
+const FS = M.FS = {
+  root:null,trash:[],
+  load(){ this.root=U.lsGet('fs',null); this.trash=U.lsGet('trash',[]); if(!this.root||!this.root.children) this.reset(); },
+  reset(){
+    this.root={name:'microOS',type:'folder',children:[
+      {name:'Рабочий стол',type:'folder',children:[]},
+      {name:'Документы',type:'folder',children:[{name:'readme.txt',type:'file',content:'Добро пожаловать в microOS!'}]},
+      {name:'Загрузки',type:'folder',children:[]},
+      {name:'Изображения',type:'folder',children:[]}
+    ]};
+    this.trash=[]; this.save();
+  },
+  save(){ U.lsSet('fs',this.root); },
+  saveTrash(){ U.lsSet('trash',this.trash); },
+  resolve(path){ let n=this.root; for(const p of path){ if(!n.children)return null; n=n.children.find(c=>c.name===p); if(!n)return null; } return n; },
+  mkdir(path,name){ if(M.IncidentMgr.has('diskFill'))return false; const p=this.resolve(path); if(!p||p.children.some(c=>c.name===name))return false; p.children.push({name,type:'folder',children:[]}); this.save(); return true; },
+  writeFile(path,name,content){ if(M.IncidentMgr.has('diskFill'))return false; const p=this.resolve(path); if(!p)return false; const ex=p.children.find(c=>c.name===name); if(ex){ if(ex.type!=='file')return false; ex.content=content; } else p.children.push({name,type:'file',content}); this.save(); return true; },
+  readFile(path){ const n=this.resolve(path); return n&&n.type==='file'?n.content:null; },
+  remove(path){ if(!path.length)return false; const parent=this.resolve(path.slice(0,-1)); if(!parent)return false; const idx=parent.children.findIndex(c=>c.name===path[path.length-1]); if(idx<0)return false; const [node]=parent.children.splice(idx,1); this.trash.push({node,from:path.slice(0,-1),at:Date.now()}); this.save(); this.saveTrash(); return true; },
+  restore(i){ if(i<0||i>=this.trash.length)return false; const it=this.trash[i]; const p=this.resolve(it.from)||this.root; p.children.push(it.node); this.trash.splice(i,1); this.save(); this.saveTrash(); return true; },
+  removePermanent(i){ if(i<0||i>=this.trash.length)return false; this.trash.splice(i,1); this.saveTrash(); return true; }
+};
+
+/* ===== 60 INCIDENTS ===== */
+const INCIDENTS = M.INCIDENTS = [
+  // Hardware 1-8
+  {id:'cpuFire',cat:'hardware',em:'🔥',name:'Пожар CPU',sub:'→100°C',code:'0x0000007F'},
+  {id:'powerSurge',cat:'hardware',em:'⚡',name:'Скачок',sub:'мигание',code:'0x00000080'},
+  {id:'powerOut',cat:'hardware',em:'🔌',name:'Отключение',sub:'перезагрузка',code:'0x0000009F'},
+  {id:'kbFail',cat:'hardware',em:'⌨️',name:'Клавиатура',sub:'блок',code:'0x0000000A'},
+  {id:'mouseFail',cat:'hardware',em:'🖱️',name:'Мышь',sub:'блок',code:'0x0000000A'},
+  {id:'gpuOverheat',cat:'hardware',em:'🌀',name:'Перегрев GPU',sub:'артефакты',code:'0x00000116'},
+  {id:'powerSupplyHeat',cat:'hardware',em:'🔥',name:'Перегрев БП',sub:'выкл',code:'0x00000124'},
+  {id:'freeze',cat:'hardware',em:'🧊',name:'Заморозка',sub:'5 сек',code:'0x000000F4'},
+  // Hardware 26-30
+  {id:'usbFail',cat:'hardware',em:'🔌',name:'Отказ USB',sub:'Код 43',code:'0x0000002B'},
+  {id:'screenFlicker',cat:'hardware',em:'🖥️',name:'Мигание',sub:'5 Гц',code:'0x00000A0C'},
+  {id:'batterySwelling',cat:'hardware',em:'🔋',name:'Батарея',sub:'вздутие',code:'0x0000001E'},
+  {id:'thermoSensorFail',cat:'hardware',em:'🌡️',name:'Термодатчик',sub:'—°C',code:'0x0000002C'},
+  {id:'powerGridSpike',cat:'hardware',em:'💥',name:'Сеть',sub:'POST',code:'0x0000007A'},
+  // Software 9-14
+  {id:'ramFill',cat:'software',em:'🧠',name:'RAM 100%',sub:'',code:'0x0000001A'},
+  {id:'memoryLeak',cat:'software',em:'📉',name:'Утечка RAM',sub:'',code:'0x0000000E'},
+  {id:'fsCrash',cat:'software',em:'📂',name:'Сбой ФС',sub:'битые',code:'0x80070570'},
+  {id:'explorerHang',cat:'software',em:'🌀',name:'Зависание',sub:'проводник',code:'0x80004004'},
+  {id:'registryCrash',cat:'software',em:'🗄',name:'Реестр',sub:'',code:'0x80070002'},
+  {id:'updateFail',cat:'software',em:'💥',name:'Обновление',sub:'откат',code:'0x800F0922'},
+  // Software 31-40
+  {id:'dataLoss',cat:'software',em:'📝',name:'Потеря данных',sub:'',code:'0x8007000D'},
+  {id:'appCrash',cat:'software',em:'🧩',name:'Сбой приложения',sub:'',code:'0xC0000005'},
+  {id:'bootLoop',cat:'software',em:'🔄',name:'Загрузка',sub:'loop',code:'0xC000021A'},
+  {id:'appConflict',cat:'software',em:'🎯',name:'Конфликт',sub:'X vs Y',code:'0x8007006E'},
+  {id:'recycleOverflow',cat:'software',em:'📦',name:'Корзина',sub:'full',code:'0x80070070'},
+  {id:'gameHang',cat:'software',em:'🕹️',name:'Зависание игры',sub:'',code:'0x80004004'},
+  {id:'codecFail',cat:'software',em:'🎬',name:'Кодек',sub:'',code:'0x80004005'},
+  {id:'audioCorrupt',cat:'software',em:'🎵',name:'Аудио',sub:'искаж',code:'0x80041317'},
+  {id:'thumbnailFail',cat:'software',em:'🖼️',name:'Миниатюры',sub:'?',code:'0x8007000E'},
+  {id:'clipboardFail',cat:'software',em:'📄',name:'Буфер',sub:'c/v',code:'0x8007052E'},
+  // Network 15-16
+  {id:'netLoss',cat:'network',em:'🌐',name:'Потеря сети',sub:'',code:'0x80072EE2'},
+  {id:'ddos',cat:'network',em:'🌐',name:'DDoS',sub:'1M/сек',code:'0x80072EFD'},
+  // Network 41-44
+  {id:'wifiDriverFail',cat:'network',em:'🛜',name:'Wi-Fi',sub:'драйвер',code:'0x0000000A'},
+  {id:'dnsAttack',cat:'network',em:'🌍',name:'DNS',sub:'фейк',code:'0x80072548'},
+  {id:'networkCongestion',cat:'network',em:'📡',name:'Перегрузка',sub:'2000мс',code:'0x80070079'},
+  {id:'updateServerDDoS',cat:'network',em:'🔥',name:'Сервер обн.',sub:'DDoS',code:'0x80072EFD'},
+  // Security 17-18
+  {id:'virus',cat:'security',em:'🦠',name:'Вирус',sub:'',code:'0x000000C1'},
+  {id:'hacker',cat:'security',em:'🔐',name:'Хакер',sub:'',code:'0x000000C2'},
+  // Security 45-49
+  {id:'phishing',cat:'security',em:'🎣',name:'Фишинг',sub:'',code:'0x8007052E'},
+  {id:'ransomwareFiles',cat:'security',em:'🔒',name:'Шифровальщик',sub:'.enc',code:'0x000000C2'},
+  {id:'spyCam',cat:'security',em:'👁️',name:'Слежка',sub:'камера',code:'0x80070005'},
+  {id:'trojan',cat:'security',em:'🧨',name:'Троян',sub:'',code:'0x000000C1'},
+  {id:'fbiRansom',cat:'security',em:'🕵️',name:'ФБР',sub:'шутка',code:'0x000000C2'},
+  // Drivers 19-22
+  {id:'videoCrash',cat:'drivers',em:'🖥️',name:'Видео',sub:'',code:'0x00000116'},
+  {id:'colorFail',cat:'drivers',em:'🎨',name:'Цвет',sub:'',code:'0x00000A0C'},
+  {id:'audioFail',cat:'drivers',em:'🔊',name:'Звук',sub:'',code:'0x0000000A'},
+  {id:'printerFail',cat:'drivers',em:'🖨️',name:'Печать',sub:'',code:'0x00000709'},
+  // Drivers 50-53
+  {id:'printSpooler',cat:'drivers',em:'🖨️',name:'Очередь',sub:'999',code:'0x00000709'},
+  {id:'touchpadFail',cat:'drivers',em:'🖱️',name:'Тачпад',sub:'рывки',code:'0x0000000A'},
+  {id:'gamepadFail',cat:'drivers',em:'🎮',name:'Геймпад',sub:'',code:'0x0000000A'},
+  {id:'soundCardFail',cat:'drivers',em:'🔊',name:'Звук. карта',sub:'тишина',code:'0x0000000A'},
+  // System 23-25
+  {id:'kernelCrash',cat:'system',em:'🧨',name:'Сбой ядра',sub:'BSOD',code:'0x0000001E'},
+  {id:'timeFail',cat:'system',em:'⏰',name:'Время',sub:'',code:'0x800705B4'},
+  {id:'diskFill',cat:'system',em:'💾',name:'Диск',sub:'100%',code:'0x80070070'},
+  // System 54-60
+  {id:'taskSchedulerFail',cat:'system',em:'⏱️',name:'Планировщик',sub:'',code:'0x8004131F'},
+  {id:'profileCorrupt',cat:'system',em:'📁',name:'Профиль',sub:'',code:'0x80070057'},
+  {id:'activationFail',cat:'system',em:'🔐',name:'Активация',sub:'',code:'0xC004F074'},
+  {id:'systemFileCorrupt',cat:'system',em:'🧬',name:'Сист. файл',sub:'sfc',code:'0x800F0906',editions:['w10-pro','w11-pro']},
+  {id:'sleepFail',cat:'system',em:'💤',name:'Сон',sub:'',code:'0x0000009F'},
+  {id:'registryOverflow',cat:'system',em:'🗂️',name:'Реестр перепол',sub:'',code:'0x8007000E',editions:['w10-pro','w11-pro']},
+  {id:'slowBoot',cat:'system',em:'⏳',name:'Долгая загрузка',sub:'87%',code:'0xC0000001'}
+];
+const CATEGORIES = M.CATEGORIES = {
+  hardware:{name:'Аппаратные',em:'🔧'},
+  software:{name:'Программные',em:'💻'},
+  network:{name:'Сетевые',em:'🌐'},
+  security:{name:'Безопасность',em:'🔐'},
+  drivers:{name:'Драйверы',em:'🎮'},
+  system:{name:'Системные',em:'⚙️'}
+};
+
+const IncidentMgr = M.IncidentMgr = {
+  active:new Set(),timers:new Map(),handlers:{},registry:INCIDENTS,
+  has(id){ return this.active.has(id); },
+  clearTimers(id){ const l=this.timers.get(id)||[]; l.forEach(t=>{clearInterval(t);clearTimeout(t);}); this.timers.delete(id); },
+  setInt(id,fn,ms){ if(!this.timers.has(id))this.timers.set(id,[]); this.timers.get(id).push(setInterval(fn,ms)); },
+  setTimeout(id,fn,ms){ if(!this.timers.has(id))this.timers.set(id,[]); this.timers.get(id).push(setTimeout(fn,ms)); },
+  start(id){
+    if(this.active.has(id))return;
+    const meta=this.registry.find(r=>r.id===id); if(!meta)return;
+    if(!Edition.isIncidentAllowed(meta)){
+      ErrorMgr.dialog({title:'Недоступно',icon:'🔒',message:`«${meta.name}» доступно только в Pro.`,detail:'Текущая: '+Edition.get().name});
+      return;
+    }
+    const fn=this.handlers[id]||this.handlers['_generic']; if(!fn)return;
+    this.active.add(id); AudioMgr.alert();
+    Notify.push('⚠️ Сбой',meta.name,meta.em);
+    fn.call(this,id,meta);
+    if(M.ControlPanel) M.ControlPanel.renderActiveState();
+  },
+  stop(id){
+    if(!this.active.has(id))return;
+    this.active.delete(id); this.clearTimers(id);
+    if(this.handlers['cleanup_'+id]) this.handlers['cleanup_'+id].call(this,id);
+    if(M.ControlPanel) M.ControlPanel.renderActiveState();
+  },
+  normalize(){
+    Array.from(this.active).forEach(id=>this.stop(id));
+    SystemState.cpu=12; SystemState.ramMB=2400; SystemState.diskGB=45; SystemState.tempC=42; SystemState.viruses=0;
+    SystemState.recalcStability(); SystemState.emit();
+    document.body.classList.remove('shaking','redPulse','glitching','invert','netLost','kbFail','mouseFail','frozen','grayscale','screenFlicker');
+    document.body.style.filter='';
+    AudioMgr.fan(false);
+    U.$$('.dialog-overlay').forEach(o=>o.remove());
+    ErrorMgr.dialogCount=0;
+    if(M.Desktop) M.Desktop.removeVirusIcons();
+    if(M.Boot) M.Boot.timeOffset=0;
+    Notify.push('✅ Нормализовано','Все сбои устранены','✔');
+  },
+  random(){
+    const allowed=this.registry.filter(r=>Edition.isIncidentAllowed(r)).map(r=>r.id);
+    this.start(allowed[Math.floor(Math.random()*allowed.length)]);
+  },
+  apocalypse(){
+    const allowed=this.registry.filter(r=>Edition.isIncidentAllowed(r));
+    const picked=new Set();
+    const cats=Object.keys(CATEGORIES);
+    while(picked.size<6){
+      const cat=cats[Math.floor(Math.random()*cats.length)];
+      const inCat=allowed.filter(r=>r.cat===cat&&!picked.has(r.id));
+      if(inCat.length) picked.add(inCat[Math.floor(Math.random()*inCat.length)].id);
+    }
+    Array.from(picked).forEach((id,i)=>setTimeout(()=>this.start(id),i*180));
+  }
+};
+
+/* Specific handlers */
+IncidentMgr.handlers.cpuFire=function(id){
+  document.body.classList.add('shaking','redPulse'); AudioMgr.fan(true);
+  let t=0;
+  this.setInt(id,()=>{
+    SystemState.tempC=Math.min(105,SystemState.tempC+3);
+    SystemState.cpu=Math.min(100,SystemState.cpu+4); t++;
+    if(t%3===0){ Notify.push('🔥 CPU',Math.round(SystemState.tempC)+'°C','🔥'); AudioMgr.beep(880,0.1,'square',0.05); }
+    if(SystemState.tempC>=95){ this.stop(id); setTimeout(()=>ErrorMgr.bsod('CRITICAL_PROCESSOR_HEAT',{onComplete:()=>M.Boot.restart()}),400); }
+  },500);
+};
+IncidentMgr.handlers.cleanup_cpuFire=()=>{ document.body.classList.remove('shaking','redPulse'); AudioMgr.fan(false); };
+
+IncidentMgr.handlers.ramFill=function(id){
+  this.setInt(id,()=>{
+    SystemState.ramMB=Math.min(SystemState.ramMaxMB,SystemState.ramMB+350);
+    if(SystemState.ramMB>=SystemState.ramMaxMB){ this.stop(id); ErrorMgr.bsod('OUT_OF_MEMORY',{onComplete:()=>M.Boot.restart()}); return; }
+    if(Math.random()<0.35) Notify.push('🧠 RAM','Недостаточно памяти','⚠️');
+  },900);
+};
+
+IncidentMgr.handlers.virus=function(id){
+  SystemState.viruses+=1; M.Desktop.addVirusIcon();
+  this.setInt(id,()=>{
+    if(Math.random()<0.4){
+      SystemState.viruses+=1; M.Desktop.addVirusIcon();
+      if(SystemState.viruses>=5){ this.stop(id); ErrorMgr.bsod('VIRUS_DETECTED',{onComplete:()=>M.Boot.restart()}); }
+    }
+  },2500);
+};
+IncidentMgr.handlers.cleanup_virus=()=>{ M.Desktop.removeVirusIcons(); SystemState.viruses=0; };
+
+IncidentMgr.handlers.diskFill=function(id){
+  this.setInt(id,()=>{ SystemState.diskGB=Math.min(SystemState.diskMaxGB,SystemState.diskGB+6); },1400);
+};
+
+IncidentMgr.handlers.netLoss=function(id){
+  document.body.classList.add('netLost');
+  const w=U.$('#trayWifi'); if(w){ w.textContent='📵'; w.classList.add('err'); }
+  ErrorMgr.dialog({title:'Сеть',icon:'🌐',message:'Не удаётся подключиться к сети.',detail:'Код: 0x80072EE2'});
+};
+IncidentMgr.handlers.cleanup_netLoss=()=>{
+  document.body.classList.remove('netLost');
+  const w=U.$('#trayWifi'); if(w){ w.textContent='📶'; w.classList.remove('err'); }
+};
+
+IncidentMgr.handlers.kbFail=function(id){
+  document.body.classList.add('kbFail');
+  const block=e=>{ if(e.target&&e.target.matches&&e.target.matches('input,textarea,[contenteditable]')){ e.preventDefault(); e.stopImmediatePropagation(); } };
+  document.addEventListener('keydown',block,true);
+  document.addEventListener('beforeinput',block,true);
+  this.handlers['cleanup_kbFail']=()=>{ document.body.classList.remove('kbFail'); document.removeEventListener('keydown',block,true); document.removeEventListener('beforeinput',block,true); };
+  ErrorMgr.dialog({title:'Устройство',icon:'⌨️',message:'Клавиатура не найдена.',detail:'Код 10',buttons:[{label:'Повторить',onClose:()=>IncidentMgr.stop(id)}]});
+};
+
+IncidentMgr.handlers.mouseFail=function(id){
+  document.body.classList.add('mouseFail');
+  const b=U.$('#mouseBlock');
+  const click=()=>{ b.removeEventListener('click',click); IncidentMgr.stop(id); };
+  b.addEventListener('click',click);
+  ErrorMgr.dialog({title:'Устройство',icon:'🖱️',message:'Устройство указывающее не отвечает.'});
+};
+IncidentMgr.handlers.cleanup_mouseFail=()=>{ document.body.classList.remove('mouseFail'); };
+
+IncidentMgr.handlers.kernelCrash=function(id){
+  setTimeout(()=>{ ErrorMgr.bsod('KERNEL_SECURITY_CHECK_FAILURE',{onComplete:()=>M.Boot.restart()}); this.stop(id); },600);
+};
+
+IncidentMgr.handlers.gpuOverheat=function(id){
+  document.body.classList.add('glitching');
+  let t=0;
+  this.setInt(id,()=>{
+    t++;
+    if(t>=10){ this.stop(id); ErrorMgr.bsod('VIDEO_TDR_FAILURE',{onComplete:()=>M.Boot.restart()}); }
+  },800);
+};
+IncidentMgr.handlers.cleanup_gpuOverheat=()=>{ document.body.classList.remove('glitching'); };
+
+IncidentMgr.handlers.powerOut=function(id){
+  AudioMgr.fan(false);
+  const fb=U.$('#fadeBlack'); fb.style.opacity='1';
+  setTimeout(()=>{
+    Array.from(WM.wins).forEach(w=>WM.close(w.id));
+    U.$$('.dialog-overlay').forEach(o=>o.remove());
+    const ps=U.$('#powerScreen');
+    ps.innerHTML=''; ps.classList.remove('hidden'); ps.style.background='#000';
+    ps.append(U.el('div','logo','microOS'),U.el('div','spinner'),U.el('div','sub','Восстановление…'));
+    setTimeout(()=>{ fb.style.opacity='0'; ps.classList.add('hidden'); this.stop(id); },2200);
+  },1000);
+};
+
+IncidentMgr.handlers.powerSurge=function(id){
+  const wp=U.$('#wallpaper');
+  if(wp){ wp.style.filter='brightness(3)'; setTimeout(()=>{wp.style.filter='';},120); }
+  if(WM.wins.length) WM.close(WM.wins[0].id);
+  setTimeout(()=>{ ErrorMgr.dialog({title:'Питание',icon:'⚡',message:'Обнаружен скачок напряжения!',onClose:()=>this.stop(id)}); },300);
+};
+
+IncidentMgr.handlers.videoCrash=function(id){
+  const flash=()=>{ document.body.classList.add('invert'); setTimeout(()=>document.body.classList.remove('invert'),180); };
+  flash(); setTimeout(flash,300);
+  setTimeout(()=>{ ErrorMgr.dialog({title:'Видео',icon:'🖥️',message:'Драйвер перестал отвечать и восстановлен.',onClose:()=>this.stop(id)}); },700);
+};
+
+IncidentMgr.handlers.colorFail=function(id){
+  document.body.classList.add('grayscale');
+  setTimeout(()=>{ ErrorMgr.dialog({title:'Дисплей',icon:'🎨',message:'Сбой цветового профиля.',buttons:[{label:'Исправить',primary:true,onClose:()=>{document.body.classList.remove('grayscale');IncidentMgr.stop(id);}}]}); },500);
+};
+IncidentMgr.handlers.cleanup_colorFail=()=>{ document.body.classList.remove('grayscale'); };
+
+IncidentMgr.handlers.audioFail=function(id){
+  const t=U.$('#trayVol'); if(t){ t.textContent='🔇'; t.classList.add('err'); }
+  let n=0;
+  const beep=()=>{ AudioMgr.beep(180,0.15,'sawtooth',0.06); if(++n>=15) clearInterval(int); };
+  const int=setInterval(beep,450);
+  this.timers.get(id).push(int);
+  ErrorMgr.dialog({title:'Звук',icon:'🔊',message:'Аудиоустройство не найдено.',onClose:()=>{ clearInterval(int); if(t){t.textContent='🔊';t.classList.remove('err');} IncidentMgr.stop(id); }});
+};
+IncidentMgr.handlers.cleanup_audioFail=()=>{ const t=U.$('#trayVol'); if(t){t.textContent='🔊';t.classList.remove('err');} };
+
+IncidentMgr.handlers.freeze=function(id){
+  document.body.classList.add('frozen');
+  this.setTimeout(id,()=>{ document.body.classList.remove('frozen'); this.stop(id); },5000);
+};
+IncidentMgr.handlers.cleanup_freeze=()=>{ document.body.classList.remove('frozen'); };
+
+IncidentMgr.handlers.timeFail=function(id){
+  M.Boot.timeOffset=0;
+  this.setInt(id,()=>{ M.Boot.timeOffset+=U.rand(-3600000,3600000); },2000);
+  setTimeout(()=>{ ErrorMgr.dialog({title:'Время',icon:'⏰',message:'Не удалось синхронизировать время.',buttons:[{label:'Синхр.',primary:true,onClose:()=>{M.Boot.timeOffset=0;IncidentMgr.stop(id);}}]}); },3000);
+};
+IncidentMgr.handlers.cleanup_timeFail=()=>{ M.Boot.timeOffset=0; };
+
+IncidentMgr.handlers.updateFail=function(id){
+  const ov=U.el('div');
+  ov.style.cssText='position:fixed;inset:0;z-index:800;background:#1a1a1a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-family:Segoe UI,sans-serif';
+  const title=U.el('div',null,'Установка обновлений…'); title.style.fontSize='22px';
+  const pct=U.el('div',null,'0%'); pct.style.fontSize='14px';
+  const bar=U.el('div'); bar.style.cssText='width:400px;height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden';
+  const fill=U.el('div'); fill.style.cssText='height:100%;width:0;background:#0078d4;transition:width .2s';
+  bar.appendChild(fill); ov.append(title,bar,pct); document.body.appendChild(ov);
+  let p=0;
+  const t=setInterval(()=>{
+    p+=U.rand(3,8);
+    if(p>=47){ p=47; fill.style.width=p+'%'; pct.textContent='47%'; clearInterval(t);
+      setTimeout(()=>{ ov.remove(); ErrorMgr.dialog({title:'Обновление',icon:'💥',message:'Не удалось установить KB5050001.',detail:'Код: 0x800F0922',onClose:()=>IncidentMgr.stop(id)}); },2500);
+    } else { fill.style.width=p+'%'; pct.textContent=Math.floor(p)+'%'; }
+  },300);
+  this.timers.get(id).push(t);
+};
+
+IncidentMgr.handlers.hacker=function(id){
+  document.body.classList.add('redPulse');
+  const bd=U.el('div');
+  bd.style.cssText='font-family:monospace;line-height:1.65';
+  ['ВСЕ ФАЙЛЫ ЗАШИФРОВАНЫ!','','Отправьте 0.5 BTC:','bc1q7x8k...','','ID: ABC-123','48 часов до удаления'].forEach(l=>bd.appendChild(U.el('div',null,l)));
+  ErrorMgr.dialog({
+    title:'🔐 ВЗЛОМ!',className:'ransomware',html:bd,
+    buttons:[{label:'Расшифровать',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'Шутка!',icon:'😄',message:'Это симуляция :)',onClose:()=>{document.body.classList.remove('redPulse');IncidentMgr.stop(id);}}); },300); }}]
+  });
+};
+IncidentMgr.handlers.cleanup_hacker=()=>{ document.body.classList.remove('redPulse'); };
+
+IncidentMgr.handlers.explorerHang=function(id){
+  let t=0,shown=false;
+  const find=()=>WM.wins.find(w=>w.appId==='explorer');
+  this.setInt(id,()=>{
+    t++;
+    const ex=find();
+    if(ex){ const ti=ex.el.querySelector('.win-title'); if(ti){ ti.textContent='Проводник (Не отвечает)'; ti.classList.add('hang-title'); } }
+    if(!shown&&t===1){ shown=true; ErrorMgr.dialog({title:'Не отвечает',icon:'⏳',message:'Проводник перестал отвечать.',buttons:[{label:'Завершить',primary:true,action:()=>{ const e=find(); if(e)WM.close(e.id); IncidentMgr.stop(id); }},{label:'Ждать',onClose:()=>IncidentMgr.stop(id)}]}); }
+    if(t>=15){ const e=find(); if(e)WM.close(e.id); this.stop(id); }
+  },1000);
+};
+
+IncidentMgr.handlers.fsCrash=function(id){
+  ErrorMgr.dialog({title:'ФС',icon:'📂',message:'Обнаружены повреждённые файлы.',detail:'Код: 0x80070570',buttons:[{label:'chkdsk /f',primary:true,action:()=>{ Notify.push('chkdsk','Восстановлено ✓','✅'); IncidentMgr.stop(id); }},{label:'Позже'}]});
+};
+
+IncidentMgr.handlers.registryCrash=function(id){
+  const keys=['HKEY_LOCAL_MACHINE\\SOFTWARE','HKEY_CURRENT_USER\\Software'];
+  let c=0;
+  const spawn=()=>{
+    c++;
+    ErrorMgr.dialog({title:'Реестр',icon:'🗄',message:'Не удаётся открыть раздел реестра.',detail:keys[Math.floor(Math.random()*keys.length)]+'\nКод: 0x80070002',buttons:[{label:'sfc /scannow',primary:true,action:()=>{ Notify.push('sfc','Восстановлено ✓','✅'); IncidentMgr.stop(id); }},{label:'OK'}]});
+    if(c>=3) clearInterval(int);
+  };
+  spawn();
+  const int=setInterval(spawn,4000);
+  this.timers.get(id).push(int);
+};
+
+IncidentMgr.handlers.ddss=IncidentMgr.handlers.ddos=function(id){
+  let packets=0;
+  this.setInt(id,()=>{
+    packets+=Math.floor(U.rand(20000,80000));
+    if(packets>=1234567){ this.stop(id); ErrorMgr.dialog({title:'Сеть',icon:'🌐',message:'DDoS! 1 234 567 пакетов/сек.',detail:'Код: 0x80072EFD'}); }
+  },1200);
+};
+
+IncidentMgr.handlers.printerFail=function(id){
+  const bd=U.el('div'); bd.style.display='block';
+  bd.append(U.el('div',null,'Печать документа…'));
+  const bar=U.el('div'); bar.style.cssText='height:8px;background:rgba(128,128,128,.2);border-radius:4px;overflow:hidden;margin:10px 0';
+  const fill=U.el('div'); fill.style.cssText='height:100%;width:0;background:var(--accent)';
+  bar.appendChild(fill); bd.appendChild(bar);
+  const pct=U.el('div',null,'0%'); pct.style.fontSize='11.5px'; bd.appendChild(pct);
+  ErrorMgr.dialog({title:'🖨️ Печать',html:bd,buttons:[{label:'Закрыть',primary:true,onClose:()=>IncidentMgr.stop(id)}]});
+  let p=0;
+  const t=setInterval(()=>{
+    p+=U.rand(2,10);
+    if(p>=85){ p=85; clearInterval(t); pct.textContent='85% — Принтер не отвечает. Очередь: 1'; pct.style.color='#f39c12'; }
+    else { fill.style.width=p+'%'; pct.textContent=Math.floor(p)+'%'; }
+  },300);
+  this.timers.get(id).push(t);
+};
+
+IncidentMgr.handlers.powerSupplyHeat=function(id){
+  let t=0; AudioMgr.fan(true);
+  this.setInt(id,()=>{
+    t++; SystemState.tempC=Math.min(100,SystemState.tempC+2);
+    if(t===3) Notify.push('🔥 БП','Проверьте вентиляцию!','🔥');
+    if(t>=8){
+      this.stop(id); AudioMgr.fan(false);
+      const ps=U.$('#powerScreen');
+      ps.innerHTML=''; ps.classList.remove('hidden'); ps.style.background='#000';
+      ps.append(U.el('div','sub','Система выключена из-за перегрева БП'));
+      const b=U.el('button',null,'⏻ Включить');
+      b.addEventListener('click',()=>{ ps.classList.add('hidden'); M.Boot.restart(); });
+      ps.appendChild(b);
+    }
+  },700);
+};
+IncidentMgr.handlers.cleanup_powerSupplyHeat=()=>{ AudioMgr.fan(false); };
+
+/* New handlers */
+IncidentMgr.handlers.usbFail=function(id){ ErrorMgr.dialog({title:'USB',icon:'🔌',message:'USB-устройство не опознано.',detail:'Код 43: дескриптор не найден.',onClose:()=>this.stop(id)}); };
+
+IncidentMgr.handlers.screenFlicker=function(id){
+  document.body.classList.add('screenFlicker');
+  this.setTimeout(id,()=>{ document.body.classList.remove('screenFlicker'); ErrorMgr.dialog({title:'Дисплей',icon:'🖥️',message:'Дисплей перестал отвечать.'}); this.stop(id); },6000);
+};
+IncidentMgr.handlers.cleanup_screenFlicker=()=>{ document.body.classList.remove('screenFlicker'); };
+
+IncidentMgr.handlers.batterySwelling=function(id){
+  Settings.set('brightness',45);
+  ErrorMgr.dialog({title:'Батарея',icon:'🔋',message:'Батарея требует замены. Обратитесь в сервис.',onClose:()=>this.stop(id)});
+};
+
+IncidentMgr.handlers.thermoSensorFail=function(id){
+  const t=U.$('#cpTemp'); if(t){ t.textContent='—°C'; t.style.color='#f55'; }
+  AudioMgr.fan(true);
+  ErrorMgr.dialog({title:'Датчик',icon:'🌡️',message:'Датчик температуры не найден.',onClose:()=>{AudioMgr.fan(false);this.stop(id);}});
+};
+IncidentMgr.handlers.cleanup_thermoSensorFail=()=>{ AudioMgr.fan(false); };
+
+IncidentMgr.handlers.powerGridSpike=function(id){
+  const fb=U.$('#fadeBlack'); fb.style.opacity='0.8';
+  setTimeout(()=>{
+    fb.style.opacity='0';
+    const ps=U.$('#powerScreen');
+    ps.innerHTML=''; ps.classList.remove('hidden'); ps.style.background='#000';
+    ps.append(U.el('div','logo','POST'),U.el('div','sub','Обнаружен скачок напряжения'));
+    setTimeout(()=>{ ps.classList.add('hidden'); ErrorMgr.dialog({title:'Питание',icon:'💥',message:'POST: проблема с питанием.',onClose:()=>IncidentMgr.stop(id)}); },2200);
+  },400);
+};
+
+IncidentMgr.handlers.dataLoss=function(id){
+  try{ localStorage.removeItem('microOS.notepad.draft'); }catch(e){}
+  ErrorMgr.dialog({title:'Сохранение',icon:'📝',message:'Данные потеряны при сохранении.',detail:'Код: 0x8007000D',onClose:()=>this.stop(id)});
+};
+
+IncidentMgr.handlers.appCrash=function(id){
+  if(!WM.wins.length){ this.stop(id); return; }
+  const w=WM.wins[Math.floor(Math.random()*WM.wins.length)];
+  const app=Apps.get(w.appId)||{name:w.appId};
+  setTimeout(()=>{ WM.close(w.id); ErrorMgr.dialog({title:'Сбой',icon:'🧩',message:`Приложение ${app.name} перестало работать.`,detail:'Код: 0xC0000005',onClose:()=>this.stop(id)}); },800);
+};
+
+IncidentMgr.handlers.bootLoop=function(id){
+  const ov=U.el('div');
+  ov.style.cssText='position:fixed;inset:0;z-index:800;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-family:Segoe UI';
+  ov.append(U.el('div',null,'Установка обновления 1 из 3…'));
+  const spin=U.el('div','spinner'); ov.appendChild(spin);
+  const pct=U.el('div',null,'0%'); ov.appendChild(pct);
+  document.body.appendChild(ov);
+  let p=0;
+  const t=setInterval(()=>{ p+=U.rand(2,7); if(p>=100){ p=0; } pct.textContent=Math.floor(p)+'%'; },300);
+  this.timers.get(id).push(t);
+  setTimeout(()=>{ clearInterval(t); ov.remove(); ErrorMgr.bsod('BOOT_LOOP_DETECTED',{onComplete:()=>M.Boot.restart()}); this.stop(id); },10000);
+};
+
+IncidentMgr.handlers.appConflict=function(id){ ErrorMgr.dialog({title:'Конфликт',icon:'🎯',message:'Программа не может быть запущена из-за конфликта.',onClose:()=>this.stop(id)}); };
+
+IncidentMgr.handlers.recycleOverflow=function(id){
+  for(let i=0;i<30;i++) FS.trash.push({node:{name:'dump_'+i+'.tmp',type:'file',content:''},from:['Загрузки'],at:Date.now()});
+  FS.saveTrash();
+  ErrorMgr.dialog({title:'Корзина',icon:'📦',message:'Корзина заполнена.',onClose:()=>this.stop(id)});
+};
+
+IncidentMgr.handlers.gameHang=function(id){
+  setTimeout(()=>{ ErrorMgr.dialog({title:'Игра',icon:'🕹️',message:'Игра не отвечает. Прогресс потерян.',buttons:[{label:'Завершить',primary:true,onClose:()=>IncidentMgr.stop(id)}]}); },1500);
+};
+
+IncidentMgr.handlers.codecFail=function(id){ ErrorMgr.dialog({title:'Видео',icon:'🎬',message:'Не удалось декодировать видео. Кодек не найден.',onClose:()=>this.stop(id)}); };
+IncidentMgr.handlers.audioCorrupt=function(id){
+  for(let i=0;i<3;i++) setTimeout(()=>AudioMgr.beep(200+i*300,0.1,'sawtooth',0.06),i*150);
+  ErrorMgr.dialog({title:'Аудио',icon:'🎵',message:'Файл повреждён.',onClose:()=>this.stop(id)});
+};
+IncidentMgr.handlers.thumbnailFail=function(id){
+  U.$$('.fitem .em').forEach(em=>{ em.textContent='?'; em.style.color='#888'; });
+  ErrorMgr.dialog({title:'Миниатюры',icon:'🖼️',message:'Не удалось загрузить миниатюру.',onClose:()=>this.stop(id)});
+};
+IncidentMgr.handlers.clipboardFail=function(id){
+  const block=e=>{ if((e.ctrlKey||e.metaKey)&&['c','v','x'].includes(e.key)){ e.preventDefault(); e.stopImmediatePropagation(); } };
+  document.addEventListener('keydown',block,true);
+  ErrorMgr.dialog({title:'Буфер',icon:'📄',message:'Буфер обмена недоступен.',onClose:()=>{ document.removeEventListener('keydown',block,true); IncidentMgr.stop(id); }});
+};
+
+IncidentMgr.handlers.wifiDriverFail=function(id){
+  const t=U.$('#trayWifi'); if(t){ t.textContent='📵'; t.classList.add('err'); }
+  ErrorMgr.dialog({title:'Wi-Fi',icon:'🛜',message:'Адаптер Wi-Fi не найден.',onClose:()=>this.stop(id)});
+};
+IncidentMgr.handlers.cleanup_wifiDriverFail=()=>{ const t=U.$('#trayWifi'); if(t){ t.textContent='📶'; t.classList.remove('err'); } };
+
+IncidentMgr.handlers.dnsAttack=function(id){
+  ErrorMgr.dialog({title:'DNS',icon:'🌍',message:'DNS-сервер не отвечает.',buttons:[{label:'Сбросить DNS',primary:true,action:()=>{ Notify.push('✅ DNS','Кэш очищен','🌐'); IncidentMgr.stop(id); }}]});
+};
+IncidentMgr.handlers.networkCongestion=function(id){
+  setTimeout(()=>{ ErrorMgr.dialog({title:'Сеть',icon:'📡',message:'Высокая задержка сети: 2000+ мс.',onClose:()=>IncidentMgr.stop(id)}); },4000);
+};
+IncidentMgr.handlers.updateServerDDoS=function(id){ ErrorMgr.dialog({title:'Обновления',icon:'🔥',message:'Сервер обновлений перегружен.',onClose:()=>this.stop(id)}); };
+
+IncidentMgr.handlers.phishing=function(id){
+  const bd=U.el('div'); bd.style.display='block';
+  bd.append(U.el('div',null,'Подтвердите вход в microOS:'));
+  const inp=U.el('input'); inp.type='password'; inp.placeholder='Пароль';
+  inp.style.cssText='width:100%;margin-top:8px;padding:8px;border-radius:6px;background:rgba(0,0,0,.2);border:1px solid var(--border);color:inherit';
+  bd.appendChild(inp);
+  ErrorMgr.dialog({title:'⚠️ Запрос пароля',icon:'🎣',html:bd,buttons:[{label:'Отмена',primary:true,action:()=>{ Notify.push('✅ Безопасность','Фишинг предотвращён','🛡'); IncidentMgr.stop(id); }},{label:'Ввести',action:()=>{ Notify.push('⚠️ ОПАСНО','Пароль скомпрометирован','🚨'); IncidentMgr.stop(id); }}]});
+};
+
+IncidentMgr.handlers.ransomwareFiles=function(id){
+  try{ const enc=n=>{ if(n.children) n.children.forEach(c=>{ if(c.type==='file'&&!c.name.endsWith('.enc')) c.name+='.enc'; enc(c); }); }; enc(FS.root); FS.save(); }catch(e){}
+  ErrorMgr.dialog({title:'🔒 Ransomware',className:'ransomware',icon:'🔒',message:'Все файлы зашифрованы!',detail:'Отправьте 0.5 BTC',buttons:[{label:'Расшифровать (демо)',primary:true,action:()=>{ try{ const dec=n=>{ if(n.children) n.children.forEach(c=>{ if(c.name.endsWith('.enc')) c.name=c.name.slice(0,-4); dec(c); }); }; dec(FS.root); FS.save(); }catch(e){} IncidentMgr.stop(id); }}]});
+};
+
+IncidentMgr.handlers.spyCam=function(id){
+  ErrorMgr.dialog({title:'Камера',icon:'👁️',message:'Камера используется неизвестным приложением.',buttons:[{label:'Закрыть доступ',primary:true,onClose:()=>IncidentMgr.stop(id)}]});
+};
+
+IncidentMgr.handlers.trojan=function(id){
+  ErrorMgr.dialog({title:'Троян',icon:'🧨',message:'Обнаружен Win32.Trojan.Agent. Удалить?',buttons:[{label:'Удалить',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'Ошибка',icon:'⚠️',message:'Не удалось удалить. Файл защищён.',onClose:()=>IncidentMgr.stop(id)}); },600); }},{label:'Игнор',onClose:()=>IncidentMgr.stop(id)}]});
+};
+
+IncidentMgr.handlers.fbiRansom=function(id){
+  const bd=U.el('div'); bd.style.display='block'; bd.style.textAlign='center';
+  bd.append(U.el('div',null,'🚔 ФЕДЕРАЛЬНОЕ БЮРО'));
+  const h=U.el('div',null,'ВАШ КОМПЬЮТЕР ЗАБЛОКИРОВАН'); h.style.cssText='font-size:18px;font-weight:700;color:#f33;margin:12px 0';
+  bd.appendChild(h);
+  ErrorMgr.dialog({title:'🚨 Заблокировано',html:bd,buttons:[{label:'Разблокировать',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'😄 Шутка!',icon:'😄',message:'Это симуляция :)',onClose:()=>IncidentMgr.stop(id)}); },500); }}]});
+};
+
+IncidentMgr.handlers.printSpooler=function(id){ ErrorMgr.dialog({title:'Печать',icon:'🖨️',message:'Принтер не отвечает. Очередь: 999.',buttons:[{label:'Очистить',primary:true,onClose:()=>IncidentMgr.stop(id)}]}); };
+IncidentMgr.handlers.touchpadFail=function(id){ ErrorMgr.dialog({title:'Тачпад',icon:'🖱️',message:'Тачпад работает некорректно.',onClose:()=>this.stop(id)}); };
+IncidentMgr.handlers.gamepadFail=function(id){ setTimeout(()=>{ ErrorMgr.dialog({title:'Геймпад',icon:'🎮',message:'Геймпад отключён.',onClose:()=>IncidentMgr.stop(id)}); },1000); };
+
+IncidentMgr.handlers.soundCardFail=function(id){
+  const t=U.$('#trayVol'); if(t){ t.textContent='🔇'; t.classList.add('err'); }
+  ErrorMgr.dialog({title:'Звук',icon:'🔊',message:'Звуковая карта не найдена.',onClose:()=>this.stop(id)});
+};
+IncidentMgr.handlers.cleanup_soundCardFail=()=>{ const t=U.$('#trayVol'); if(t){ t.textContent='🔊'; t.classList.remove('err'); } };
+
+IncidentMgr.handlers.taskSchedulerFail=function(id){ ErrorMgr.dialog({title:'Планировщик',icon:'⏱️',message:'Служба планировщика не запущена.',onClose:()=>this.stop(id)}); };
+
+IncidentMgr.handlers.profileCorrupt=function(id){
+  const b=U.$('#icons'); if(b) b.style.opacity='0.15';
+  ErrorMgr.dialog({title:'Профиль',icon:'📁',message:'Создан временный профиль.',buttons:[{label:'Восстановить',primary:true,onClose:()=>{ if(b)b.style.opacity=''; IncidentMgr.stop(id); }}]});
+};
+IncidentMgr.handlers.cleanup_profileCorrupt=()=>{ const b=U.$('#icons'); if(b) b.style.opacity=''; };
+
+IncidentMgr.handlers.activationFail=function(id){
+  ErrorMgr.dialog({title:'Активация',icon:'🔐',message:'microOS не активирована.',buttons:[{label:'Активировать',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'Сервер',icon:'⚠️',message:'Сервер недоступен.',onClose:()=>IncidentMgr.stop(id)}); },700); }},{label:'Позже',onClose:()=>IncidentMgr.stop(id)}]});
+};
+
+IncidentMgr.handlers.systemFileCorrupt=function(id){ ErrorMgr.dialog({title:'Сист. файл',icon:'🧬',message:'Системный файл повреждён. sfc /scannow.',buttons:[{label:'Запустить sfc',primary:true,action:()=>{ Notify.push('sfc','Сканирование…','⏳'); setTimeout(()=>{ Notify.push('sfc','Готово ✓','✅'); IncidentMgr.stop(id); },2500); }}]}); };
+
+IncidentMgr.handlers.sleepFail=function(id){
+  const fb=U.$('#fadeBlack'); fb.style.opacity='1';
+  setTimeout(()=>{ fb.style.opacity='0'; ErrorMgr.dialog({title:'Сон',icon:'💤',message:'Не удаётся выйти из сна.',onClose:()=>IncidentMgr.stop(id)}); },2500);
+};
+
+IncidentMgr.handlers.registryOverflow=function(id){ ErrorMgr.dialog({title:'Реестр',icon:'🗂️',message:'Реестр переполнен.',detail:'Код: 0x8007000E',onClose:()=>this.stop(id)}); };
+
+IncidentMgr.handlers.slowBoot=function(id){
+  const ov=U.el('div');
+  ov.style.cssText='position:fixed;inset:0;z-index:800;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-family:Segoe UI';
+  ov.append(U.el('div',null,'Подготовка microOS…'));
+  const bar=U.el('div'); bar.style.cssText='width:400px;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden';
+  const fill=U.el('div'); fill.style.cssText='height:100%;width:0;background:#0078d4;transition:width .3s';
+  bar.appendChild(fill);
+  const pct=U.el('div',null,'0%'); pct.style.fontSize='13px';
+  ov.append(bar,pct); document.body.appendChild(ov);
+  let p=0;
+  const t=setInterval(()=>{ p+=U.rand(3,8); if(p>=87) p=87; fill.style.width=p+'%'; pct.textContent=Math.floor(p)+'%'; },300);
+  this.timers.get(id).push(t);
+  setTimeout(()=>{
+    const t2=setInterval(()=>{ p+=U.rand(2,5); if(p>=100){ p=100; clearInterval(t2); clearInterval(t); ov.remove(); IncidentMgr.stop(id); } fill.style.width=p+'%'; pct.textContent=Math.floor(p)+'%'; },400);
+    this.timers.get(id).push(t2);
+  },12000);
+};
+
+/* Generic fallback */
+IncidentMgr.handlers._generic=function(id,meta){
+  ErrorMgr.dialog({title:'Сбой',icon:meta.em,message:meta.name,detail:'Код ошибки: '+meta.code,onClose:()=>this.stop(id)});
+};
+
+const UserSession = M.UserSession = {
+  name:'Пользователь',computerName:'DESKTOP-PC',avatar:null,avatarIdx:0,passwordHash:null,hint:'',
+  load(){
+    const s=U.lsGet('user',null);
+    if(s){ this.name=s.name||'Пользователь'; this.computerName=s.computerName||'DESKTOP-PC'; this.avatar=s.avatar||null; this.avatarIdx=s.avatarIdx||0; this.passwordHash=s.passwordHash||null; this.hint=s.hint||''; }
+  },
+  save(){ U.lsSet('user',{name:this.name,computerName:this.computerName,avatar:this.avatar,avatarIdx:this.avatarIdx,passwordHash:this.passwordHash,hint:this.hint}); },
+  setName(n){ this.name=n||'Пользователь'; this.save(); if(M.Taskbar)M.Taskbar.render(); if(M.StartMenu)M.StartMenu.render(); },
+  async hash(pw){
+    try{
+      const buf=new TextEncoder().encode(pw);
+      const h=await crypto.subtle.digest('SHA-256',buf);
+      return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    }catch(e){
+      let h=0; for(let i=0;i<pw.length;i++) h=(h*31+pw.charCodeAt(i))|0;
+      return 'fb_'+Math.abs(h).toString(16);
+    }
+  },
+  async checkPassword(pw){ if(!this.passwordHash) return true; const h=await this.hash(pw); return h===this.passwordHash; },
+  getAvatarHTML(){
+    if(this.avatar) return `<img src="${this.avatar}" alt="">`;
+    const e=['👤','😀','🐱','🐶','🦊','🐼','🦉','🐢','🐸'];
+    return e[this.avatarIdx]||'👤';
+  }
+};
+
+const SYSTEM_ICONS = [
+  {key:'computer',label:'Этот компьютер',icon:'🖥',action:()=>Apps.open('explorer',[])},
+  {key:'recycle',label:'Корзина',icon:'🗑',action:()=>Apps.open('recycle')},
+  {key:'explorer',label:'Проводник',icon:'📁',action:()=>Apps.open('explorer')},
+  {key:'settings',label:'Настройки',icon:'⚙️',action:()=>Apps.open('settings')},
+  {key:'terminal',label:'Терминал',icon:'⌨️',action:()=>Apps.open('terminal')},
+  {key:'notepad',label:'Блокнот',icon:'📝',action:()=>Apps.open('notepad')},
+  {key:'store',label:'Магазин',icon:'🛍️',action:()=>Apps.open('store')},
+  {key:'taskmgr',label:'Диспетчер',icon:'📊',action:()=>Apps.open('taskmgr')}
+];
+const Desktop = M.Desktop = {
+  positions:{},virusIcons:[],
+  init(){ this.positions=U.lsGet('iconPos',{}); this.render(); this.bind(); },
+  render(){
+    const box=U.$('#icons'); if(!box)return;
+    box.innerHTML='';
+    SYSTEM_ICONS.forEach((ic,i)=>{
+      const d=U.el('div','dicon'); d.dataset.key=ic.key;
+      if(!Edition.isAppAllowed(ic.key==='computer'?'explorer':ic.key)) d.classList.add('unavailable');
+      let pos=this.positions[ic.key];
+      if(!pos){ const col=Math.floor(i/7),row=i%7; pos={x:18+col*92,y:18+row*100}; }
+      d.style.left=pos.x+'px'; d.style.top=pos.y+'px';
+      d.append(U.el('div','em',ic.icon),U.el('div','lb',ic.label));
+      d.addEventListener('click',e=>{ e.stopPropagation(); U.$$('.dicon').forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); });
+      d.addEventListener('dblclick',ic.action);
+      d.addEventListener('mousedown',e=>this.startDrag(e,d,ic.key));
+      box.appendChild(d);
+    });
+  },
+  startDrag(e,d,key){
+    if(e.button!==0)return;
+    let dragging=false; const sx=e.clientX,sy=e.clientY;
+    const ox=parseFloat(d.style.left),oy=parseFloat(d.style.top);
+    const move=ev=>{ const dx=ev.clientX-sx,dy=ev.clientY-sy; if(!dragging&&Math.hypot(dx,dy)>5)dragging=true; if(dragging){ d.style.left=Math.max(0,ox+dx)+'px'; d.style.top=Math.max(0,oy+dy)+'px'; } };
+    const up=()=>{ document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up); if(dragging){ this.positions[key]={x:parseFloat(d.style.left),y:parseFloat(d.style.top)}; U.lsSet('iconPos',this.positions); } };
+    document.addEventListener('mousemove',move); document.addEventListener('mouseup',up);
+  },
+  addVirusIcon(){
+    const d=U.el('div','dicon virus');
+    const icons=['🦠','👾','💀'];
+    d.append(U.el('div','em',icons[Math.floor(Math.random()*icons.length)]),U.el('div','lb','virus_'+Math.floor(Math.random()*1000)+'.exe'));
+    d.style.left=U.rand(200,window.innerWidth-100)+'px';
+    d.style.top=U.rand(100,window.innerHeight-150)+'px';
+    const b=U.$('#icons'); if(b)b.appendChild(d);
+    this.virusIcons.push(d);
+  },
+  removeVirusIcons(){ this.virusIcons.forEach(v=>v.remove()); this.virusIcons=[]; },
+  bind(){
+    const desk=U.$('#desktop'); if(!desk)return;
+    desk.addEventListener('click',()=>{ U.$$('.dicon').forEach(x=>x.classList.remove('sel')); hideCtx(); });
+    desk.addEventListener('contextmenu',e=>{
+      if(e.target.closest('.dicon'))return;
+      e.preventDefault();
+      showCtx(e.clientX,e.clientY,[
+        {icon:'🔄',label:'Обновить',action:()=>this.render()},
+        {icon:'📁',label:'Создать папку',action:()=>{ const n=prompt('Имя:'); if(n) FS.mkdir(['Рабочий стол'],n); }},
+        {icon:'🎨',label:'Персонализация',action:()=>Apps.open('settings')},
+        {icon:'⌨️',label:'Терминал',action:()=>Apps.open('terminal')},
+        {icon:'💠',label:'Свойства системы',action:()=>ErrorMgr.dialog({title:'Свойства',icon:'💠',message:'microOS '+Edition.get().ver+' ('+Edition.get().build+')',detail:'ПК: '+UserSession.computerName+'\nПроцессор: '+(navigator.hardwareConcurrency||4)+' ядер'})}
+      ]);
+    });
+  }
+};
+let ctxEl=null;
+function hideCtx(){ if(ctxEl){ ctxEl.remove(); ctxEl=null; } }
+function showCtx(x,y,items){
+  hideCtx();
+  const m=U.el('div','ctx');
+  items.forEach(it=>{
+    const d=U.el('div','ctx-item');
+    d.append(U.el('span',null,it.icon||''),U.el('span',null,it.label));
+    d.addEventListener('click',()=>{ hideCtx(); it.action&&it.action(); });
+    m.appendChild(d);
+  });
+  document.body.appendChild(m);
+  const r=m.getBoundingClientRect();
+  m.style.left=Math.min(x,window.innerWidth-r.width-8)+'px';
+  m.style.top=Math.min(y,window.innerHeight-r.height-8)+'px';
+  ctxEl=m;
+}
+document.addEventListener('click',e=>{ if(ctxEl&&!ctxEl.contains(e.target)) hideCtx(); });
+
+const Taskbar = M.Taskbar = {
+  render(){
+    const c=U.$('#tbCenter'); if(!c)return;
+    c.innerHTML='';
+    const start=U.el('button','tb-btn');
+    const logo=U.el('div','tb-logo');
+    for(let i=0;i<4;i++) logo.appendChild(U.el('i'));
+    start.appendChild(logo);
+    start.addEventListener('click',e=>{ e.stopPropagation(); M.StartMenu.toggle(); });
+    c.appendChild(start);
+    const seen=new Set(),ids=[];
+    Apps.list().filter(a=>a.pinned).forEach(a=>{ ids.push(a.id); seen.add(a.id); });
+    WM.wins.forEach(w=>{ if(!seen.has(w.appId)){ ids.push(w.appId); seen.add(w.appId); } });
+    ids.forEach(id=>{
+      const app=Apps.get(id); if(!app)return;
+      const running=WM.wins.some(w=>w.appId===id);
+      const focused=WM.wins.some(w=>w.appId===id&&w.id===WM.activeId);
+      const allowed=Edition.isAppAllowed(id);
+      const b=U.el('button','tb-btn'+(running?' running':'')+(focused?' focused':'')+(allowed?'':' unavailable'));
+      b.textContent=app.icon; b.title=app.name;
+      b.addEventListener('click',()=>{
+        const wins=WM.wins.filter(w=>w.appId===id);
+        if(!wins.length){ Apps.open(id); return; }
+        const active=wins.find(w=>w.id===WM.activeId);
+        if(active&&!active.minimized){ WM.minimize(active.id); return; }
+        WM.focus(wins[wins.length-1].id);
+      });
+      c.appendChild(b);
+    });
+  }
+};
+
+const StartMenu = M.StartMenu = {
+  open:false,
+  init(){
+    U.$('#smSearch').addEventListener('input',()=>{
+      const q=U.$('#smSearch').value.toLowerCase().trim();
+      U.$('#smPinnedWrap').style.display=q?'none':'';
+      const all=U.$('#smAll'); all.innerHTML='';
+      Apps.list().filter(a=>a.name.toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name,'ru')).forEach(a=>all.appendChild(this.row(a)));
+    });
+    U.$('#smPower').addEventListener('click',e=>{
+      e.stopPropagation();
+      const r=U.$('#smPower').getBoundingClientRect();
+      showCtx(r.right-150,r.top-140,[
+        {icon:'🔄',label:'Перезагрузить',action:()=>{ this.close(); M.Boot.restart(); }},
+        {icon:'🔒',label:'Блокировка',action:()=>{ this.close(); M.LockScreen.show(); }},
+        {icon:'⏻',label:'Выключить',action:()=>{ this.close(); M.Boot.shutdown(); }}
+      ]);
+    });
+    document.addEventListener('click',e=>{ if(this.open&&!e.target.closest('#startMenu')&&!e.target.closest('.tb-btn')) this.close(); });
+    this.render();
+  },
+  render(){
+    const pin=U.$('#smPinned'); if(!pin)return;
+    pin.innerHTML='';
+    Apps.list().slice(0,12).forEach(a=>{
+      const allowed=Edition.isAppAllowed(a.id);
+      const d=U.el('div','sm-app'+(allowed?'':' unavailable'));
+      d.append(U.el('div','em',a.icon),U.el('div',null,a.name));
+      d.addEventListener('click',()=>{ this.close(); Apps.open(a.id); });
+      pin.appendChild(d);
+    });
+    this.renderAll();
+    const nm=U.$('#smUserName'); if(nm) nm.textContent=UserSession.name;
+    const av=U.$('#smAvatar'); if(av){ av.innerHTML=UserSession.getAvatarHTML(); }
+  },
+  renderAll(){
+    const box=U.$('#smAll'); if(!box)return;
+    box.innerHTML='';
+    Apps.list().sort((a,b)=>a.name.localeCompare(b.name,'ru')).forEach(a=>box.appendChild(this.row(a)));
+  },
+  row(a){
+    const allowed=Edition.isAppAllowed(a.id);
+    const d=U.el('div','sm-row'+(allowed?'':' unavailable'));
+    d.append(U.el('span','em',a.icon),U.el('span',null,a.name));
+    d.addEventListener('click',()=>{ this.close(); Apps.open(a.id); });
+    return d;
+  },
+  toggle(){ this.open?this.close():this.show(); },
+  show(){ this.open=true; U.$('#startMenu').classList.remove('closed'); setTimeout(()=>U.$('#smSearch').focus(),80); },
+  close(){ this.open=false; U.$('#startMenu').classList.add('closed'); U.$('#smSearch').value=''; U.$('#smPinnedWrap').style.display=''; this.renderAll(); }
+};
+
+const ControlPanel = M.ControlPanel = {
+  collapsed:false,showIndicators:true,collapsedCats:new Set(),search:'',filterEdition:false,
+  init(){
+    this.render(); this.bind();
+    SystemState.onChange(()=>this.updateIndicators());
+    this.updateIndicators();
+  },
+  render(){
+    const b=U.$('#cpBody'); if(!b)return;
+    b.innerHTML='';
+    const metrics=U.el('div','cp-card'); metrics.id='cpMetrics'; b.appendChild(metrics);
+    b.appendChild(U.el('div','cp-section-title','Происшествия'));
+    const incWrap=U.el('div'); incWrap.id='cpIncidents'; b.appendChild(incWrap);
+    b.appendChild(U.el('div','cp-section-title','Управление'));
+    const ctrl=U.el('div','cp-grid'); ctrl.id='cpCtrl'; b.appendChild(ctrl);
+    this.renderMetrics(); this.renderIncidents(); this.renderControls();
+  },
+  renderIncidents(){
+    const wrap=U.$('#cpIncidents'); if(!wrap)return;
+    wrap.innerHTML='';
+    Object.keys(CATEGORIES).forEach(catId=>{
+      const cat=CATEGORIES[catId];
+      let incs=INCIDENTS.filter(i=>i.cat===catId);
+      if(this.search) incs=incs.filter(i=>i.name.toLowerCase().includes(this.search)||i.id.includes(this.search));
+      if(this.filterEdition) incs=incs.filter(i=>Edition.isIncidentAllowed(i));
+      if(!incs.length)return;
+      const catEl=U.el('div','cp-cat');
+      if(this.collapsedCats.has(catId)) catEl.classList.add('collapsed');
+      const hdr=U.el('div','cp-cat-header');
+      hdr.append(U.el('span',null,cat.em),U.el('span',null,cat.name+' ('+incs.length+')'),U.el('span','arrow','▾'));
+      hdr.addEventListener('click',()=>{
+        catEl.classList.toggle('collapsed');
+        if(catEl.classList.contains('collapsed')) this.collapsedCats.add(catId);
+        else this.collapsedCats.delete(catId);
+      });
+      const body=U.el('div','cp-cat-body');
+      incs.forEach(inc=>{
+        const allowed=Edition.isIncidentAllowed(inc);
+        const btn=U.el('button','cp-btn'+(IncidentMgr.has(inc.id)?' active':'')+(allowed?'':' locked'));
+        btn.dataset.incident=inc.id;
+        btn.title=allowed?inc.name:inc.name+' — только Pro';
+        const span=U.el('span');
+        span.append(U.el('div',null,inc.name),U.el('small',null,inc.sub));
+        btn.append(U.el('span','em',inc.em),span);
+        btn.addEventListener('click',()=>{
+          if(!allowed){ ErrorMgr.dialog({title:'Только Pro',icon:'🔒',message:`«${inc.name}» доступно только в Pro.`}); return; }
+          if(IncidentMgr.has(inc.id)) IncidentMgr.stop(inc.id);
+          else IncidentMgr.start(inc.id);
+        });
+        body.appendChild(btn);
+      });
+      catEl.append(hdr,body); wrap.appendChild(catEl);
+    });
+  },
+  renderMetrics(){
+    const box=U.$('#cpMetrics'); if(!box)return;
+    box.innerHTML='';
+    [{id:'cpu',label:'CPU'},{id:'ram',label:'ОЗУ'},{id:'disk',label:'Диск C:'}].forEach(r=>{
+      const m=U.el('div','cp-metric'); m.dataset.metric=r.id;
+      const row=U.el('div','cp-row');
+      row.append(U.el('span',null,r.label),U.el('span','v','0'));
+      const bar=U.el('div','cp-bar'); bar.appendChild(U.el('div'));
+      m.append(row,bar); box.appendChild(m);
+    });
+    const ex=U.el('div','cp-row');
+    ex.append(U.el('span',null,'🌡 Температура'));
+    const tv=U.el('span','v','—'); tv.id='cpTemp'; ex.appendChild(tv); box.appendChild(ex);
+    const st=U.el('div','cp-row');
+    st.append(U.el('span',null,'📊 Стабильность'));
+    const sv=U.el('span','v','100%'); sv.id='cpStab'; st.appendChild(sv); box.appendChild(st);
+    const vr=U.el('div','cp-row');
+    vr.append(U.el('span',null,'🦠 Вирусы'));
+    const vv=U.el('span','v','0'); vv.id='cpVir'; vr.appendChild(vv); box.appendChild(vr);
+  },
+  updateIndicators(){
+    if(!this.showIndicators)return;
+    const set=(sel,val,pct,cls)=>{
+      const m=U.$('[data-metric="'+sel+'"]'); if(!m)return;
+      const v=U.$('.v',m); if(v) v.textContent=val;
+      const fill=U.$('.cp-bar > div',m); const bar=U.$('.cp-bar',m);
+      if(fill) fill.style.width=pct+'%';
+      if(bar){ bar.classList.remove('warn','danger'); if(cls) bar.classList.add(cls); }
+    };
+    set('cpu',Math.round(SystemState.cpu)+'%',SystemState.cpu,SystemState.cpu>80?'danger':SystemState.cpu>60?'warn':'');
+    set('ram',Math.round(SystemState.ramMB)+' / '+SystemState.ramMaxMB,SystemState.ramMB/SystemState.ramMaxMB*100,SystemState.ramMB/SystemState.ramMaxMB>0.85?'danger':SystemState.ramMB/SystemState.ramMaxMB>0.65?'warn':'');
+    set('disk',Math.round(SystemState.diskGB)+' / '+SystemState.diskMaxGB,SystemState.diskGB/SystemState.diskMaxGB*100,SystemState.diskGB>90?'danger':SystemState.diskGB>70?'warn':'');
+    const t=U.$('#cpTemp'); if(t){ t.textContent=Math.round(SystemState.tempC)+'°C'; t.style.color=SystemState.tempC>85?'#f55':SystemState.tempC>70?'#f39c12':''; }
+    const s=U.$('#cpStab'); if(s){ s.textContent=Math.round(SystemState.stability)+'%'; s.style.color=SystemState.stability<40?'#f55':SystemState.stability<70?'#f39c12':''; }
+    const v=U.$('#cpVir'); if(v){ v.textContent=SystemState.viruses; v.style.color=SystemState.viruses>0?'#f55':''; }
+    const dot=U.$('#cpStatus'); if(dot) dot.style.background=SystemState.stability>70?'#2ecc71':SystemState.stability>40?'#f39c12':'#e74c3c';
+  },
+  renderControls(){
+    const c=U.$('#cpCtrl'); if(!c)return;
+    c.innerHTML='';
+    [
+      {label:'Нормализовать',icon:'✅',cls:'success',action:()=>IncidentMgr.normalize()},
+      {label:'Случайный',icon:'🎲',action:()=>IncidentMgr.random()},
+      {label:'Апокалипсис',icon:'💥',cls:'danger',action:()=>IncidentMgr.apocalypse()},
+      {label:'Перезагрузка',icon:'🔄',action:()=>M.Boot.restart()},
+      {label:'Выключить',icon:'⏻',action:()=>M.Boot.shutdown()}
+    ].forEach(it=>{
+      const b=U.el('button','cp-btn wide '+(it.cls||''));
+      b.append(U.el('span','em',it.icon),U.el('span',null,it.label));
+      b.addEventListener('click',it.action);
+      c.appendChild(b);
+    });
+  },
+  renderActiveState(){ U.$$('.cp-btn[data-incident]').forEach(b=>{ b.classList.toggle('active',IncidentMgr.has(b.dataset.incident)); }); },
+  bind(){
+    U.$('#cpToggle').addEventListener('click',()=>{
+      this.collapsed=!this.collapsed;
+      U.$('#controlPanel').classList.toggle('collapsed',this.collapsed);
+      U.$('#cpToggle').textContent=this.collapsed?'⟨':'⟩';
+    });
+    U.$('#cpSearch').addEventListener('input',e=>{ this.search=e.target.value.toLowerCase(); this.renderIncidents(); });
+    U.$('#cpFilterCb').addEventListener('change',e=>{ this.filterEdition=e.target.checked; this.renderIncidents(); });
+    const st=U.$('#cpSettings');
+    const wrap=U.el('div');
+    wrap.append(U.el('div','cp-section-title','Настройки'));
+    const mkRow=(label,input)=>{ const r=U.el('label'); r.append(input,U.el('span',null,label)); return r; };
+    const posIn=U.el('select');
+    posIn.innerHTML='<option value="right">Справа</option><option value="left">Слева</option>';
+    posIn.addEventListener('change',()=>U.$('#controlPanel').classList.toggle('left',posIn.value==='left'));
+    wrap.appendChild(mkRow('Позиция',posIn));
+    const indIn=U.el('input'); indIn.type='checkbox'; indIn.checked=true;
+    indIn.addEventListener('change',()=>{ this.showIndicators=indIn.checked; const m=U.$('#cpMetrics'); if(m) m.style.display=indIn.checked?'':'none'; });
+    wrap.appendChild(mkRow('Индикаторы',indIn));
+    st.appendChild(wrap);
+    U.$('#cpSettingsToggle').addEventListener('click',()=>st.classList.toggle('open'));
+  }
+};
+
+/* APPS */
+Apps.register({id:'explorer',name:'Проводник',icon:'📁',pinned:true,open(startPath){
+  let path=startPath||[];
+  const win=WM.create({appId:'explorer',title:'Проводник',icon:'📁',width:800,height:520});
+  const b=win.body; b.classList.add('explorer');
+  const tb=U.el('div','toolbar');
+  const bUp=U.el('button','tbtn','↑');
+  const bNew=U.el('button','tbtn','📁+');
+  const bFile=U.el('button','tbtn','📄+');
+  tb.append(bUp,bNew,bFile);
+  const crumb=U.el('div','exp-crumb');
+  const grid=U.el('div','exp-grid');
+  b.append(tb,crumb,grid);
+  function render(){
+    crumb.innerHTML='';
+    const root=U.el('span',null,'💠 microOS');
+    root.addEventListener('click',()=>{ path=[]; render(); });
+    crumb.appendChild(root);
+    path.forEach((p,i)=>{
+      crumb.append(U.el('span',null,'›'));
+      const s=U.el('span',null,p);
+      s.addEventListener('click',()=>{ path=path.slice(0,i+1); render(); });
+      crumb.appendChild(s);
+    });
+    grid.innerHTML='';
+    const node=FS.resolve(path);
+    if(!node||node.type!=='folder'){ grid.appendChild(U.el('div','exp-empty','Не найдено')); return; }
+    const items=node.children.slice().sort((a,b)=>{ if(a.type!==b.type)return a.type==='folder'?-1:1; return a.name.localeCompare(b.name,'ru'); });
+    if(!items.length){ grid.appendChild(U.el('div','exp-empty','Пусто')); return; }
+    items.forEach(c=>{
+      const it=U.el('div','fitem');
+      it.append(U.el('div','em',c.type==='folder'?'📁':'📄'),U.el('div','nm',c.name));
+      it.addEventListener('dblclick',()=>{
+        if(c.type==='folder'){ path=[...path,c.name]; render(); }
+        else Apps.open('notepad',{path:[...path],name:c.name});
+      });
+      it.addEventListener('contextmenu',e=>{
+        e.preventDefault(); e.stopPropagation();
+        showCtx(e.clientX,e.clientY,[
+          {icon:'📂',label:'Открыть',action:()=>{ if(c.type==='folder'){path=[...path,c.name];render();} }},
+          {icon:'✏️',label:'Переименовать',action:()=>{ const n=prompt('Новое:',c.name); if(n){ c.name=n; FS.save(); render(); } }},
+          {icon:'🗑',label:'Удалить',action:()=>{ FS.remove([...path,c.name]); render(); }}
+        ]);
+      });
+      grid.appendChild(it);
+    });
+  }
+  bUp.addEventListener('click',()=>{ if(path.length){ path.pop(); render(); } });
+  bNew.addEventListener('click',()=>{ const n=prompt('Имя:','Папка'); if(n&&FS.mkdir(path,n)) render(); });
+  bFile.addEventListener('click',()=>{ const n=prompt('Имя:','file.txt'); if(n&&FS.writeFile(path,n,'')) render(); });
+  render();
+}});
+
+const NotepadApp = M.NotepadApp = {id:'notepad',name:'Блокнот',icon:'📝',pinned:true,open(fileRef){
+  const win=WM.create({appId:'notepad',title:'Блокнот',icon:'📝',width:680,height:520});
+  const b=win.body; b.style.background='var(--win-solid)';
+  const tb=U.el('div','toolbar');
+  const bB=U.el('button','tbtn','B'); bB.style.fontWeight='700';
+  const bI=U.el('button','tbtn','I'); bI.style.fontStyle='italic';
+  const bU=U.el('button','tbtn','U'); bU.style.textDecoration='underline';
+  const bSave=U.el('button','tbtn','💾');
+  const bOpen=U.el('button','tbtn','📂');
+  [bB,bI,bU].forEach((x,i)=>{ const cmd=['bold','italic','underline'][i]; x.addEventListener('click',()=>{ document.execCommand(cmd,false); ed.focus(); }); });
+  tb.append(bB,bI,bU,U.el('div','sep'),bSave,bOpen);
+  const ed=U.el('div','np-editor'); ed.contentEditable='true';
+  const st=U.el('div','np-status');
+  const stL=U.el('span',null,'Черновик'); const stR=U.el('span',null,'0');
+  st.append(stL,stR); b.append(tb,ed,st);
+  let current=fileRef||null;
+  if(fileRef){ const c=FS.readFile([...fileRef.path,fileRef.name]); if(c!=null) ed.textContent=c; stL.textContent=fileRef.name; }
+  else { const d=U.lsGet('notepad.draft',''); if(d) ed.textContent=d; }
+  const upd=()=>{ stR.textContent=ed.textContent.length+' символов'; };
+  upd();
+  const auto=U.debounce(()=>{ U.lsSet('notepad.draft',ed.textContent); stL.textContent='Черновик сохранён'; },700);
+  ed.addEventListener('input',()=>{ upd(); auto(); });
+  bSave.addEventListener('click',()=>{
+    let name,path;
+    if(current){ name=current.name; path=current.path; }
+    else{ name=prompt('Имя:','Новый.txt'); if(!name)return; path=['Документы']; }
+    if(FS.writeFile(path,name,ed.textContent)){ current={name,path}; stL.textContent=name; Notify.push('Блокнот','Сохранено','💾'); }
+  });
+  bOpen.addEventListener('click',()=>{ const n=prompt('Имя:'); if(!n)return; const c=FS.readFile(['Документы',n]); if(c!=null){ ed.textContent=c; current={name:n,path:['Документы']}; stL.textContent=n; upd(); } });
+}};
+Apps.register(NotepadApp);
+
+function CalcEval(s){
+  s=String(s).replace(/\s+/g,''); let i=0;
+  const num=()=>{ let t=''; while(i<s.length&&/[0-9.]/.test(s[i]))t+=s[i++]; if(!t)throw new Error(); return parseFloat(t); };
+  const atom=()=>{
+    if(s[i]==='('){ i++; const v=expr(); if(s[i]===')')i++; return v; }
+    if(s[i]==='-'){ i++; return -atom(); }
+    if(/[a-zA-Z]/.test(s[i]||'')){
+      let name=''; while(i<s.length&&/[a-zA-Z]/.test(s[i]))name+=s[i++];
+      if(s[i]==='('){ i++; const a=expr(); if(s[i]===')')i++;
+        switch(name.toLowerCase()){ case 'sqrt':return Math.sqrt(a); case 'sin':return Math.sin(a); case 'cos':return Math.cos(a); case 'tan':return Math.tan(a); case 'log':return Math.log10(a); case 'ln':return Math.log(a); default:throw new Error(); }
+      }
+      if(name==='pi')return Math.PI; if(name==='e')return Math.E; throw new Error();
+    }
+    return num();
+  };
+  const power=()=>{ let v=atom(); if(s[i]==='^'){i++; v=Math.pow(v,power());} while(s[i]==='%'){i++; v/=100;} return v; };
+  const term=()=>{ let v=power(); while(s[i]==='*'||s[i]==='/'){ const op=s[i++]; const r=power(); if(op==='*')v*=r; else{ if(r===0)throw new Error(); v/=r; } } return v; };
+  const expr=()=>{ let v=term(); while(s[i]==='+'||s[i]==='-'){ const op=s[i++]; const r=term(); v=op==='+'?v+r:v-r; } return v; };
+  const r=expr(); if(i<s.length)throw new Error(); return r;
+}
+Apps.register({id:'calculator',name:'Калькулятор',icon:'🧮',pinned:true,open(){
+  const win=WM.create({appId:'calculator',title:'Калькулятор',icon:'🧮',width:340,height:480});
+  const b=win.body; b.style.background='var(--win-solid)'; b.classList.add('calc');
+  const disp=U.el('div','calc-disp');
+  const exprEl=U.el('div','calc-expr',''); const valEl=U.el('div','calc-val','0');
+  disp.append(exprEl,valEl);
+  const sci=U.el('div');
+  sci.style.cssText='display:flex;gap:4px;padding:0 10px 4px;flex-wrap:wrap';
+  ['√','sin(','cos(','tan(','^','π','e'].forEach(f=>{
+    const btn=U.el('button','ckey fn',f); btn.style.cssText='flex:1;min-height:28px';
+    btn.addEventListener('click',()=>{ if(f==='√')press('sqrt('); else if(f==='π')press(String(Math.PI)); else if(f==='e')press(String(Math.E)); else press(f); });
+    sci.appendChild(btn);
+  });
+  const keys=U.el('div','calc-keys');
+  b.append(disp,sci,keys);
+  let expr='',done=false;
+  const upd=()=>{ exprEl.textContent=expr; valEl.textContent=expr||'0'; };
+  const press=tok=>{
+    if(tok==='C'){ expr=''; done=false; upd(); return; }
+    if(tok==='⌫'){ expr=expr.slice(0,-1); upd(); return; }
+    if(tok==='='){ try{ const r=CalcEval(expr); if(!isFinite(r))throw new Error(); expr=String(Number(r.toPrecision(12))); done=true; } catch(e){ valEl.textContent='Ошибка'; expr=''; return; } upd(); return; }
+    if(done&&/[0-9.]/.test(tok)) expr=''; done=false; expr+=tok; upd();
+  };
+  ['C','(',')','/','7','8','9','*','4','5','6','-','1','2','3','+','0','.','%','='].forEach(k=>{
+    const btn=U.el('button','ckey',k==='*'?'×':k==='/'?'÷':k==='-'?'−':k);
+    if('+-*/%'.includes(k)) btn.classList.add('op');
+    if(k==='=') btn.classList.add('eq');
+    btn.addEventListener('click',()=>press(k)); keys.appendChild(btn);
+  });
+  const onKey=e=>{
+    if(WM.activeId!==win.id)return;
+    const k=e.key;
+    if(/[0-9.]/.test(k)||'+-*/%()'.includes(k)){ press(k); e.preventDefault(); }
+    else if(k==='Enter'){ press('='); e.preventDefault(); }
+    else if(k==='Backspace'){ press('⌫'); e.preventDefault(); }
+    else if(k==='Escape'){ press('C'); e.preventDefault(); }
+  };
+  document.addEventListener('keydown',onKey);
+  win.close=((orig)=>function(){ document.removeEventListener('keydown',onKey); orig(); })(win.close);
+  upd();
+}});
+
+Apps.register({id:'terminal',name:'Терминал',icon:'⌨️',pinned:true,open(){
+  const win=WM.create({appId:'terminal',title:'Терминал',icon:'⌨️',width:740,height:460});
+  const term=U.el('div','term'); win.body.appendChild(term);
+  let cwd=[];
+  let hist=U.lsGet('term.history',[]); let hi=hist.length;
+  const mode=Edition.get().terminal;
+  const promptStr=()=>'microOS:\\'+cwd.join('\\')+'> ';
+  const write=(txt,cls)=>{ term.appendChild(U.el('div','line'+(cls?' '+cls:''),txt)); term.scrollTop=term.scrollHeight; };
+  function writePrompt(){
+    const line=U.el('div','line');
+    line.append(U.el('span','prompt',promptStr()));
+    const inp=U.el('input','term-input');
+    line.appendChild(inp); term.appendChild(line); inp.focus();
+    if(M.IncidentMgr.has('kbFail')) inp.disabled=true;
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){ const cmd=inp.value; inp.disabled=true; if(cmd.trim()){ hist.push(cmd); if(hist.length>100)hist.shift(); U.lsSet('term.history',hist); hi=hist.length; } write(promptStr()+cmd); run(cmd); writePrompt(); }
+      else if(e.key==='ArrowUp'){ if(hi>0){ hi--; inp.value=hist[hi]||''; } e.preventDefault(); }
+      else if(e.key==='ArrowDown'){ if(hi<hist.length-1){ hi++; inp.value=hist[hi]||''; } else{ hi=hist.length; inp.value=''; } e.preventDefault(); }
+    });
+  }
+  function run(raw){
+    const parts=raw.trim().split(/\s+/);
+    const cmd=(parts[0]||'').toLowerCase();
+    const args=parts.slice(1); const arg=args.join(' ');
+    if(mode==='limited'&&!['help','dir','ls','date','time','cls','clear'].includes(cmd)){
+      write('Команда недоступна в вашей редакции.','err'); return;
+    }
+    switch(cmd){
+      case '': break;
+      case 'help': write('Команды:','ok'); ['help','dir / ls','cd','mkdir','echo','type','del','cls','date','time','whoami','color','tasklist','kill','scan','fix','chkdsk','sfc','sync','exit'].forEach(l=>write('  '+l)); break;
+      case 'dir': case 'ls': { const n=FS.resolve(cwd); write(' \\'+cwd.join('\\')); if(!n||!n.children||!n.children.length){write('  <пусто>');break;} n.children.forEach(c=>write('  '+(c.type==='folder'?'[DIR] ':'      ')+c.name)); break; }
+      case 'cd': { if(!arg){cwd=[];break;} if(arg==='..'){cwd.pop();break;} const t=[...cwd,arg]; const n=FS.resolve(t); if(n&&n.type==='folder')cwd=t; else write('Не найдено','err'); break; }
+      case 'mkdir': if(!arg){write('Укажите имя','err');break;} write(FS.mkdir(cwd,arg)?'OK':'Ошибка','ok'); break;
+      case 'echo': write(arg); break;
+      case 'type': { const c=FS.readFile([...cwd,arg]); write(c!=null?c:'Не найдено',c!=null?'':'err'); break; }
+      case 'del': write(FS.remove([...cwd,arg])?'Удалено':'Не найдено','ok'); break;
+      case 'cls': case 'clear': term.innerHTML=''; break;
+      case 'date': write(new Date().toLocaleDateString('ru-RU')); break;
+      case 'time': write(new Date().toLocaleTimeString('ru-RU')); break;
+      case 'whoami': write(UserSession.name); break;
+      case 'color': if(/^#[0-9a-f]{6}$/i.test(arg)){ Settings.set('accent',arg); write('OK','ok'); } else write('Формат: #rrggbb','err'); break;
+      case 'tasklist': write(' PID   Имя                 CPU    RAM','ok'); WM.wins.forEach((w,i)=>{ const cpu=Math.max(1,Math.round(SystemState.cpu/(WM.wins.length+1))); const ram=Math.round(SystemState.ramMB/(WM.wins.length+2)/4); write(` ${String(i+1).padStart(3,' ')}   ${(w.appId||'app').padEnd(20,' ')} ${String(cpu).padStart(3,' ')}%   ${ram}M`); }); break;
+      case 'kill': { const idx=parseInt(arg,10)-1; if(idx>=0&&idx<WM.wins.length){ WM.close(WM.wins[idx].id); write('OK','ok'); } else write('Нет PID','err'); break; }
+      case 'scan': if(SystemState.viruses>0){ write('Угроз: '+SystemState.viruses+'. Очистка...','err'); IncidentMgr.normalize(); write('Чисто','ok'); } else write('Чисто','ok'); break;
+      case 'fix': IncidentMgr.normalize(); write('Готово','ok'); break;
+      case 'chkdsk': write('Проверка...','ok'); setTimeout(()=>{ write('Готово ✓','ok'); IncidentMgr.stop('fsCrash'); },1500); break;
+      case 'sfc': write('Сканирование...','ok'); setTimeout(()=>{ write('Готово ✓','ok'); IncidentMgr.stop('registryCrash'); IncidentMgr.stop('systemFileCorrupt'); },1800); break;
+      case 'sync': M.Boot.timeOffset=0; IncidentMgr.stop('timeFail'); write('OK','ok'); break;
+      case 'exit': win.close(); break;
+      default: write('Неизвестно: '+cmd,'err');
+    }
+  }
+  write('microOS Terminal v11.0','ok');
+  if(mode==='limited') write('Редакция: ограниченный набор команд.');
+  write('Введите help.');
+  write('');
+  writePrompt();
+  term.addEventListener('click',()=>{ const l=term.querySelector('.term-input:not([disabled])'); if(l)l.focus(); });
+}});
+
+Apps.register({id:'browser',name:'Браузер',icon:'🌐',pinned:true,open(){
+  const win=WM.create({appId:'browser',title:'Браузер',icon:'🌐',width:880,height:580});
+  const b=win.body; b.classList.add('browser');
+  const tb=U.el('div','toolbar');
+  const bBack=U.el('button','tbtn','←');
+  const addr=U.el('input'); addr.placeholder='Адрес'; addr.style.flex='1'; addr.style.padding='5px 12px';
+  const bGo=U.el('button','tbtn','➜');
+  tb.append(bBack,addr,bGo);
+  const stage=U.el('div'); stage.style.cssText='flex:1;display:flex;min-height:0;position:relative';
+  b.append(tb,stage);
+  const home=()=>{
+    stage.innerHTML='';
+    const h=U.el('div','br-home');
+    h.append(U.el('h1',null,'microOS Browser'));
+    const inp=U.el('input'); inp.placeholder='Поиск…';
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter')go(inp.value); });
+    const links=U.el('div','br-links');
+    [['example.com','Example'],['wikipedia.org','Wikipedia']].forEach(([u,n])=>{ const btn=U.el('button',null,n); btn.addEventListener('click',()=>go(u)); links.appendChild(btn); });
+    h.append(inp,links); stage.appendChild(h);
+  };
+  const go=input=>{
+    if(M.IncidentMgr.has('netLoss')||M.IncidentMgr.has('ddos')){
+      stage.innerHTML='';
+      const d=U.el('div','br-home');
+      d.append(U.el('h1',null,'🌐'),U.el('div',null,'Нет подключения'));
+      stage.appendChild(d); return;
+    }
+    let url=(input||'').trim(); if(!url){ home(); return; }
+    if(!/^https?:\/\//i.test(url)){ if(/^[\w-]+(\.[\w-]+)+/.test(url)) url='https://'+url; else url='https://duckduckgo.com/?q='+encodeURIComponent(url); }
+    addr.value=url; stage.innerHTML='';
+    const frame=U.el('iframe','br-frame'); frame.src=url;
+    frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-popups');
+    stage.appendChild(frame);
+  };
+  bGo.addEventListener('click',()=>go(addr.value));
+  addr.addEventListener('keydown',e=>{ if(e.key==='Enter')go(addr.value); });
+  bBack.addEventListener('click',home);
+  home();
+}});
+
+Apps.register({id:'taskmgr',name:'Диспетчер',icon:'📊',pinned:true,open(){
+  const win=WM.create({appId:'taskmgr',title:'Диспетчер задач',icon:'📊',width:620,height:480});
+  const b=win.body;
+  const tb=U.el('div','toolbar');
+  const info=U.el('span',null,''); info.style.cssText='font-size:12px;color:var(--dim);margin-left:auto';
+  tb.appendChild(info);
+  const list=U.el('div'); list.style.cssText='flex:1;overflow-y:auto';
+  b.append(tb,list);
+  const lite=Edition.get().taskmgr==='lite';
+  function render(){
+    list.innerHTML='';
+    const header=U.el('div','tm-row'); header.style.fontWeight='600';
+    header.append(U.el('div','nm','Приложение'),U.el('div','pct','CPU'),U.el('div','pct','RAM'),U.el('div','',''));
+    list.appendChild(header);
+    WM.wins.forEach(w=>{
+      const row=U.el('div','tm-row');
+      const nm=U.el('div','nm');
+      const app=Apps.get(w.appId)||{icon:'🗔',name:w.appId};
+      nm.append(U.el('span',null,app.icon),U.el('span',null,app.name));
+      const cpu=Math.max(1,Math.round(SystemState.cpu/(WM.wins.length+1)));
+      const ram=Math.round(SystemState.ramMB/(WM.wins.length+2)/4);
+      const kill=U.el('button',null,'Снять');
+      if(!lite) kill.addEventListener('click',()=>{ WM.close(w.id); render(); });
+      else kill.disabled=true;
+      row.append(nm,U.el('div','pct',cpu+'%'),U.el('div','pct',ram+' МБ'),kill);
+      list.appendChild(row);
+    });
+    info.textContent=`Процессов: ${WM.wins.length}`+(lite?' (lite)':'');
+  }
+  render();
+  const int=setInterval(render,1500);
+  win.close=((orig)=>function(){ clearInterval(int); orig(); })(win.close);
+}});
+
+Apps.register({id:'store',name:'Магазин',icon:'🛍️',pinned:true,open(){
+  const win=WM.create({appId:'store',title:'Магазин',icon:'🛍️',width:720,height:520});
+  const b=win.body; b.style.padding='20px'; b.style.overflowY='auto';
+  const hero=U.el('div','store-hero');
+  hero.append(U.el('h2',null,'microOS Store'),U.el('div',null,'Скоро здесь что-то будет 🤫'));
+  b.appendChild(hero);
+  const grid=U.el('div','store-grid');
+  ['🎮 Игры','🎬 Видео','🎵 Музыка','📚 Книги','🧩 Утилиты','🎨 Темы','💡 Расширения','🔧 Драйверы'].forEach(t=>{
+    const it=U.el('div','store-item');
+    it.append(U.el('div','em',t.split(' ')[0]),U.el('div',null,t.split(' ').slice(1).join(' ')));
+    it.addEventListener('click',()=>Notify.push('Магазин','Скоро!','🛍️'));
+    grid.appendChild(it);
+  });
+  b.appendChild(grid);
+}});
+
+Apps.register({id:'recycle',name:'Корзина',icon:'🗑',pinned:false,open(){
+  const win=WM.create({appId:'recycle',title:'Корзина',icon:'🗑',width:600,height:420});
+  const b=win.body;
+  const tb=U.el('div','toolbar');
+  const bEmpty=U.el('button','tbtn','Очистить');
+  tb.appendChild(bEmpty);
+  const list=U.el('div'); list.style.cssText='flex:1;overflow-y:auto;padding:10px';
+  b.append(tb,list);
+  function render(){
+    list.innerHTML='';
+    if(!FS.trash.length){ list.appendChild(U.el('div','bin-empty','Пусто')); win.setTitle('Корзина'); return; }
+    win.setTitle('Корзина ('+FS.trash.length+')');
+    FS.trash.forEach((it,idx)=>{
+      const row=U.el('div','bin-item');
+      row.append(U.el('div','em',it.node.type==='folder'?'📁':'📄'));
+      const meta=U.el('div','meta');
+      meta.append(U.el('div',null,it.node.name));
+      meta.append(U.el('small',null,new Date(it.at).toLocaleString('ru-RU')));
+      const bR=U.el('button','btn sec','↩'); bR.style.padding='3px 10px'; bR.style.fontSize='11.5px';
+      bR.addEventListener('click',()=>{ FS.restore(idx); render(); });
+      const bD=U.el('button','btn sec','🗑'); bD.style.padding='3px 10px'; bD.style.fontSize='11.5px';
+      bD.addEventListener('click',()=>{ FS.removePermanent(idx); render(); });
+      row.append(meta,bR,bD); list.appendChild(row);
+    });
+  }
+  bEmpty.addEventListener('click',()=>{ if(confirm('Очистить?')){ FS.trash=[]; FS.saveTrash(); render(); } });
+  render();
+}});
+
+Apps.register({id:'settings',name:'Настройки',icon:'⚙️',pinned:true,open(){
+  const win=WM.create({appId:'settings',title:'Настройки',icon:'⚙️',width:820,height:560});
+  const b=win.body; b.classList.add('settings');
+  const nav=U.el('div','set-nav');
+  const content=U.el('div','set-body');
+  b.append(nav,content);
+  const sections=[
+    {id:'system',icon:'🖥',name:'Система'},
+    {id:'personal',icon:'🎨',name:'Персонализация'},
+    {id:'about',icon:'💠',name:'Об устройстве'},
+    {id:'reset',icon:'⚠️',name:'Сброс системы'}
+  ];
+  let cur='system';
+  function renderNav(){
+    nav.innerHTML='';
+    sections.forEach(s=>{
+      const it=U.el('div','it'+(s.id===cur?' sel':''));
+      it.append(U.el('span',null,s.icon),U.el('span',null,s.name));
+      it.addEventListener('click',()=>{ cur=s.id; renderNav(); renderContent(); });
+      nav.appendChild(it);
+    });
+  }
+  function renderContent(){
+    content.innerHTML='';
+    content.appendChild(U.el('h2',null,sections.find(s=>s.id===cur).name));
+    if(cur==='system'){
+      [['Устройство',UserSession.computerName],['Редакция',Edition.get().name],['Процессор',(navigator.hardwareConcurrency||4)+' ядер'],['ОЗУ',SystemState.ramMaxMB+' МБ'],['Разрешение',window.innerWidth+' × '+window.innerHeight]].forEach(([k,v])=>{
+        const r=U.el('div','row');
+        r.append(U.el('div',null,k),U.el('div',null,v));
+        r.lastChild.style.color='var(--dim)';
+        content.appendChild(r);
+      });
+    }
+    if(cur==='personal'){
+      content.appendChild(U.el('h3',null,'Обои'));
+      const wg=U.el('div','wp-grid');
+      Object.keys(WALLPAPERS).forEach(k=>{
+        const d=U.el('div','wp'+(Settings.get('wallpaper')===k?' sel':''));
+        d.style.backgroundImage=WALLPAPERS[k];
+        d.addEventListener('click',()=>{ Settings.set('wallpaper',k); U.$$('.wp',wg).forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); });
+        wg.appendChild(d);
+      });
+      content.appendChild(wg);
+      content.appendChild(U.el('h3',null,'Цвет акцента'));
+      const cg=U.el('div'); cg.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-top:6px';
+      ['#0078d4','#8e46b8','#1e9078','#e81123','#e08a2e','#3fbf6a','#a06bff'].forEach(c=>{
+        const d=U.el('div','color-dot'+(Settings.get('accent')===c?' sel':''));
+        d.style.background=c;
+        d.addEventListener('click',()=>{ Settings.set('accent',c); U.$$('.color-dot',cg).forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); document.documentElement.style.setProperty('--accent',c); });
+        cg.appendChild(d);
+      });
+      content.appendChild(cg);
+      content.appendChild(U.el('h3',null,'Тема'));
+      const tg=U.el('div'); tg.style.cssText='display:flex;gap:8px;margin-top:6px';
+      ['dark','light'].forEach(t=>{
+        const allowed=Edition.get().themes.includes(t);
+        const btn=U.el('button','btn'+(Settings.get('theme')===t?'':' sec'),t==='dark'?'🌙 Тёмная':'☀️ Светлая');
+        if(!allowed){ btn.disabled=true; btn.style.opacity='.4'; }
+        btn.addEventListener('click',()=>{ if(!allowed)return; Settings.set('theme',t); U.$$('button',tg).forEach(x=>x.classList.add('sec')); btn.classList.remove('sec'); });
+        tg.appendChild(btn);
+      });
+      content.appendChild(tg);
+    }
+    if(cur==='about'){
+      const info=U.el('div','card');
+      [`microOS ${Edition.get().ver} (build ${Edition.get().build})`,Edition.get().name,'Kernel: microJS 6.0','UI: Fluent Design'].forEach(t=>{
+        info.appendChild(U.el('div','row',t));
+      });
+      content.appendChild(info);
+    }
+    if(cur==='reset'){
+      const card=U.el('div','card');
+      card.append(U.el('div',null,'Сброс microOS'));
+      const w=U.el('div',null,'Все данные и настройки будут удалены. Вы вернётесь к выбору редакции.');
+      w.style.cssText='font-size:12.5px;color:var(--dim);margin:10px 0;line-height:1.5';
+      card.appendChild(w);
+      const btn=U.el('button','btn','🔄 Сбросить');
+      btn.style.background='#e81123';
+      btn.addEventListener('click',()=>{
+        if(!confirm('Сбросить? Необратимо.'))return;
+        ['installed','user','settings','fs','trash','iconPos','term.history','notepad.draft','edition'].forEach(k=>{ try{ localStorage.removeItem('microOS.'+k); }catch(e){} });
+        location.reload();
+      });
+      card.appendChild(btn); content.appendChild(card);
+    }
+  }
+  renderNav(); renderContent();
+}});
+
+const LockScreen = M.LockScreen = {
+  show(){
+    const ls=U.$('#lockScreen'); if(!ls)return;
+    ls.classList.remove('hidden'); ls.style.opacity='1';
+    const n=U.$('#lockName'); if(n) n.textContent=UserSession.name;
+    const av=U.$('#lockAvatar'); if(av){ av.innerHTML=''; av.innerHTML=UserSession.getAvatarHTML(); }
+    const pw=U.$('#lockPassWrap'); const en=U.$('#lockEnter');
+    const err=U.$('#lockErr'); if(err) err.textContent='';
+    const hint=U.$('#lockHint'); if(hint) hint.textContent=UserSession.passwordHash&&UserSession.hint?'Подсказка: '+UserSession.hint:'';
+    if(UserSession.passwordHash){ if(pw) pw.classList.remove('hidden'); if(en) en.classList.add('hidden'); setTimeout(()=>{ const p=U.$('#lockPass'); if(p)p.focus(); },200); }
+    else { if(pw) pw.classList.add('hidden'); if(en) en.classList.remove('hidden'); }
+    this.updateClock();
+  },
+  updateClock(){
+    const now=new Date();
+    const lt=U.$('#lockTime'); if(lt) lt.textContent=U.pad(now.getHours())+':'+U.pad(now.getMinutes());
+    const ld=U.$('#lockDate'); if(ld){ const s=now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}); ld.textContent=s.charAt(0).toUpperCase()+s.slice(1); }
+  },
+  async tryLogin(){
+    const pw=U.$('#lockPass');
+    const ok=await UserSession.checkPassword(pw?pw.value:'');
+    if(ok){
+      const ls=U.$('#lockScreen');
+      ls.style.opacity='0';
+      setTimeout(()=>{ ls.classList.add('hidden'); ls.style.opacity='1'; if(pw)pw.value=''; },350);
+      AudioMgr.greet();
+      M.Boot.showDesktop();
+    } else {
+      const err=U.$('#lockErr'); if(err) err.textContent='Неверный пароль';
+      const av=U.$('#lockAvatar'); if(av){ av.classList.add('shake'); setTimeout(()=>av.classList.remove('shake'),400); }
+      if(pw) pw.value='';
+      AudioMgr.error();
+    }
+  },
+  init(){
+    const en=U.$('#lockEnter'); if(en) en.addEventListener('click',()=>this.tryLogin());
+    const sb=U.$('#lockSubmit'); if(sb) sb.addEventListener('click',()=>this.tryLogin());
+    const pw=U.$('#lockPass'); if(pw) pw.addEventListener('keydown',e=>{ if(e.key==='Enter') this.tryLogin(); });
+  }
+};
+
+/* OOBE */
+const OOBE = M.OOBE = {
+  step:-1, maxStep:7, onDone:null, $root:null,
+  data:{edition:'w11-pro',lang:'ru',region:'RU',keyboard:'ru',network:null,accepted:false,userName:'',computerName:'',avatarIdx:0,avatarData:null,password:'',confirmPassword:'',hint:'',theme:'dark',wallpaper:'a',accent:'#0078d4',privacy:{diagnostics:true,ads:true,speech:true,location:true,sync:true}},
+
+  init(){
+    this.$root=U.$('#oobe');
+    this.buildScreens();
+    U.$('#oobeBack').addEventListener('click',()=>{ if(this.step>-1) this.goTo(this.step-1); });
+    U.$('#oobeNext').addEventListener('click',()=>{
+      if(!this.validate(this.step))return;
+      if(this.step===this.maxStep) this.launch();
+      else this.goTo(this.step+1);
+    });
+    U.$('#oobeSkip').addEventListener('click',()=>this.quickSetup());
+  },
+
+  buildScreens(){
+    const c=U.$('#oobeScreens'); c.innerHTML='';
+    // Экран -1: Выбор редакции
+    c.appendChild(this.mkScreen(-1,`
+      <h1 style="font-size:28px">Выберите редакцию microOS</h1>
+      <p style="font-size:14px">Каждая редакция имеет свои возможности и стиль</p>
+      <div class="edition-grid" id="editionGrid"></div>
+    `));
+    // Экран 0: Приветствие
+    c.appendChild(this.mkScreen(0,`
+      <div class="oobe-logo"><svg width="120" height="120" viewBox="0 0 100 100"><rect x="10" y="10" width="38" height="38" rx="4" fill="#4aa3ff"/><rect x="52" y="10" width="38" height="38" rx="4" fill="#7cc4ff"/><rect x="10" y="52" width="38" height="38" rx="4" fill="#7cc4ff"/><rect x="52" y="52" width="38" height="38" rx="4" fill="#4aa3ff"/></svg></div>
+      <h1 id="oobeWelcomeTitle">Добро пожаловать в microOS 11</h1>
+      <p>Давайте настроим вашу систему</p>
+      <button class="oobe-btn primary" id="oobeStartBtn">Начать →</button>
+    `));
+    // Экран 1: Язык
+    c.appendChild(this.mkScreen(1,`
+      <h1>Язык и регион</h1>
+      <div class="oobe-form">
+        <label>Язык</label>
+        <select id="oobeLang"><option value="ru">Русский</option><option value="en">English</option><option value="uk">Українська</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option></select>
+        <label>Регион</label>
+        <select id="oobeRegion"><option value="RU">Россия</option><option value="KZ">Казахстан</option><option value="BY">Беларусь</option><option value="UA">Украина</option><option value="US">США</option><option value="DE">Германия</option><option value="FR">Франция</option></select>
+        <label>Раскладка</label>
+        <div class="oobe-radios">
+          <label><input type="radio" name="oobeKb" value="ru" checked> Русская</label>
+          <label><input type="radio" name="oobeKb" value="en"> Английская</label>
+          <label><input type="radio" name="oobeKb" value="both"> Обе</label>
+        </div>
+      </div>
+    `));
+    // Экран 2: Wi-Fi
+    c.appendChild(this.mkScreen(2,`
+      <h1>Подключение к сети</h1>
+      <p>Выберите Wi-Fi</p>
+      <div class="oobe-wifi-list" id="oobeWifiList"></div>
+      <button class="oobe-link" id="oobeSkipNet">Пропустить</button>
+    `));
+    // Экран 3: EULA
+    c.appendChild(this.mkScreen(3,`
+      <h1>Условия использования</h1>
+      <div class="oobe-eula" id="oobeEula"></div>
+      <label class="oobe-checkbox"><input type="checkbox" id="oobeAccept"> Я принимаю условия</label>
+    `));
+    // Экран 4: Аккаунт
+    c.appendChild(this.mkScreen(4,`
+      <h1>Учётная запись</h1>
+      <div class="oobe-form oobe-form-wide">
+        <label>Имя пользователя *</label>
+        <input type="text" id="oobeUser" maxlength="32" placeholder="Введите имя">
+        <div class="oobe-err" id="oobeUserErr"></div>
+        <label>Имя компьютера</label>
+        <input type="text" id="oobePC" maxlength="32">
+        <label>Аватар</label>
+        <div class="oobe-avatars" id="oobeAvatars"></div>
+        <label>Пароль (необязательно)</label>
+        <input type="password" id="oobePass" placeholder="Пусто = без пароля">
+        <div class="oobe-err" id="oobePassErr"></div>
+        <div id="oobePassConfirmWrap" class="hidden">
+          <label>Подтвердите пароль</label>
+          <input type="password" id="oobePassConfirm">
+          <div class="oobe-err" id="oobePassConfirmErr"></div>
+        </div>
+        <label>Подсказка (необязательно)</label>
+        <input type="text" id="oobeHint" maxlength="64">
+      </div>
+    `));
+    // Экран 5: Персонализация
+    c.appendChild(this.mkScreen(5,`
+      <h1>Персонализация</h1>
+      <div class="oobe-form oobe-form-wide">
+        <label>Тема</label>
+        <div class="oobe-themes">
+          <div class="oobe-theme" data-theme="light"><div class="oobe-theme-prev" style="background:#f3f3f3"><div style="background:#fff;width:60%;height:8px;border-radius:2px;margin:10px auto"></div><div style="background:#0078d4;width:30%;height:6px;border-radius:2px;margin:6px auto"></div></div><span>Светлая</span></div>
+          <div class="oobe-theme active" data-theme="dark"><div class="oobe-theme-prev" style="background:#1a1a1a"><div style="background:#333;width:60%;height:8px;border-radius:2px;margin:10px auto"></div><div style="background:#0078d4;width:30%;height:6px;border-radius:2px;margin:6px auto"></div></div><span>Тёмная</span></div>
+        </div>
+        <label>Обои</label>
+        <div class="oobe-wallpapers" id="oobeWallpapers"></div>
+        <label>Цвет акцента</label>
+        <div class="oobe-accents" id="oobeAccents"></div>
+      </div>
+    `));
+    // Экран 6: Приватность
+    c.appendChild(this.mkScreen(6,`
+      <h1>Конфиденциальность</h1>
+      <div class="oobe-form oobe-form-wide">
+        <div class="oobe-switch-row"><div><b>Диагностика</b></div><div class="switch on" data-priv="diagnostics"></div></div>
+        <div class="oobe-switch-row"><div><b>Реклама</b></div><div class="switch on" data-priv="ads"></div></div>
+        <div class="oobe-switch-row"><div><b>Речь</b></div><div class="switch on" data-priv="speech"></div></div>
+        <div class="oobe-switch-row"><div><b>Местоположение</b></div><div class="switch on" data-priv="location"></div></div>
+        <div class="oobe-switch-row"><div><b>Синхронизация</b></div><div class="switch on" data-priv="sync"></div></div>
+      </div>
+    `));
+    // Экран 7: Финал
+    c.appendChild(this.mkScreen(7,`
+      <div class="oobe-logo"><svg width="80" height="80" viewBox="0 0 100 100"><rect x="10" y="10" width="38" height="38" rx="4" fill="#4aa3ff"/><rect x="52" y="10" width="38" height="38" rx="4" fill="#7cc4ff"/><rect x="10" y="52" width="38" height="38" rx="4" fill="#7cc4ff"/><rect x="52" y="52" width="38" height="38" rx="4" fill="#4aa3ff"/></svg></div>
+      <h1>Всё готово!</h1>
+      <p>microOS настроена</p>
+      <div class="oobe-summary" id="oobeSummary"></div>
+      <button class="oobe-btn primary big" id="oobeLaunch">🚀 Запустить</button>
+    `));
+    // Dots
+    const dots=U.$('#oobeDots'); dots.innerHTML='';
+    for(let i=-1;i<=this.maxStep;i++){ const d=U.el('div','oobe-dot'); d.dataset.i=i; dots.appendChild(d); }
+    // Edition cards
+    const eg=U.$('#editionGrid');
+    eg.innerHTML='';
+    Object.keys(EDITIONS).forEach(id=>{
+      const ed=EDITIONS[id];
+      const card=U.el('div','edition-card'+(id==='w11-pro'?' selected':''));
+      card.dataset.edition=id;
+      const logo=U.el('div','ed-logo '+(ed.logoClass||''));
+      for(let i=0;i<4;i++) logo.appendChild(U.el('i'));
+      card.appendChild(logo);
+      card.append(U.el('div','ed-ver',ed.name));
+      card.append(U.el('h3',null,ed.short));
+      card.append(U.el('div','ed-desc',ed.desc));
+      const ul=U.el('ul','ed-features');
+      ed.features.forEach(f=>{
+        const li=U.el('li');
+        li.append(U.el('span',f.ok?'ok':'no',f.ok?'✓':'✗'),U.el('span',null,f.text));
+        ul.appendChild(li);
+      });
+      card.appendChild(ul);
+      card.addEventListener('click',()=>{
+        U.$$('.edition-card',eg).forEach(c=>c.classList.remove('selected'));
+        card.classList.add('selected');
+        this.data.edition=id;
+        const t=U.$('#oobeWelcomeTitle');
+        if(t) t.textContent='Добро пожаловать в '+ed.name;
+      });
+      eg.appendChild(card);
+    });
+    // PC name
+    U.$('#oobePC').value='DESKTOP-'+Math.random().toString(36).substring(2,8).toUpperCase();
+    // EULA
+    const eula=U.$('#oobeEula');
+    [{h:'1. Общие',p:'Настоящее соглашение регулирует использование microOS.'},{h:'2. Лицензия',p:'Неисключительная лицензия.'},{h:'3. Данные',p:'Диагностические данные хранятся локально.'},{h:'4. Обновления',p:'Система может загружать обновления.'},{h:'5. Гарантии',p:'Программа предоставляется «как есть».'}].forEach(s=>{
+      eula.append(U.el('h4',null,s.h),U.el('p',null,s.p));
+    });
+    // Wi-Fi
+    const wl=U.$('#oobeWifiList');
+    ['HomeWiFi_5G','MTS_Router','Beeline_A1B2','FREE_WIFI','OfficeNetwork'].forEach(n=>{
+      const item=U.el('div','oobe-wifi');
+      item.append(U.el('span','em','📶'),U.el('span','nm',n),U.el('span','st','Подключиться'));
+      item.addEventListener('click',()=>{
+        U.$$('.oobe-wifi',wl).forEach(x=>x.classList.remove('connected'));
+        item.classList.add('connected');
+        item.querySelector('.st').textContent='Подключение…';
+        setTimeout(()=>{ item.querySelector('.st').textContent='✓ Подключено'; this.data.network=n; },1000);
+      });
+      wl.appendChild(item);
+    });
+    U.$('#oobeSkipNet').addEventListener('click',()=>this.goTo(this.step+1));
+    // Avatars
+    const ab=U.$('#oobeAvatars');
+    const emojis=['👤','😀','🐱','🐶','🦊','🐼','🦉','🐢','🐸'];
+    const colors=['#4aa3ff','#8e46b8','#1e9078','#e08a2e','#e81123','#3fbf6a','#a06bff','#ff6b9d','#00bcd4'];
+    emojis.forEach((em,i)=>{
+      const a=U.el('div','oobe-avatar'+(i===0?' sel':''),em);
+      a.style.background=colors[i];
+      a.addEventListener('click',()=>{ U.$$('.oobe-avatar',ab).forEach(x=>x.classList.remove('sel')); a.classList.add('sel'); this.data.avatarIdx=i; this.data.avatarData=null; });
+      ab.appendChild(a);
+    });
+    const up=U.el('div','oobe-avatar upload','📷');
+    up.addEventListener('click',()=>{
+      const inp=U.el('input'); inp.type='file'; inp.accept='image/*';
+      inp.addEventListener('change',()=>{
+        const f=inp.files[0]; if(!f)return;
+        const rd=new FileReader();
+        rd.onload=()=>{ U.$$('.oobe-avatar',ab).forEach(x=>x.classList.remove('sel')); up.classList.add('sel'); up.style.backgroundImage=`url(${rd.result})`; up.style.color='transparent'; this.data.avatarData=rd.result; };
+        rd.readAsDataURL(f);
+      });
+      inp.click();
+    });
+    ab.appendChild(up);
+    // Pass confirm toggle
+    U.$('#oobePass').addEventListener('input',e=>{ U.$('#oobePassConfirmWrap').classList.toggle('hidden',!e.target.value); });
+    // Accept
+    U.$('#oobeAccept').addEventListener('change',e=>{ this.data.accepted=e.target.checked; U.$('#oobeNext').disabled=!e.target.checked; });
+    // Themes
+    U.$$('.oobe-theme').forEach(t=>{
+      t.addEventListener('click',()=>{ U.$$('.oobe-theme').forEach(x=>x.classList.remove('active')); t.classList.add('active'); this.data.theme=t.dataset.theme; });
+    });
+    // Wallpapers
+    const wpb=U.$('#oobeWallpapers');
+    Object.keys(WALLPAPERS).forEach(k=>{
+      const w=U.el('div','oobe-wallpaper'+(k==='a'?' sel':''));
+      w.style.backgroundImage=WALLPAPERS[k];
+      w.addEventListener('click',()=>{ U.$$('.oobe-wallpaper',wpb).forEach(x=>x.classList.remove('sel')); w.classList.add('sel'); this.data.wallpaper=k; });
+      wpb.appendChild(w);
+    });
+    // Accents
+    const accb=U.$('#oobeAccents');
+    ['#0078d4','#4aa3ff','#8e46b8','#1e9078','#e81123','#e08a2e','#3fbf6a','#a06bff','#ff6b9d','#00bcd4'].forEach(c=>{
+      const a=U.el('div','oobe-accent'+(c==='#0078d4'?' sel':''));
+      a.style.background=c;
+      a.addEventListener('click',()=>{ U.$$('.oobe-accent',accb).forEach(x=>x.classList.remove('sel')); a.classList.add('sel'); this.data.accent=c; });
+      accb.appendChild(a);
+    });
+    // Privacy
+    U.$$('.oobe-switch-row .switch').forEach(sw=>{
+      sw.addEventListener('click',()=>{ sw.classList.toggle('on'); this.data.privacy[sw.dataset.priv]=sw.classList.contains('on'); });
+    });
+    // Buttons
+    U.$('#oobeStartBtn').addEventListener('click',()=>this.goTo(0));
+    U.$('#oobeLaunch').addEventListener('click',()=>this.launch());
+  },
+
+  mkScreen(idx,inner){
+    const s=U.el('div','oobe-screen'); s.dataset.step=idx;
+    const c=U.el('div','oobe-center'); c.innerHTML=inner;
+    s.appendChild(c); return s;
+  },
+
+  start(onDone){
+    this.onDone=onDone;
+    this.$root.classList.remove('hidden');
+    this.goTo(-1);
+  },
+
+  goTo(step){
+    if(step<-1||step>this.maxStep)return;
+    this.step=step;
+    U.$$('.oobe-screen').forEach(s=>s.classList.remove('active'));
+    const t=U.$(`.oobe-screen[data-step="${step}"]`);
+    if(t) t.classList.add('active');
+    U.$$('.oobe-dot').forEach((d,i)=>{ d.classList.toggle('active',parseInt(d.dataset.i)===step); d.classList.toggle('done',parseInt(d.dataset.i)<step); });
+    U.$('#oobeBack').disabled=step===-1;
+    U.$('#oobeNext').disabled=step===-1||(step===3&&!this.data.accepted);
+    U.$('#oobeNext').textContent=step===this.maxStep?'Запустить ✓':'Далее →';
+    if(step===0){
+      const ed=EDITIONS[this.data.edition];
+      const tt=U.$('#oobeWelcomeTitle');
+      if(tt) tt.textContent='Добро пожаловать в '+ed.name;
+    }
+    if(step===7) this.fillSummary();
+  },
+
+  validate(step){
+    if(step===-1){
+      if(!this.data.edition){ alert('Выберите редакцию'); return false; }
+    }
+    if(step===3&&!this.data.accepted) return false;
+    if(step===4){
+      const ue=U.$('#oobeUserErr'),pe=U.$('#oobePassErr'),ce=U.$('#oobePassConfirmErr');
+      ue.textContent=''; pe.textContent=''; ce.textContent='';
+      const name=U.$('#oobeUser').value.trim();
+      if(!name){ ue.textContent='Имя обязательно'; return false; }
+      if(name.length<2){ ue.textContent='Минимум 2 символа'; return false; }
+      this.data.userName=name;
+      this.data.computerName=U.$('#oobePC').value.trim()||'DESKTOP-PC';
+      const pw=U.$('#oobePass').value; const cf=U.$('#oobePassConfirm').value;
+      if(pw&&pw.length<4){ pe.textContent='Минимум 4 символа'; return false; }
+      if(pw&&pw!==cf){ ce.textContent='Не совпадают'; return false; }
+      this.data.password=pw;
+      this.data.hint=U.$('#oobeHint').value.trim();
+    }
+    return true;
+  },
+
+  fillSummary(){
+    const box=U.$('#oobeSummary'); box.innerHTML='';
+    [
+      ['📀 Редакция',EDITIONS[this.data.edition].name],
+      ['👤 Пользователь',this.data.userName||'Пользователь'],
+      ['💻 Компьютер',this.data.computerName||'DESKTOP-PC'],
+      ['🎨 Тема',this.data.theme==='dark'?'Тёмная':'Светлая'],
+      ['🖼️ Обои',this.data.wallpaper.toUpperCase()],
+      ['🔐 Пароль',this.data.password?'Установлен':'Не установлен']
+    ].forEach(([k,v])=>{
+      const d=U.el('div');
+      d.append(U.el('span',null,k),U.el('span','v',v));
+      box.appendChild(d);
+    });
+  },
+
+  quickSetup(){
+    this.data={
+      edition:'w11-pro',lang:'ru',region:'RU',keyboard:'ru',network:null,accepted:true,
+      userName:'Пользователь',
+      computerName:'DESKTOP-'+Math.random().toString(36).substring(2,8).toUpperCase(),
+      avatarIdx:0,avatarData:null,password:'',confirmPassword:'',hint:'',
+      theme:'light',wallpaper:'a',accent:'#0078d4',
+      privacy:{diagnostics:true,ads:true,speech:true,location:true,sync:true}
+    };
+    this.applyAndFinish();
+  },
+
+  launch(){
+    if(!this.data.userName) this.data.userName=U.$('#oobeUser').value.trim()||'Пользователь';
+    if(!this.data.computerName) this.data.computerName=U.$('#oobePC').value.trim()||'DESKTOP-PC';
+    this.applyAndFinish();
+  },
+
+  async applyAndFinish(){
+    let passwordHash=null;
+    if(this.data.password) passwordHash=await UserSession.hash(this.data.password);
+    U.lsSet('installed',true);
+    U.lsSet('edition',this.data.edition);
+    U.lsSet('user',{name:this.data.userName,computerName:this.data.computerName,avatar:this.data.avatarData||null,avatarIdx:this.data.avatarIdx,passwordHash,hint:this.data.hint});
+    Edition.set(this.data.edition);
+    Settings.data.theme=this.data.theme;
+    Settings.data.wallpaper=this.data.wallpaper;
+    Settings.data.accent=this.data.accent;
+    Settings.data.privacy=this.data.privacy;
+    Settings.save();
+    UserSession.load();
+    Settings.apply(); Edition.apply();
+    AudioMgr.greet();
+    this.$root.style.opacity='0';
+    setTimeout(()=>{
+      this.$root.classList.add('hidden');
+      this.$root.style.opacity='';
+      if(this.onDone) this.onDone();
+    },500);
+  }
+};
+
+const Boot = M.Boot = {
+  timeOffset:0,
+  init(){
+    Settings.load(); Edition.load(); FS.load(); UserSession.load(); Settings.apply();
+    Desktop.init(); StartMenu.init(); ControlPanel.init(); LockScreen.init(); OOBE.init();
+    Taskbar.render();
+    this.updateClock(); setInterval(()=>this.updateClock(),1000);
+    document.addEventListener('keydown',e=>{
+      if(e.altKey&&e.key==='Tab'){ e.preventDefault(); WM.cycle(); }
+      if(e.key==='Escape'){ hideCtx(); StartMenu.close(); }
+    });
+    const installed=U.lsGet('installed',false);
+    if(!installed){
+      U.$('#controlPanel').classList.add('hidden');
+      U.$('#taskbar').classList.add('hidden');
+      OOBE.start(()=>{
+        U.$('#controlPanel').classList.remove('hidden');
+        U.$('#taskbar').classList.remove('hidden');
+        this.showDesktop();
+        setTimeout(()=>Notify.push('microOS',Edition.get().name+' готова','💠'),600);
+      });
+    } else {
+      U.$('#controlPanel').classList.add('hidden');
+      U.$('#taskbar').classList.add('hidden');
+      LockScreen.show();
+    }
+  },
+  showDesktop(){
+    U.$('#controlPanel').classList.remove('hidden');
+    U.$('#taskbar').classList.remove('hidden');
+    Taskbar.render(); StartMenu.render(); Desktop.render();
+    SystemState.start();
+  },
+  updateClock(){
+    const now=new Date(Date.now()+this.timeOffset);
+    const t=U.pad(now.getHours())+':'+U.pad(now.getMinutes());
+    const d=U.pad(now.getDate())+'.'+U.pad(now.getMonth()+1)+'.'+now.getFullYear();
+    const cl=U.$('#trayClock');
+    if(cl){ cl.querySelector('.t').textContent=t; cl.querySelector('.d').textContent=d; }
+    LockScreen.updateClock();
+  },
+  restart(){
+    const ps=U.$('#powerScreen');
+    ps.innerHTML=''; ps.classList.remove('hidden'); ps.style.background='#000';
+    ps.append(U.el('div','logo','microOS'),U.el('div','spinner'),U.el('div','sub','Перезагрузка…'));
+    AudioMgr.fan(false);
+    setTimeout(()=>location.reload(),1800);
+  },
+  shutdown(){
+    const ps=U.$('#powerScreen');
+    ps.innerHTML=''; ps.classList.remove('hidden'); ps.style.background='#000';
+    ps.append(U.el('div','sub','Питание отключено'));
+    const b=U.el('button',null,'⏻ Включить');
+    b.addEventListener('click',()=>{ ps.classList.add('hidden'); Boot.restart(); });
+    ps.appendChild(b);
+    AudioMgr.fan(false); SystemState.stop();
+  }
+};
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>Boot.init());
+else Boot.init();
+
+})(window.microOS);
+</script>
+</body>
+</html>
