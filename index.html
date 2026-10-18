@@ -7,8 +7,8 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--accent:#0078d4;--accent-rgb:0,120,212;--tb-h:46px;--radius:10px}
-html[data-theme="dark"]{--bg:#0d0d0d;--text:#fff;--dim:#a8a8a8;--win-bg:rgba(32,32,32,.9);--win-solid:#202020;--panel:rgba(28,28,28,.8);--border:rgba(255,255,255,.09);--hover:rgba(255,255,255,.07);--input:rgba(255,255,255,.06);--shadow:0 12px 40px rgba(0,0,0,.55);--shadow-sm:0 2px 10px rgba(0,0,0,.35)}
-html[data-theme="light"]{--bg:#f3f3f3;--text:#1b1b1b;--dim:#5c5c5c;--win-bg:rgba(250,250,250,.92);--win-solid:#fafafa;--panel:rgba(243,243,243,.85);--border:rgba(0,0,0,.1);--hover:rgba(0,0,0,.06);--input:rgba(0,0,0,.05);--shadow:0 12px 40px rgba(0,0,0,.25);--shadow-sm:0 2px 10px rgba(0,0,0,.12)}
+html[data-theme="dark"]{--bg:#0d0d0d;--text:#fff;--dim:#a8a8a8;--win-bg:rgba(32,32,32,.9);--win-solid:#202020;--panel:rgba(28,28,28,.82);--border:rgba(255,255,255,.09);--hover:rgba(255,255,255,.07);--input:rgba(255,255,255,.06);--shadow:0 12px 40px rgba(0,0,0,.55);--shadow-sm:0 2px 10px rgba(0,0,0,.35)}
+html[data-theme="light"]{--bg:#f3f3f3;--text:#1b1b1b;--dim:#5c5c5c;--win-bg:rgba(250,250,250,.92);--win-solid:#fafafa;--panel:rgba(243,243,243,.88);--border:rgba(0,0,0,.1);--hover:rgba(0,0,0,.06);--input:rgba(0,0,0,.05);--shadow:0 12px 40px rgba(0,0,0,.25);--shadow-sm:0 2px 10px rgba(0,0,0,.12)}
 html,body{height:100%;overflow:hidden}
 body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;user-select:none}
 button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
@@ -23,11 +23,10 @@ input:focus{border-color:var(--accent)}
 .switch.on{background:var(--accent)}
 .switch.on::after{transform:translateX(18px)}
 
-/* Edition styles */
 html[data-edition^="w10"]{--radius:2px;--accent:#0078D7;--accent-rgb:0,120,215;--shadow:0 4px 16px rgba(0,0,0,.35)}
 html[data-edition^="w10"] .window{border-radius:2px}
 html[data-edition^="w10"] .panel,html[data-edition^="w10"] .dialog,html[data-edition^="w10"] .ctx,html[data-edition^="w10"] .notif{border-radius:0}
-html[data-edition^="w10"] #tbCenter{position:static;transform:none;margin-left:8px;justify-content:flex-start}
+html[data-edition^="w10"] #tbCenter{position:static;transform:none;margin-left:8px}
 html[data-edition^="w10"] #taskbar{justify-content:flex-start}
 html[data-edition^="w10"] #tbTray{margin-left:auto}
 html[data-edition^="w10"] #startMenu{left:8px;transform:none;width:420px;height:auto;max-height:600px;padding:12px 12px 0}
@@ -36,9 +35,7 @@ html[data-edition^="w10"] #smPinnedWrap .sm-pinned{grid-template-columns:repeat(
 html[data-edition^="w10"] .lock-content{position:absolute;bottom:80px;left:60px;text-align:left}
 html[data-edition^="w10"] .lock-user{align-items:flex-start}
 html[data-edition^="w10"] #bsod .qrw{display:none!important}
-html[data-edition^="w10"] #bsod .frown{font-size:110px}
 
-/* Desktop */
 #wallpaper{position:fixed;inset:0;background-size:cover;background-position:center;z-index:0;transition:background .4s,filter .3s}
 #desktop{position:fixed;inset:0;z-index:1}
 #icons{position:absolute;inset:0}
@@ -52,7 +49,6 @@ html[data-edition^="w10"] #bsod .frown{font-size:110px}
 .dicon.unavailable .lb{opacity:.6;text-decoration:line-through}
 @keyframes pulseRed{50%{filter:drop-shadow(0 0 10px #f00) hue-rotate(-30deg)}}
 
-/* Windows */
 #winLayer{position:fixed;inset:0;z-index:10;pointer-events:none}
 .window{position:absolute;pointer-events:auto;display:flex;flex-direction:column;background:var(--win-bg);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;min-width:340px;min-height:220px;transition:opacity .18s,transform .18s,box-shadow .18s}
 .window.active{box-shadow:var(--shadow);border-color:rgba(var(--accent-rgb),.35)}
@@ -81,7 +77,6 @@ html[data-edition^="w10"] #bsod .frown{font-size:110px}
 .rz.nw{top:-3px;left:-3px;cursor:nwse-resize}
 #snapPreview{position:fixed;z-index:9;border-radius:10px;pointer-events:none;background:rgba(var(--accent-rgb),.22);border:2px solid rgba(var(--accent-rgb),.7);transition:all .12s;display:none}
 
-/* Taskbar */
 #taskbar{position:fixed;left:0;right:0;bottom:0;height:var(--tb-h);z-index:100;background:var(--panel);backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 8px}
 #tbCenter{display:flex;align-items:center;gap:4px;position:absolute;left:50%;transform:translateX(-50%)}
 .tb-btn{width:44px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;transition:background .15s}
@@ -98,8 +93,11 @@ html[data-edition^="w10"] #bsod .frown{font-size:110px}
 #trayClock .t{font-weight:500}
 #trayClock .d{font-size:10px;color:var(--dim)}
 .tray-btn.err{color:#ff5555}
+.install-btn{display:flex;align-items:center;gap:4px;background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.35)}
+.install-btn:hover{background:rgba(var(--accent-rgb),.3)}
+.install-btn .lbl-inst{font-size:11.5px;font-weight:600}
+@media(max-width:1280px){.install-btn .lbl-inst{display:none}}
 
-/* Panels */
 .panel{position:fixed;z-index:200;background:var(--panel);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);transition:opacity .18s,transform .18s;transform-origin:bottom center}
 .panel.closed{opacity:0;transform:translateY(16px) scale(.97);pointer-events:none}
 #startMenu{left:50%;bottom:calc(var(--tb-h) + 8px);transform:translateX(-50%);width:620px;max-width:calc(100vw - 24px);height:620px;max-height:calc(100vh - 90px);padding:18px 20px 0;display:flex;flex-direction:column}
@@ -108,12 +106,12 @@ html[data-edition^="w10"] #bsod .frown{font-size:110px}
 .sm-scroll{flex:1;overflow-y:auto;margin-bottom:8px}
 .sm-h{font-size:12px;font-weight:600;color:var(--dim);margin:10px 0 8px}
 .sm-pinned{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
-.sm-app{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:8px;font-size:11px;transition:background .15s;text-align:center}
+.sm-app{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:8px;font-size:11px;transition:background .15s;text-align:center;cursor:pointer}
 .sm-app:hover{background:var(--hover)}
 .sm-app .em{font-size:26px;line-height:1}
 .sm-app.unavailable{opacity:.5}
 .sm-app.unavailable .em{filter:grayscale(1)}
-.sm-row{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:6px;font-size:13px;transition:background .15s}
+.sm-row{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:6px;font-size:13px;transition:background .15s;cursor:pointer}
 .sm-row:hover{background:var(--hover)}
 .sm-row.unavailable{opacity:.5}
 .sm-row .em{font-size:19px;width:24px;text-align:center}
@@ -123,6 +121,7 @@ html[data-edition^="w10"] #bsod .frown{font-size:110px}
 .sm-avatar img{width:100%;height:100%;object-fit:cover}
 .sm-power{width:36px;height:36px;border-radius:6px;font-size:16px;display:flex;align-items:center;justify-content:center}
 .sm-power:hover{background:var(--hover)}
+
 #notifs{position:fixed;right:10px;bottom:calc(var(--tb-h) + 10px);z-index:300;display:flex;flex-direction:column;gap:8px;width:340px;pointer-events:none}
 .notif{background:var(--panel);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--border);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);animation:notifIn .24s cubic-bezier(.2,.9,.3,1);display:flex;gap:10px;pointer-events:auto;font-size:12.5px}
 .notif.out{animation:notifOut .2s forwards}
@@ -131,13 +130,11 @@ html[data-edition^="w10"] #bsod .frown{font-size:110px}
 @keyframes notifIn{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
 @keyframes notifOut{to{opacity:0;transform:translateX(60px)}}
 
-/* Context */
 .ctx{position:fixed;z-index:500;min-width:200px;padding:5px;background:var(--panel);backdrop-filter:blur(28px);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);animation:ctxIn .12s ease}
 @keyframes ctxIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
 .ctx-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:5px;font-size:13px;transition:background .12s}
 .ctx-item:hover{background:var(--hover)}
 
-/* Control Panel */
 #controlPanel{position:fixed;right:8px;top:8px;bottom:calc(var(--tb-h) + 8px);width:310px;z-index:150;background:var(--panel);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .25s cubic-bezier(.4,0,.2,1),opacity .25s;overflow:hidden}
 #controlPanel.collapsed{transform:translateX(calc(100% - 44px))}
 #controlPanel.left{right:auto;left:8px}
@@ -193,7 +190,6 @@ html[data-edition^="w10"] #bsod .frown{font-size:110px}
 #cpSettings label{display:flex;align-items:center;gap:8px;font-size:11px;padding:3px 0;justify-content:space-between}
 #cpSettings select,#cpSettings input[type=range]{padding:2px 5px;font-size:11px}
 
-/* Dialog / BSOD */
 .dialog-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;animation:fadeIn .15s}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .dialog{background:var(--win-solid);border:1px solid var(--border);border-radius:10px;min-width:380px;max-width:540px;box-shadow:var(--shadow);overflow:hidden;animation:dlgIn .2s cubic-bezier(.2,.9,.3,1);color:var(--text)}
@@ -210,6 +206,7 @@ html[data-edition^="w10"] #bsod .frown{font-size:110px}
 .dialog.ransomware .dialog-bd{background:#0d0000;color:#ff6666}
 .dialog.ransomware .dialog-ft{background:#1a0000;border-color:#3a0000}
 .dialog.ransomware .dialog-ft button{background:#330000;color:#ff8888;border-color:#5a0000}
+
 #bsod{position:fixed;inset:0;z-index:1000;background:#0078d7;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:8vh 10vw;gap:16px;font-family:'Segoe UI',sans-serif}
 #bsod .frown{font-size:88px;line-height:1;font-weight:300}
 #bsod .msg{font-size:22px;line-height:1.4;max-width:700px}
@@ -227,7 +224,6 @@ html[data-edition^="w10"] #bsod .frown{font-size:110px}
 #powerScreen button{margin-top:16px;padding:10px 36px;border-radius:22px;background:#fff;color:#000;font-weight:600}
 #fadeBlack{position:fixed;inset:0;z-index:900;background:#000;opacity:0;pointer-events:none;transition:opacity .15s}
 
-/* Incident effects */
 body.shaking #desktop,body.shaking #winLayer{animation:shake .15s infinite}
 @keyframes shake{25%{transform:translate(-2px,1px)}50%{transform:translate(2px,-1px)}75%{transform:translate(1px,2px)}}
 body.redPulse::after{content:'';position:fixed;inset:0;z-index:60;pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent 40%,rgba(255,0,0,.35) 100%);animation:redPulse 1.2s infinite}
@@ -247,7 +243,6 @@ body.kbFail #kbOverlay{display:block}
 #mouseBlock::after{content:'🖱  Устройство указывающее не отвечает';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);padding:10px 20px;background:rgba(231,76,60,.9);color:#fff;border-radius:8px;font-size:13px;font-weight:600}
 body.mouseFail #mouseBlock{display:block}
 
-/* Apps */
 .toolbar{display:flex;align-items:center;gap:4px;padding:6px 8px;flex-wrap:wrap;border-bottom:1px solid var(--border);flex:none;background:rgba(128,128,128,.05)}
 .tbtn{min-width:30px;height:28px;padding:0 8px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12.5px;transition:background .15s}
 .tbtn:hover{background:var(--hover)}
@@ -327,7 +322,6 @@ body.mouseFail #mouseBlock{display:block}
 .bin-item .meta small{display:block;color:var(--dim);font-size:11px}
 .bin-empty{text-align:center;color:var(--dim);padding:60px 20px;font-size:13px}
 
-/* OOBE */
 #oobe{position:fixed;inset:0;z-index:2000;background:radial-gradient(circle at 30% 40%,#1a5eb8 0%,#0e3a7a 50%,#051a3f 100%);color:#fff;display:flex;flex-direction:column;font-family:'Segoe UI',sans-serif;transition:opacity .5s}
 #oobe.hidden{display:none}
 .oobe-dots{display:flex;gap:8px;position:absolute;top:24px;left:50%;transform:translateX(-50%);z-index:5}
@@ -392,13 +386,11 @@ body.mouseFail #mouseBlock{display:block}
 .oobe-accent.sel{border-color:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
 .oobe-switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1)}
 .oobe-switch-row b{font-size:13px;display:block;font-weight:600}
-.oobe-switch-row small{font-size:11.5px;opacity:.7;display:block;margin-top:2px}
 .oobe-summary{max-width:440px;margin:0 auto 24px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:16px 20px;font-size:13px;text-align:left}
 .oobe-summary div{padding:6px 0;display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08)}
 .oobe-summary div:last-child{border-bottom:none}
 .oobe-summary .v{font-weight:600}
 
-/* Edition selection cards */
 .edition-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px auto;max-width:1100px;width:100%}
 @media(max-width:900px){.edition-grid{grid-template-columns:1fr 1fr}}
 .edition-card{position:relative;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;text-align:left;display:flex;flex-direction:column;gap:8px}
@@ -416,10 +408,7 @@ body.mouseFail #mouseBlock{display:block}
 .edition-card .ed-features li{display:flex;align-items:center;gap:5px}
 .edition-card .ed-features .ok{color:#6be07b}
 .edition-card .ed-features .no{color:#a0a0a0;opacity:.7}
-.edition-card .ed-more{background:none;border:none;color:#7cc4ff;font-size:11px;cursor:pointer;text-decoration:underline;padding:4px 0;text-align:left}
-.edition-card .ed-more:hover{color:#fff}
 
-/* Lock Screen */
 #lockScreen{position:fixed;inset:0;z-index:1500;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#1a5eb8 0%,#0a2040 70%,#020814 100%);color:#fff;transition:opacity .35s,transform .35s}
 #lockScreen.hidden{opacity:0;transform:scale(1.05);pointer-events:none}
 .lock-content{text-align:center;animation:lockIn .6s cubic-bezier(.2,.9,.3,1)}
@@ -439,11 +428,60 @@ body.mouseFail #mouseBlock{display:block}
 .lock-enter{padding:10px 34px;border-radius:22px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:14px;cursor:pointer;backdrop-filter:blur(10px)}
 .lock-err{color:#ff8b8b;font-size:12.5px;min-height:16px;margin-top:4px}
 .lock-hint{font-size:12px;opacity:.6;margin-top:4px}
+
+#dropOverlay{position:fixed;inset:0;z-index:900;background:rgba(var(--accent-rgb),.25);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;pointer-events:none}
+#dropOverlay.hidden{display:none}
+.drop-zone{border:3px dashed #fff;border-radius:20px;padding:60px 80px;text-align:center;color:#fff;background:rgba(0,0,0,.35);animation:dropPulse 1.2s infinite}
+@keyframes dropPulse{50%{transform:scale(1.03)}}
+.drop-icon{font-size:72px;margin-bottom:12px}
+.drop-text{font-size:20px;font-weight:600}
+
+.inst-overlay{position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;animation:fadeIn .18s}
+.inst-dialog{background:var(--win-solid);border:1px solid var(--border);border-radius:10px;min-width:480px;max-width:560px;box-shadow:var(--shadow);overflow:hidden;animation:dlgIn .24s cubic-bezier(.2,.9,.3,1);color:var(--text)}
+.inst-head{padding:14px 18px;background:linear-gradient(135deg,rgba(var(--accent-rgb),.15),rgba(var(--accent-rgb),.05));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.inst-head .em{font-size:26px}
+.inst-head h3{font-size:14.5px;font-weight:600;margin:0;flex:1}
+.inst-body{padding:18px 20px;font-size:13px;line-height:1.55;max-height:60vh;overflow-y:auto}
+.inst-foot{padding:12px 18px;display:flex;justify-content:flex-end;gap:8px;background:rgba(128,128,128,.05);border-top:1px solid var(--border)}
+.inst-foot button{padding:7px 20px;border-radius:6px;border:1px solid var(--border);background:var(--input);font-size:12.5px;cursor:pointer;transition:background .15s}
+.inst-foot button:hover{background:var(--hover)}
+.inst-foot button.primary{background:var(--accent);color:#fff;border-color:transparent;font-weight:500}
+.inst-foot button:disabled{opacity:.4;cursor:not-allowed}
+.inst-file-info{display:flex;gap:14px;padding:12px;background:var(--input);border:1px solid var(--border);border-radius:8px;margin-bottom:12px}
+.inst-file-info .em{font-size:44px}
+.inst-file-info .meta{flex:1;min-width:0}
+.inst-file-info .nm{font-size:13.5px;font-weight:600;word-break:break-all;margin-bottom:4px}
+.inst-file-info .sub{font-size:11.5px;color:var(--dim);margin-top:2px}
+.inst-file-info .sig-ok{color:#2ecc71;font-weight:600}
+.inst-file-info .sig-bad{color:#e74c3c;font-weight:600}
+.inst-steps{list-style:none;padding:0;margin:8px 0}
+.inst-steps li{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12.5px;color:var(--dim)}
+.inst-steps li.done{color:var(--text)}
+.inst-steps li.done::before{content:'✓';color:#2ecc71;font-weight:700}
+.inst-steps li.active{color:var(--accent);font-weight:600}
+.inst-steps li.active::before{content:'●';color:var(--accent)}
+.inst-steps li:not(.done):not(.active)::before{content:'○';color:var(--dim)}
+.inst-progress{height:10px;border-radius:5px;background:var(--input);overflow:hidden;margin:12px 0}
+.inst-progress > div{height:100%;width:0;background:linear-gradient(90deg,var(--accent),rgba(var(--accent-rgb),.7));transition:width .3s;border-radius:5px}
+.inst-pct{text-align:right;font-size:11.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+.inst-result{padding:24px;text-align:center}
+.inst-result .em{font-size:56px;display:block;margin-bottom:12px}
+.inst-result h3{font-size:16px;margin-bottom:6px}
+.inst-result p{font-size:12.5px;color:var(--dim)}
+.uac-dialog{background:#f0f6ff;color:#000;border-radius:8px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.6);overflow:hidden;border:1px solid #1a73e8;animation:dlgIn .22s}
+.uac-dialog.unsigned{background:#fff8e7;border-color:#c98910}
+.uac-hdr{padding:16px 20px;background:#1a73e8;color:#fff;display:flex;align-items:center;gap:10px;font-weight:600}
+.uac-dialog.unsigned .uac-hdr{background:#c98910}
+.uac-body{padding:20px;color:#000;font-size:13px;line-height:1.55}
+.uac-body .uac-program{font-size:12px;color:#444;padding:4px 0}
+.uac-foot{padding:12px 20px;background:#f5f5f5;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid #ddd}
+.uac-foot button{padding:8px 22px;border-radius:4px;border:1px solid #ccc;background:#fff;color:#000;cursor:pointer;font-size:12.5px}
+.uac-foot button.yes{background:#1a73e8;color:#fff;border-color:transparent;font-weight:600}
+.uac-dialog.unsigned .uac-foot button.yes{background:#e0a800;color:#000}
 </style>
 </head>
 <body>
 
-<!-- OOBE -->
 <div id="oobe" class="hidden">
   <button class="oobe-skip" id="oobeSkip">⚡ Быстрая настройка</button>
   <div class="oobe-dots" id="oobeDots"></div>
@@ -454,7 +492,6 @@ body.mouseFail #mouseBlock{display:block}
   </div>
 </div>
 
-<!-- Lock Screen -->
 <div id="lockScreen" class="hidden">
   <div class="lock-content">
     <div class="lock-time" id="lockTime">00:00</div>
@@ -473,7 +510,6 @@ body.mouseFail #mouseBlock{display:block}
   </div>
 </div>
 
-<!-- Desktop -->
 <div id="wallpaper"></div>
 <div id="desktop"><div id="icons"></div></div>
 <div id="winLayer"></div>
@@ -481,18 +517,18 @@ body.mouseFail #mouseBlock{display:block}
 <div id="snapPreview"></div>
 <div id="kbOverlay">⌨  Клавиатура не найдена — ввод недоступен</div>
 <div id="mouseBlock"></div>
+<div id="dropOverlay" class="hidden"><div class="drop-zone"><div class="drop-icon">📥</div><div class="drop-text">Отпустите файл для установки</div></div></div>
 
-<!-- Taskbar -->
 <div id="taskbar">
   <div id="tbCenter"></div>
   <div id="tbTray">
+    <button class="tray-btn install-btn" id="trayInstall" title="Установить файл">📥<span class="lbl-inst">Установить</span></button>
     <button class="tray-btn" id="trayWifi" title="Сеть">📶</button>
     <button class="tray-btn" id="trayVol" title="Звук">🔊</button>
     <button class="tray-btn" id="trayClock"><span class="t"></span><span class="d"></span></button>
   </div>
 </div>
 
-<!-- Start Menu -->
 <div class="panel closed" id="startMenu">
   <div class="sm-search"><input type="text" id="smSearch" placeholder="🔍  Поиск приложений"></div>
   <div class="sm-scroll">
@@ -506,7 +542,6 @@ body.mouseFail #mouseBlock{display:block}
   </div>
 </div>
 
-<!-- Control Panel -->
 <div id="controlPanel">
   <div id="cpHeader">
     <div id="cpStatus"></div>
@@ -516,7 +551,7 @@ body.mouseFail #mouseBlock{display:block}
   </div>
   <div id="cpSearchWrap">
     <input type="text" id="cpSearch" placeholder="🔍 Поиск сбоя…">
-    <label id="cpFilter"><input type="checkbox" id="cpFilterCb"> Только доступные в редакции</label>
+    <label id="cpFilter"><input type="checkbox" id="cpFilterCb"> Только доступные</label>
   </div>
   <div id="cpBody"></div>
   <div id="cpSettings"></div>
@@ -527,6 +562,7 @@ body.mouseFail #mouseBlock{display:block}
 <div id="bsod" class="hidden"></div>
 <div id="powerScreen" class="hidden"></div>
 <div id="fadeBlack"></div>
+<input type="file" id="installFileInput" style="display:none">
 
 <script>
 'use strict';
@@ -557,11 +593,11 @@ const WALLPAPERS = M.WALLPAPERS = {
 };
 
 const EDITIONS = M.EDITIONS = {
-  'w10-base':{name:'microOS 10 (Базовая)',short:'10 Base',ver:'10',logoClass:'base',desc:'Простая версия для слабых ПК.',features:[{ok:true,text:'Светлая тема'},{ok:true,text:'Базовые приложения'},{ok:false,text:'Тёмная тема'},{ok:false,text:'Терминал, Магазин'}],accent:'#0078D7',apps:['explorer','notepad','calculator','browser','recycle'],terminal:false,store:false,taskmgr:false,snap:false,maxWindows:3,themes:['light'],build:'19045.3803',pro:false},
-  'w10-home':{name:'microOS 10 Домашняя',short:'10 Home',ver:'10',logoClass:'w10',desc:'Для дома. Базовые функции Windows 10.',features:[{ok:true,text:'Светлая / тёмная'},{ok:true,text:'Диспетчер задач'},{ok:true,text:'Терминал (ограничен)'},{ok:false,text:'Магазин'}],accent:'#0078D7',apps:['explorer','notepad','calculator','browser','recycle','taskmgr','terminal'],terminal:'limited',store:false,taskmgr:true,snap:false,maxWindows:5,themes:['light','dark'],build:'19045.3803',pro:false},
-  'w10-pro':{name:'microOS 10 Pro',short:'10 Pro',ver:'10',logoClass:'w10',desc:'Профессиональная редакция.',features:[{ok:true,text:'Все приложения'},{ok:true,text:'Полный терминал'},{ok:true,text:'Магазин + Snap'},{ok:true,text:'Все происшествия'}],accent:'#0078D7',apps:['explorer','notepad','calculator','browser','recycle','taskmgr','terminal','store','settings'],terminal:'full',store:true,taskmgr:true,snap:true,maxWindows:99,themes:['light','dark'],build:'19045.3803',pro:true},
-  'w11-home':{name:'microOS 11 Домашняя',short:'11 Home',ver:'11',logoClass:'w11',desc:'Современный дизайн Windows 11.',features:[{ok:true,text:'Fluent Design'},{ok:true,text:'Snap Layouts'},{ok:false,text:'Терминал, Магазин'},{ok:false,text:'Диспетчер (ограничен)'}],accent:'#0078D4',apps:['explorer','notepad','calculator','browser','recycle','taskmgr'],terminal:false,store:false,taskmgr:'lite',snap:true,maxWindows:99,themes:['light','dark'],build:'22631.4317',pro:false},
-  'w11-pro':{name:'microOS 11 Pro',short:'11 Pro',ver:'11',logoClass:'w11',desc:'Полная Windows 11.',features:[{ok:true,text:'Все приложения'},{ok:true,text:'Полный терминал'},{ok:true,text:'Все происшествия'},{ok:true,text:'Snap + магазин'}],accent:'#0078D4',apps:['explorer','notepad','calculator','browser','recycle','taskmgr','terminal','store','settings'],terminal:'full',store:true,taskmgr:true,snap:true,maxWindows:99,themes:['light','dark'],build:'22631.4317',pro:true}
+  'w10-base':{name:'microOS 10 (Базовая)',short:'10 Base',ver:'10',logoClass:'base',desc:'Простая версия для слабых ПК.',features:[{ok:true,text:'Светлая тема'},{ok:true,text:'Базовые приложения'},{ok:false,text:'Тёмная тема'},{ok:false,text:'Терминал'}],accent:'#0078D7',apps:['explorer','notepad','calculator','browser','recycle'],terminal:false,store:false,taskmgr:false,snap:false,maxWindows:3,themes:['light'],build:'19045.3803',pro:false},
+  'w10-home':{name:'microOS 10 Домашняя',short:'10 Home',ver:'10',logoClass:'w10',desc:'Для дома. Базовые функции.',features:[{ok:true,text:'Светлая/тёмная'},{ok:true,text:'Диспетчер'},{ok:true,text:'Терминал (огранич.)'},{ok:false,text:'Магазин'}],accent:'#0078D7',apps:['explorer','notepad','calculator','browser','recycle','taskmgr','terminal'],terminal:'limited',store:false,taskmgr:true,snap:false,maxWindows:5,themes:['light','dark'],build:'19045.3803',pro:false},
+  'w10-pro':{name:'microOS 10 Pro',short:'10 Pro',ver:'10',logoClass:'w10',desc:'Профессиональная редакция.',features:[{ok:true,text:'Все приложения'},{ok:true,text:'Полный терминал'},{ok:true,text:'Магазин + Snap'},{ok:true,text:'Все сбои'}],accent:'#0078D7',apps:['explorer','notepad','calculator','browser','recycle','taskmgr','terminal','store','settings'],terminal:'full',store:true,taskmgr:true,snap:true,maxWindows:99,themes:['light','dark'],build:'19045.3803',pro:true},
+  'w11-home':{name:'microOS 11 Домашняя',short:'11 Home',ver:'11',logoClass:'w11',desc:'Современный дизайн.',features:[{ok:true,text:'Fluent Design'},{ok:true,text:'Snap Layouts'},{ok:false,text:'Терминал'},{ok:false,text:'Магазин'}],accent:'#0078D4',apps:['explorer','notepad','calculator','browser','recycle','taskmgr'],terminal:false,store:false,taskmgr:'lite',snap:true,maxWindows:99,themes:['light','dark'],build:'22631.4317',pro:false},
+  'w11-pro':{name:'microOS 11 Pro',short:'11 Pro',ver:'11',logoClass:'w11',desc:'Полная версия.',features:[{ok:true,text:'Все приложения'},{ok:true,text:'Полный терминал'},{ok:true,text:'Все сбои'},{ok:true,text:'Snap + магазин'}],accent:'#0078D4',apps:['explorer','notepad','calculator','browser','recycle','taskmgr','terminal','store','settings'],terminal:'full',store:true,taskmgr:true,snap:true,maxWindows:99,themes:['light','dark'],build:'22631.4317',pro:true}
 };
 
 const Edition = M.Edition = {
@@ -586,7 +622,12 @@ const Edition = M.Edition = {
     const badge=U.$('#cpEditionBadge');
     if(badge) badge.textContent=ed.short;
   },
-  isAppAllowed(id){ const ed=this.get(); return !ed.apps || ed.apps.includes(id); },
+  isAppAllowed(id){
+    const ed=this.get();
+    if(!ed.apps) return true;
+    if(String(id).startsWith('installed_')) return true;
+    return ed.apps.includes(id);
+  },
   isIncidentAllowed(inc){ return !inc.editions || inc.editions.includes(this.current); },
   getBuild(){ return this.get().build; }
 };
@@ -601,9 +642,6 @@ const Settings = M.Settings = {
   apply(){
     const d=this.data;
     document.documentElement.dataset.theme=d.theme;
-    if(d.accent && !Edition.get().accent){
-      document.documentElement.style.setProperty('--accent',d.accent);
-    }
     const wp=document.getElementById('wallpaper');
     if(!wp) return;
     if(d.wallpaper==='custom'&&d.customWallpaper) wp.style.backgroundImage=`url(${d.customWallpaper})`;
@@ -735,7 +773,7 @@ const ErrorMgr = M.ErrorMgr = {
     const el=U.$('#bsod'); el.innerHTML=''; el.classList.remove('hidden');
     el.append(
       U.el('div','frown',':('),
-      U.el('div','msg','Ваш компьютер столкнулся с проблемой и будет перезагружен. Сбор данных об ошибке…'),
+      U.el('div','msg','Ваш компьютер столкнулся с проблемой и будет перезагружен. Сбор данных…'),
       U.el('div','code','Код ошибки: '+code)
     );
     if(!isW10){
@@ -794,6 +832,26 @@ const ErrorMgr = M.ErrorMgr = {
       svg.append(a,b,c);
     });
     return svg;
+  },
+  uacPrompt(opts){
+    AudioMgr.alert();
+    const ov=U.el('div','inst-overlay');
+    const dlg=U.el('div','uac-dialog'+(opts.signed?'':' unsigned'));
+    const hdr=U.el('div','uac-hdr');
+    hdr.append(U.el('span',null,opts.signed?'🛡️':'⚠️'),U.el('span',null,opts.signed?'Приложение проверено':'Неизвестный издатель'));
+    const bd=U.el('div','uac-body');
+    const msg=U.el('div',null,opts.signed?'Разрешить этому приложению установку?':'Разрешить этому неизвестному приложению вносить изменения?');
+    msg.style.fontSize='13px'; msg.style.marginBottom='12px';
+    bd.appendChild(msg);
+    bd.append(U.el('div','uac-program','📦 '+opts.name),U.el('div','uac-program','🏢 '+(opts.publisher||'Неизвестный')));
+    const ft=U.el('div','uac-foot');
+    const no=U.el('button',null,'Нет'); no.addEventListener('click',()=>{ ov.remove(); opts.onDeny&&opts.onDeny(); });
+    const yes=U.el('button','yes','Да'); yes.addEventListener('click',()=>{ ov.remove(); opts.onAllow&&opts.onAllow(); });
+    ft.append(no,yes);
+    dlg.append(hdr,bd,ft); ov.appendChild(dlg); document.body.appendChild(ov);
+  },
+  installError(code,message,onClose){
+    this.dialog({title:'Ошибка установки',icon:'❌',message:message,detail:'Код ошибки: '+code,buttons:[{label:'ОК',primary:true,onClose}]});
   }
 };
 
@@ -904,8 +962,7 @@ function startDrag(e,win,api){
   const move=ev=>{
     win.style.left=(sl+ev.clientX-sx)+'px';
     win.style.top=Math.max(0,st+ev.clientY-sy)+'px';
-    const ed=Edition.get();
-    if(ed.snap){
+    if(Edition.get().snap){
       const nearL=ev.clientX<8,nearR=ev.clientX>window.innerWidth-8;
       if(nearL||nearR){
         snapped=nearL?'left':'right';
@@ -956,12 +1013,12 @@ const Apps = M.Apps = {
   open(id,arg){
     const a=this.registry[id]; if(!a)return;
     if(!Edition.isAppAllowed(id)){
-      ErrorMgr.dialog({title:'Недоступно',icon:'🔒',message:`Приложение «${a.name}» недоступно в редакции «${Edition.get().name}».`,detail:'Обновитесь до Pro-редакции.',buttons:[{label:'Понятно',primary:true}]});
+      ErrorMgr.dialog({title:'Недоступно',icon:'🔒',message:`Приложение «${a.name}» недоступно в редакции «${Edition.get().name}».`,detail:'Обновитесь до Pro.',buttons:[{label:'Понятно',primary:true}]});
       return;
     }
     const ed=Edition.get();
     if(ed.maxWindows && ed.maxWindows<99 && WM.wins.length>=ed.maxWindows){
-      ErrorMgr.dialog({title:'Достигнут лимит редакции',icon:'⚠️',message:`Редакция «${ed.name}» поддерживает не более ${ed.maxWindows} окон.`,detail:'Закройте окно или обновитесь до Pro.',buttons:[{label:'ОК',primary:true}]});
+      ErrorMgr.dialog({title:'Лимит редакции',icon:'⚠️',message:`Редакция «${ed.name}» поддерживает не более ${ed.maxWindows} окон.`,buttons:[{label:'ОК',primary:true}]});
       return;
     }
     const existing=WM.findApp(id);
@@ -974,11 +1031,21 @@ const FS = M.FS = {
   root:null,trash:[],
   load(){ this.root=U.lsGet('fs',null); this.trash=U.lsGet('trash',[]); if(!this.root||!this.root.children) this.reset(); },
   reset(){
+    const uname=(M.UserSession&&M.UserSession.name)||'User';
     this.root={name:'microOS',type:'folder',children:[
+      {name:'Program Files',type:'folder',children:[]},
+      {name:'Windows',type:'folder',children:[]},
+      {name:'Users',type:'folder',children:[{name:uname,type:'folder',children:[
+        {name:'Documents',type:'folder',children:[{name:'readme.txt',type:'file',content:'Добро пожаловать в microOS!'}]},
+        {name:'Downloads',type:'folder',children:[]},
+        {name:'Pictures',type:'folder',children:[]},
+        {name:'Music',type:'folder',children:[]}
+      ]}]},
       {name:'Рабочий стол',type:'folder',children:[]},
       {name:'Документы',type:'folder',children:[{name:'readme.txt',type:'file',content:'Добро пожаловать в microOS!'}]},
       {name:'Загрузки',type:'folder',children:[]},
-      {name:'Изображения',type:'folder',children:[]}
+      {name:'Изображения',type:'folder',children:[]},
+      {name:'Музыка',type:'folder',children:[]}
     ]};
     this.trash=[]; this.save();
   },
@@ -993,82 +1060,91 @@ const FS = M.FS = {
   removePermanent(i){ if(i<0||i>=this.trash.length)return false; this.trash.splice(i,1); this.saveTrash(); return true; }
 };
 
-/* ===== 60 INCIDENTS ===== */
+/* ===== 80 INCIDENTS ===== */
 const INCIDENTS = M.INCIDENTS = [
-  // Hardware 1-8
   {id:'cpuFire',cat:'hardware',em:'🔥',name:'Пожар CPU',sub:'→100°C',code:'0x0000007F'},
-  {id:'powerSurge',cat:'hardware',em:'⚡',name:'Скачок',sub:'мигание',code:'0x00000080'},
-  {id:'powerOut',cat:'hardware',em:'🔌',name:'Отключение',sub:'перезагрузка',code:'0x0000009F'},
-  {id:'kbFail',cat:'hardware',em:'⌨️',name:'Клавиатура',sub:'блок',code:'0x0000000A'},
-  {id:'mouseFail',cat:'hardware',em:'🖱️',name:'Мышь',sub:'блок',code:'0x0000000A'},
-  {id:'gpuOverheat',cat:'hardware',em:'🌀',name:'Перегрев GPU',sub:'артефакты',code:'0x00000116'},
-  {id:'powerSupplyHeat',cat:'hardware',em:'🔥',name:'Перегрев БП',sub:'выкл',code:'0x00000124'},
-  {id:'freeze',cat:'hardware',em:'🧊',name:'Заморозка',sub:'5 сек',code:'0x000000F4'},
-  // Hardware 26-30
-  {id:'usbFail',cat:'hardware',em:'🔌',name:'Отказ USB',sub:'Код 43',code:'0x0000002B'},
-  {id:'screenFlicker',cat:'hardware',em:'🖥️',name:'Мигание',sub:'5 Гц',code:'0x00000A0C'},
-  {id:'batterySwelling',cat:'hardware',em:'🔋',name:'Батарея',sub:'вздутие',code:'0x0000001E'},
-  {id:'thermoSensorFail',cat:'hardware',em:'🌡️',name:'Термодатчик',sub:'—°C',code:'0x0000002C'},
-  {id:'powerGridSpike',cat:'hardware',em:'💥',name:'Сеть',sub:'POST',code:'0x0000007A'},
-  // Software 9-14
+  {id:'powerSurge',cat:'hardware',em:'⚡',name:'Скачок',sub:'',code:'0x00000080'},
+  {id:'powerOut',cat:'hardware',em:'🔌',name:'Отключение',sub:'',code:'0x0000009F'},
+  {id:'kbFail',cat:'hardware',em:'⌨️',name:'Клавиатура',sub:'',code:'0x0000000A'},
+  {id:'mouseFail',cat:'hardware',em:'🖱️',name:'Мышь',sub:'',code:'0x0000000A'},
+  {id:'gpuOverheat',cat:'hardware',em:'🌀',name:'Перегрев GPU',sub:'',code:'0x00000116'},
+  {id:'powerSupplyHeat',cat:'hardware',em:'🔥',name:'Перегрев БП',sub:'',code:'0x00000124'},
+  {id:'freeze',cat:'hardware',em:'🧊',name:'Заморозка',sub:'',code:'0x000000F4'},
+  {id:'usbFail',cat:'hardware',em:'🔌',name:'Отказ USB',sub:'',code:'0x0000002B'},
+  {id:'screenFlicker',cat:'hardware',em:'🖥️',name:'Мигание',sub:'',code:'0x00000A0C'},
+  {id:'batterySwelling',cat:'hardware',em:'🔋',name:'Батарея',sub:'',code:'0x0000001E'},
+  {id:'thermoSensorFail',cat:'hardware',em:'🌡️',name:'Термодатчик',sub:'',code:'0x0000002C'},
+  {id:'powerGridSpike',cat:'hardware',em:'💥',name:'Сеть',sub:'',code:'0x0000007A'},
+  {id:'bluetoothFail',cat:'hardware',em:'📡',name:'Bluetooth',sub:'',code:'0x0000002B'},
+  {id:'speakerDistort',cat:'hardware',em:'🔊',name:'Хрип звука',sub:'',code:'0x0000000A'},
+  {id:'stuckKeys',cat:'hardware',em:'⌨️',name:'Залипание',sub:'',code:'0x0000000A'},
+  {id:'cursorRunaway',cat:'hardware',em:'🖲️',name:'Убегает',sub:'',code:'0x0000000A'},
   {id:'ramFill',cat:'software',em:'🧠',name:'RAM 100%',sub:'',code:'0x0000001A'},
   {id:'memoryLeak',cat:'software',em:'📉',name:'Утечка RAM',sub:'',code:'0x0000000E'},
-  {id:'fsCrash',cat:'software',em:'📂',name:'Сбой ФС',sub:'битые',code:'0x80070570'},
-  {id:'explorerHang',cat:'software',em:'🌀',name:'Зависание',sub:'проводник',code:'0x80004004'},
+  {id:'fsCrash',cat:'software',em:'📂',name:'Сбой ФС',sub:'',code:'0x80070570'},
+  {id:'explorerHang',cat:'software',em:'🌀',name:'Зависание',sub:'',code:'0x80004004'},
   {id:'registryCrash',cat:'software',em:'🗄',name:'Реестр',sub:'',code:'0x80070002'},
-  {id:'updateFail',cat:'software',em:'💥',name:'Обновление',sub:'откат',code:'0x800F0922'},
-  // Software 31-40
+  {id:'updateFail',cat:'software',em:'💥',name:'Обновление',sub:'',code:'0x800F0922'},
   {id:'dataLoss',cat:'software',em:'📝',name:'Потеря данных',sub:'',code:'0x8007000D'},
   {id:'appCrash',cat:'software',em:'🧩',name:'Сбой приложения',sub:'',code:'0xC0000005'},
-  {id:'bootLoop',cat:'software',em:'🔄',name:'Загрузка',sub:'loop',code:'0xC000021A'},
-  {id:'appConflict',cat:'software',em:'🎯',name:'Конфликт',sub:'X vs Y',code:'0x8007006E'},
-  {id:'recycleOverflow',cat:'software',em:'📦',name:'Корзина',sub:'full',code:'0x80070070'},
+  {id:'bootLoop',cat:'software',em:'🔄',name:'Загрузка',sub:'',code:'0xC000021A'},
+  {id:'appConflict',cat:'software',em:'🎯',name:'Конфликт',sub:'',code:'0x8007006E'},
+  {id:'recycleOverflow',cat:'software',em:'📦',name:'Корзина',sub:'',code:'0x80070070'},
   {id:'gameHang',cat:'software',em:'🕹️',name:'Зависание игры',sub:'',code:'0x80004004'},
   {id:'codecFail',cat:'software',em:'🎬',name:'Кодек',sub:'',code:'0x80004005'},
-  {id:'audioCorrupt',cat:'software',em:'🎵',name:'Аудио',sub:'искаж',code:'0x80041317'},
-  {id:'thumbnailFail',cat:'software',em:'🖼️',name:'Миниатюры',sub:'?',code:'0x8007000E'},
-  {id:'clipboardFail',cat:'software',em:'📄',name:'Буфер',sub:'c/v',code:'0x8007052E'},
-  // Network 15-16
+  {id:'audioCorrupt',cat:'software',em:'🎵',name:'Аудио',sub:'',code:'0x80041317'},
+  {id:'thumbnailFail',cat:'software',em:'🖼️',name:'Миниатюры',sub:'',code:'0x8007000E'},
+  {id:'clipboardFail',cat:'software',em:'📄',name:'Буфер',sub:'',code:'0x8007052E'},
+  {id:'corruptInstaller',cat:'install',em:'🚫',name:'Повреждённый уст.',sub:'',code:'0x80070570'},
+  {id:'installBlocked',cat:'install',em:'🔒',name:'Установка блок.',sub:'',code:'0x800704EC',editions:['w10-home','w11-home']},
+  {id:'virusInstall',cat:'install',em:'🧬',name:'Установка вируса',sub:'',code:'0x000000C1'},
+  {id:'diskFullInstall',cat:'install',em:'💾',name:'Мало места',sub:'',code:'0x80070070'},
+  {id:'overwriteSystem',cat:'install',em:'🔄',name:'Повреждение сист.',sub:'',code:'0xC000021A'},
+  {id:'antivirusBlock',cat:'install',em:'🛡️',name:'Антивирус',sub:'',code:'0x800704EC'},
+  {id:'uninstallFail',cat:'install',em:'💥',name:'Сбой деинст.',sub:'',code:'0x800700AA'},
+  {id:'registryWreck',cat:'install',em:'🧹',name:'Реестр сломан',sub:'',code:'0x800703F1'},
   {id:'netLoss',cat:'network',em:'🌐',name:'Потеря сети',sub:'',code:'0x80072EE2'},
-  {id:'ddos',cat:'network',em:'🌐',name:'DDoS',sub:'1M/сек',code:'0x80072EFD'},
-  // Network 41-44
-  {id:'wifiDriverFail',cat:'network',em:'🛜',name:'Wi-Fi',sub:'драйвер',code:'0x0000000A'},
-  {id:'dnsAttack',cat:'network',em:'🌍',name:'DNS',sub:'фейк',code:'0x80072548'},
-  {id:'networkCongestion',cat:'network',em:'📡',name:'Перегрузка',sub:'2000мс',code:'0x80070079'},
-  {id:'updateServerDDoS',cat:'network',em:'🔥',name:'Сервер обн.',sub:'DDoS',code:'0x80072EFD'},
-  // Security 17-18
+  {id:'ddos',cat:'network',em:'🌐',name:'DDoS',sub:'',code:'0x80072EFD'},
+  {id:'wifiDriverFail',cat:'network',em:'🛜',name:'Wi-Fi',sub:'',code:'0x0000000A'},
+  {id:'dnsAttack',cat:'network',em:'🌍',name:'DNS',sub:'',code:'0x80072548'},
+  {id:'networkCongestion',cat:'network',em:'📡',name:'Перегрузка',sub:'',code:'0x80070079'},
+  {id:'updateServerDDoS',cat:'network',em:'🔥',name:'Сервер обн.',sub:'',code:'0x80072EFD'},
+  {id:'dnsHijack',cat:'network',em:'🎭',name:'Подмена DNS',sub:'',code:'0x80072548'},
+  {id:'packetLoss',cat:'network',em:'📶',name:'Потеря пакетов',sub:'',code:'0x80070079'},
+  {id:'mitmAttack',cat:'network',em:'🔐',name:'MITM',sub:'',code:'0x800B0109'},
   {id:'virus',cat:'security',em:'🦠',name:'Вирус',sub:'',code:'0x000000C1'},
   {id:'hacker',cat:'security',em:'🔐',name:'Хакер',sub:'',code:'0x000000C2'},
-  // Security 45-49
   {id:'phishing',cat:'security',em:'🎣',name:'Фишинг',sub:'',code:'0x8007052E'},
-  {id:'ransomwareFiles',cat:'security',em:'🔒',name:'Шифровальщик',sub:'.enc',code:'0x000000C2'},
-  {id:'spyCam',cat:'security',em:'👁️',name:'Слежка',sub:'камера',code:'0x80070005'},
+  {id:'ransomwareFiles',cat:'security',em:'🔒',name:'Шифровальщик',sub:'',code:'0x000000C2'},
+  {id:'spyCam',cat:'security',em:'👁️',name:'Слежка',sub:'',code:'0x80070005'},
   {id:'trojan',cat:'security',em:'🧨',name:'Троян',sub:'',code:'0x000000C1'},
-  {id:'fbiRansom',cat:'security',em:'🕵️',name:'ФБР',sub:'шутка',code:'0x000000C2'},
-  // Drivers 19-22
+  {id:'fbiRansom',cat:'security',em:'🕵️',name:'ФБР',sub:'',code:'0x000000C2'},
   {id:'videoCrash',cat:'drivers',em:'🖥️',name:'Видео',sub:'',code:'0x00000116'},
   {id:'colorFail',cat:'drivers',em:'🎨',name:'Цвет',sub:'',code:'0x00000A0C'},
   {id:'audioFail',cat:'drivers',em:'🔊',name:'Звук',sub:'',code:'0x0000000A'},
   {id:'printerFail',cat:'drivers',em:'🖨️',name:'Печать',sub:'',code:'0x00000709'},
-  // Drivers 50-53
-  {id:'printSpooler',cat:'drivers',em:'🖨️',name:'Очередь',sub:'999',code:'0x00000709'},
-  {id:'touchpadFail',cat:'drivers',em:'🖱️',name:'Тачпад',sub:'рывки',code:'0x0000000A'},
+  {id:'printSpooler',cat:'drivers',em:'🖨️',name:'Очередь',sub:'',code:'0x00000709'},
+  {id:'touchpadFail',cat:'drivers',em:'🖱️',name:'Тачпад',sub:'',code:'0x0000000A'},
   {id:'gamepadFail',cat:'drivers',em:'🎮',name:'Геймпад',sub:'',code:'0x0000000A'},
-  {id:'soundCardFail',cat:'drivers',em:'🔊',name:'Звук. карта',sub:'тишина',code:'0x0000000A'},
-  // System 23-25
-  {id:'kernelCrash',cat:'system',em:'🧨',name:'Сбой ядра',sub:'BSOD',code:'0x0000001E'},
+  {id:'soundCardFail',cat:'drivers',em:'🔊',name:'Звук. карта',sub:'',code:'0x0000000A'},
+  {id:'kernelCrash',cat:'system',em:'🧨',name:'Сбой ядра',sub:'',code:'0x0000001E'},
   {id:'timeFail',cat:'system',em:'⏰',name:'Время',sub:'',code:'0x800705B4'},
-  {id:'diskFill',cat:'system',em:'💾',name:'Диск',sub:'100%',code:'0x80070070'},
-  // System 54-60
+  {id:'diskFill',cat:'system',em:'💾',name:'Диск',sub:'',code:'0x80070070'},
   {id:'taskSchedulerFail',cat:'system',em:'⏱️',name:'Планировщик',sub:'',code:'0x8004131F'},
   {id:'profileCorrupt',cat:'system',em:'📁',name:'Профиль',sub:'',code:'0x80070057'},
   {id:'activationFail',cat:'system',em:'🔐',name:'Активация',sub:'',code:'0xC004F074'},
-  {id:'systemFileCorrupt',cat:'system',em:'🧬',name:'Сист. файл',sub:'sfc',code:'0x800F0906',editions:['w10-pro','w11-pro']},
+  {id:'systemFileCorrupt',cat:'system',em:'🧬',name:'Сист. файл',sub:'',code:'0x800F0906',editions:['w10-pro','w11-pro']},
   {id:'sleepFail',cat:'system',em:'💤',name:'Сон',sub:'',code:'0x0000009F'},
-  {id:'registryOverflow',cat:'system',em:'🗂️',name:'Реестр перепол',sub:'',code:'0x8007000E',editions:['w10-pro','w11-pro']},
-  {id:'slowBoot',cat:'system',em:'⏳',name:'Долгая загрузка',sub:'87%',code:'0xC0000001'}
+  {id:'registryOverflow',cat:'system',em:'🗂️',name:'Реестр перепол.',sub:'',code:'0x8007000E',editions:['w10-pro','w11-pro']},
+  {id:'slowBoot',cat:'system',em:'⏳',name:'Долгая загрузка',sub:'',code:'0xC0000001'},
+  {id:'timezoneFail',cat:'system',em:'📅',name:'Часовой пояс',sub:'',code:'0x800705B4'},
+  {id:'diskFragmentation',cat:'system',em:'🗃️',name:'Фрагментация',sub:'',code:'0x80070490'},
+  {id:'wmCrash',cat:'system',em:'🪟',name:'WM crash',sub:'',code:'0x80004005'},
+  {id:'hibernationFail',cat:'system',em:'💤',name:'Гибернация',sub:'',code:'0x000000A0'},
+  {id:'classicBSODSound',cat:'system',em:'🔊',name:'Звук сбоя',sub:'',code:'0x000000FE'}
 ];
 const CATEGORIES = M.CATEGORIES = {
+  install:{name:'Установка и файлы',em:'📥'},
   hardware:{name:'Аппаратные',em:'🔧'},
   software:{name:'Программные',em:'💻'},
   network:{name:'Сетевые',em:'🌐'},
@@ -1087,10 +1163,10 @@ const IncidentMgr = M.IncidentMgr = {
     if(this.active.has(id))return;
     const meta=this.registry.find(r=>r.id===id); if(!meta)return;
     if(!Edition.isIncidentAllowed(meta)){
-      ErrorMgr.dialog({title:'Недоступно',icon:'🔒',message:`«${meta.name}» доступно только в Pro.`,detail:'Текущая: '+Edition.get().name});
+      ErrorMgr.dialog({title:'Только Pro',icon:'🔒',message:`«${meta.name}» доступно только в Pro.`,detail:'Текущая: '+Edition.get().name});
       return;
     }
-    const fn=this.handlers[id]||this.handlers['_generic']; if(!fn)return;
+    const fn=this.handlers[id]||this.handlers._generic; if(!fn)return;
     this.active.add(id); AudioMgr.alert();
     Notify.push('⚠️ Сбой',meta.name,meta.em);
     fn.call(this,id,meta);
@@ -1106,10 +1182,12 @@ const IncidentMgr = M.IncidentMgr = {
     Array.from(this.active).forEach(id=>this.stop(id));
     SystemState.cpu=12; SystemState.ramMB=2400; SystemState.diskGB=45; SystemState.tempC=42; SystemState.viruses=0;
     SystemState.recalcStability(); SystemState.emit();
-    document.body.classList.remove('shaking','redPulse','glitching','invert','netLost','kbFail','mouseFail','frozen','grayscale','screenFlicker');
+    document.body.classList.remove('shaking','redPulse','glitching','invert','netLost','kbFail','mouseFail','frozen','grayscale','screenFlicker','cursorRunaway');
     document.body.style.filter='';
+    const rs=document.getElementById('cursorRunawayStyle'); if(rs) rs.remove();
     AudioMgr.fan(false);
     U.$$('.dialog-overlay').forEach(o=>o.remove());
+    U.$$('.inst-overlay').forEach(o=>o.remove());
     ErrorMgr.dialogCount=0;
     if(M.Desktop) M.Desktop.removeVirusIcons();
     if(M.Boot) M.Boot.timeOffset=0;
@@ -1123,7 +1201,7 @@ const IncidentMgr = M.IncidentMgr = {
     const allowed=this.registry.filter(r=>Edition.isIncidentAllowed(r));
     const picked=new Set();
     const cats=Object.keys(CATEGORIES);
-    while(picked.size<6){
+    while(picked.size<7){
       const cat=cats[Math.floor(Math.random()*cats.length)];
       const inCat=allowed.filter(r=>r.cat===cat&&!picked.has(r.id));
       if(inCat.length) picked.add(inCat[Math.floor(Math.random()*inCat.length)].id);
@@ -1132,14 +1210,14 @@ const IncidentMgr = M.IncidentMgr = {
   }
 };
 
-/* Specific handlers */
+/* Handlers */
 IncidentMgr.handlers.cpuFire=function(id){
   document.body.classList.add('shaking','redPulse'); AudioMgr.fan(true);
   let t=0;
   this.setInt(id,()=>{
     SystemState.tempC=Math.min(105,SystemState.tempC+3);
     SystemState.cpu=Math.min(100,SystemState.cpu+4); t++;
-    if(t%3===0){ Notify.push('🔥 CPU',Math.round(SystemState.tempC)+'°C','🔥'); AudioMgr.beep(880,0.1,'square',0.05); }
+    if(t%3===0){ Notify.push('🔥 CPU',Math.round(SystemState.tempC)+'°C','🔥'); }
     if(SystemState.tempC>=95){ this.stop(id); setTimeout(()=>ErrorMgr.bsod('CRITICAL_PROCESSOR_HEAT',{onComplete:()=>M.Boot.restart()}),400); }
   },500);
 };
@@ -1149,7 +1227,7 @@ IncidentMgr.handlers.ramFill=function(id){
   this.setInt(id,()=>{
     SystemState.ramMB=Math.min(SystemState.ramMaxMB,SystemState.ramMB+350);
     if(SystemState.ramMB>=SystemState.ramMaxMB){ this.stop(id); ErrorMgr.bsod('OUT_OF_MEMORY',{onComplete:()=>M.Boot.restart()}); return; }
-    if(Math.random()<0.35) Notify.push('🧠 RAM','Недостаточно памяти','⚠️');
+    if(Math.random()<0.35) Notify.push('🧠 RAM','Мало памяти','⚠️');
   },900);
 };
 
@@ -1173,10 +1251,7 @@ IncidentMgr.handlers.netLoss=function(id){
   const w=U.$('#trayWifi'); if(w){ w.textContent='📵'; w.classList.add('err'); }
   ErrorMgr.dialog({title:'Сеть',icon:'🌐',message:'Не удаётся подключиться к сети.',detail:'Код: 0x80072EE2'});
 };
-IncidentMgr.handlers.cleanup_netLoss=()=>{
-  document.body.classList.remove('netLost');
-  const w=U.$('#trayWifi'); if(w){ w.textContent='📶'; w.classList.remove('err'); }
-};
+IncidentMgr.handlers.cleanup_netLoss=()=>{ document.body.classList.remove('netLost'); const w=U.$('#trayWifi'); if(w){ w.textContent='📶'; w.classList.remove('err'); } };
 
 IncidentMgr.handlers.kbFail=function(id){
   document.body.classList.add('kbFail');
@@ -1184,7 +1259,7 @@ IncidentMgr.handlers.kbFail=function(id){
   document.addEventListener('keydown',block,true);
   document.addEventListener('beforeinput',block,true);
   this.handlers['cleanup_kbFail']=()=>{ document.body.classList.remove('kbFail'); document.removeEventListener('keydown',block,true); document.removeEventListener('beforeinput',block,true); };
-  ErrorMgr.dialog({title:'Устройство',icon:'⌨️',message:'Клавиатура не найдена.',detail:'Код 10',buttons:[{label:'Повторить',onClose:()=>IncidentMgr.stop(id)}]});
+  ErrorMgr.dialog({title:'Устройство',icon:'⌨️',message:'Клавиатура не найдена.',detail:'Код 10'});
 };
 
 IncidentMgr.handlers.mouseFail=function(id){
@@ -1203,10 +1278,7 @@ IncidentMgr.handlers.kernelCrash=function(id){
 IncidentMgr.handlers.gpuOverheat=function(id){
   document.body.classList.add('glitching');
   let t=0;
-  this.setInt(id,()=>{
-    t++;
-    if(t>=10){ this.stop(id); ErrorMgr.bsod('VIDEO_TDR_FAILURE',{onComplete:()=>M.Boot.restart()}); }
-  },800);
+  this.setInt(id,()=>{ t++; if(t>=10){ this.stop(id); ErrorMgr.bsod('VIDEO_TDR_FAILURE',{onComplete:()=>M.Boot.restart()}); } },800);
 };
 IncidentMgr.handlers.cleanup_gpuOverheat=()=>{ document.body.classList.remove('glitching'); };
 
@@ -1227,13 +1299,13 @@ IncidentMgr.handlers.powerSurge=function(id){
   const wp=U.$('#wallpaper');
   if(wp){ wp.style.filter='brightness(3)'; setTimeout(()=>{wp.style.filter='';},120); }
   if(WM.wins.length) WM.close(WM.wins[0].id);
-  setTimeout(()=>{ ErrorMgr.dialog({title:'Питание',icon:'⚡',message:'Обнаружен скачок напряжения!',onClose:()=>this.stop(id)}); },300);
+  setTimeout(()=>{ ErrorMgr.dialog({title:'Питание',icon:'⚡',message:'Скачок напряжения!',onClose:()=>this.stop(id)}); },300);
 };
 
 IncidentMgr.handlers.videoCrash=function(id){
   const flash=()=>{ document.body.classList.add('invert'); setTimeout(()=>document.body.classList.remove('invert'),180); };
   flash(); setTimeout(flash,300);
-  setTimeout(()=>{ ErrorMgr.dialog({title:'Видео',icon:'🖥️',message:'Драйвер перестал отвечать и восстановлен.',onClose:()=>this.stop(id)}); },700);
+  setTimeout(()=>{ ErrorMgr.dialog({title:'Видео',icon:'🖥️',message:'Драйвер перестал отвечать.',onClose:()=>this.stop(id)}); },700);
 };
 
 IncidentMgr.handlers.colorFail=function(id){
@@ -1267,12 +1339,13 @@ IncidentMgr.handlers.cleanup_timeFail=()=>{ M.Boot.timeOffset=0; };
 
 IncidentMgr.handlers.updateFail=function(id){
   const ov=U.el('div');
-  ov.style.cssText='position:fixed;inset:0;z-index:800;background:#1a1a1a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-family:Segoe UI,sans-serif';
-  const title=U.el('div',null,'Установка обновлений…'); title.style.fontSize='22px';
-  const pct=U.el('div',null,'0%'); pct.style.fontSize='14px';
+  ov.style.cssText='position:fixed;inset:0;z-index:800;background:#1a1a1a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-family:Segoe UI';
+  ov.append(U.el('div',null,'Установка обновлений…'));
   const bar=U.el('div'); bar.style.cssText='width:400px;height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden';
   const fill=U.el('div'); fill.style.cssText='height:100%;width:0;background:#0078d4;transition:width .2s';
-  bar.appendChild(fill); ov.append(title,bar,pct); document.body.appendChild(ov);
+  bar.appendChild(fill);
+  const pct=U.el('div',null,'0%'); pct.style.fontSize='14px';
+  ov.append(bar,pct); document.body.appendChild(ov);
   let p=0;
   const t=setInterval(()=>{
     p+=U.rand(3,8);
@@ -1287,11 +1360,8 @@ IncidentMgr.handlers.hacker=function(id){
   document.body.classList.add('redPulse');
   const bd=U.el('div');
   bd.style.cssText='font-family:monospace;line-height:1.65';
-  ['ВСЕ ФАЙЛЫ ЗАШИФРОВАНЫ!','','Отправьте 0.5 BTC:','bc1q7x8k...','','ID: ABC-123','48 часов до удаления'].forEach(l=>bd.appendChild(U.el('div',null,l)));
-  ErrorMgr.dialog({
-    title:'🔐 ВЗЛОМ!',className:'ransomware',html:bd,
-    buttons:[{label:'Расшифровать',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'Шутка!',icon:'😄',message:'Это симуляция :)',onClose:()=>{document.body.classList.remove('redPulse');IncidentMgr.stop(id);}}); },300); }}]
-  });
+  ['ВСЕ ФАЙЛЫ ЗАШИФРОВАНЫ!','','0.5 BTC: bc1q7x8k...','','ID: ABC-123','48 часов'].forEach(l=>bd.appendChild(U.el('div',null,l)));
+  ErrorMgr.dialog({title:'🔐 ВЗЛОМ!',className:'ransomware',html:bd,buttons:[{label:'Расшифровать',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'Шутка!',icon:'😄',message:'Это симуляция :)',onClose:()=>{document.body.classList.remove('redPulse');IncidentMgr.stop(id);}}); },300); }}]});
 };
 IncidentMgr.handlers.cleanup_hacker=()=>{ document.body.classList.remove('redPulse'); };
 
@@ -1308,44 +1378,35 @@ IncidentMgr.handlers.explorerHang=function(id){
 };
 
 IncidentMgr.handlers.fsCrash=function(id){
-  ErrorMgr.dialog({title:'ФС',icon:'📂',message:'Обнаружены повреждённые файлы.',detail:'Код: 0x80070570',buttons:[{label:'chkdsk /f',primary:true,action:()=>{ Notify.push('chkdsk','Восстановлено ✓','✅'); IncidentMgr.stop(id); }},{label:'Позже'}]});
+  ErrorMgr.dialog({title:'ФС',icon:'📂',message:'Обнаружены повреждённые файлы.',detail:'Код: 0x80070570',buttons:[{label:'chkdsk',primary:true,action:()=>{ Notify.push('chkdsk','Восстановлено','✅'); IncidentMgr.stop(id); }},{label:'Позже'}]});
 };
 
 IncidentMgr.handlers.registryCrash=function(id){
-  const keys=['HKEY_LOCAL_MACHINE\\SOFTWARE','HKEY_CURRENT_USER\\Software'];
   let c=0;
-  const spawn=()=>{
-    c++;
-    ErrorMgr.dialog({title:'Реестр',icon:'🗄',message:'Не удаётся открыть раздел реестра.',detail:keys[Math.floor(Math.random()*keys.length)]+'\nКод: 0x80070002',buttons:[{label:'sfc /scannow',primary:true,action:()=>{ Notify.push('sfc','Восстановлено ✓','✅'); IncidentMgr.stop(id); }},{label:'OK'}]});
-    if(c>=3) clearInterval(int);
-  };
+  const spawn=()=>{ c++; ErrorMgr.dialog({title:'Реестр',icon:'🗄',message:'Не удаётся открыть раздел.',detail:'HKEY_LOCAL_MACHINE\\...\nКод: 0x80070002',buttons:[{label:'sfc',primary:true,action:()=>{ Notify.push('sfc','OK','✅'); IncidentMgr.stop(id); }},{label:'OK'}]}); if(c>=3) clearInterval(int); };
   spawn();
   const int=setInterval(spawn,4000);
   this.timers.get(id).push(int);
 };
 
-IncidentMgr.handlers.ddss=IncidentMgr.handlers.ddos=function(id){
+IncidentMgr.handlers.ddos=function(id){
   let packets=0;
   this.setInt(id,()=>{
     packets+=Math.floor(U.rand(20000,80000));
-    if(packets>=1234567){ this.stop(id); ErrorMgr.dialog({title:'Сеть',icon:'🌐',message:'DDoS! 1 234 567 пакетов/сек.',detail:'Код: 0x80072EFD'}); }
+    if(packets>=1234567){ this.stop(id); ErrorMgr.dialog({title:'Сеть',icon:'🌐',message:'DDoS! 1 234 567 пакетов/сек.'}); }
   },1200);
 };
 
 IncidentMgr.handlers.printerFail=function(id){
   const bd=U.el('div'); bd.style.display='block';
-  bd.append(U.el('div',null,'Печать документа…'));
-  const bar=U.el('div'); bar.style.cssText='height:8px;background:rgba(128,128,128,.2);border-radius:4px;overflow:hidden;margin:10px 0';
+  bd.append(U.el('div',null,'Печать…'));
+  const bar=U.el('div'); bar.style.cssText='height:8px;background:rgba(128,128,128,.2);border-radius:4px;margin:10px 0';
   const fill=U.el('div'); fill.style.cssText='height:100%;width:0;background:var(--accent)';
   bar.appendChild(fill); bd.appendChild(bar);
   const pct=U.el('div',null,'0%'); pct.style.fontSize='11.5px'; bd.appendChild(pct);
   ErrorMgr.dialog({title:'🖨️ Печать',html:bd,buttons:[{label:'Закрыть',primary:true,onClose:()=>IncidentMgr.stop(id)}]});
   let p=0;
-  const t=setInterval(()=>{
-    p+=U.rand(2,10);
-    if(p>=85){ p=85; clearInterval(t); pct.textContent='85% — Принтер не отвечает. Очередь: 1'; pct.style.color='#f39c12'; }
-    else { fill.style.width=p+'%'; pct.textContent=Math.floor(p)+'%'; }
-  },300);
+  const t=setInterval(()=>{ p+=U.rand(2,10); if(p>=85){ p=85; clearInterval(t); pct.textContent='85% — принтер не отвечает'; pct.style.color='#f39c12'; } else { fill.style.width=p+'%'; pct.textContent=Math.floor(p)+'%'; } },300);
   this.timers.get(id).push(t);
 };
 
@@ -1353,7 +1414,6 @@ IncidentMgr.handlers.powerSupplyHeat=function(id){
   let t=0; AudioMgr.fan(true);
   this.setInt(id,()=>{
     t++; SystemState.tempC=Math.min(100,SystemState.tempC+2);
-    if(t===3) Notify.push('🔥 БП','Проверьте вентиляцию!','🔥');
     if(t>=8){
       this.stop(id); AudioMgr.fan(false);
       const ps=U.$('#powerScreen');
@@ -1367,168 +1427,188 @@ IncidentMgr.handlers.powerSupplyHeat=function(id){
 };
 IncidentMgr.handlers.cleanup_powerSupplyHeat=()=>{ AudioMgr.fan(false); };
 
-/* New handlers */
-IncidentMgr.handlers.usbFail=function(id){ ErrorMgr.dialog({title:'USB',icon:'🔌',message:'USB-устройство не опознано.',detail:'Код 43: дескриптор не найден.',onClose:()=>this.stop(id)}); };
-
+IncidentMgr.handlers.usbFail=function(id){ ErrorMgr.dialog({title:'USB',icon:'🔌',message:'USB-устройство не опознано.',detail:'Код 43',onClose:()=>this.stop(id)}); };
 IncidentMgr.handlers.screenFlicker=function(id){
   document.body.classList.add('screenFlicker');
   this.setTimeout(id,()=>{ document.body.classList.remove('screenFlicker'); ErrorMgr.dialog({title:'Дисплей',icon:'🖥️',message:'Дисплей перестал отвечать.'}); this.stop(id); },6000);
 };
 IncidentMgr.handlers.cleanup_screenFlicker=()=>{ document.body.classList.remove('screenFlicker'); };
-
-IncidentMgr.handlers.batterySwelling=function(id){
-  Settings.set('brightness',45);
-  ErrorMgr.dialog({title:'Батарея',icon:'🔋',message:'Батарея требует замены. Обратитесь в сервис.',onClose:()=>this.stop(id)});
-};
-
+IncidentMgr.handlers.batterySwelling=function(id){ Settings.set('brightness',45); ErrorMgr.dialog({title:'Батарея',icon:'🔋',message:'Батарея требует замены.',onClose:()=>this.stop(id)}); };
 IncidentMgr.handlers.thermoSensorFail=function(id){
   const t=U.$('#cpTemp'); if(t){ t.textContent='—°C'; t.style.color='#f55'; }
   AudioMgr.fan(true);
   ErrorMgr.dialog({title:'Датчик',icon:'🌡️',message:'Датчик температуры не найден.',onClose:()=>{AudioMgr.fan(false);this.stop(id);}});
 };
 IncidentMgr.handlers.cleanup_thermoSensorFail=()=>{ AudioMgr.fan(false); };
-
 IncidentMgr.handlers.powerGridSpike=function(id){
   const fb=U.$('#fadeBlack'); fb.style.opacity='0.8';
   setTimeout(()=>{
     fb.style.opacity='0';
     const ps=U.$('#powerScreen');
     ps.innerHTML=''; ps.classList.remove('hidden'); ps.style.background='#000';
-    ps.append(U.el('div','logo','POST'),U.el('div','sub','Обнаружен скачок напряжения'));
+    ps.append(U.el('div','logo','POST'),U.el('div','sub','Скачок напряжения'));
     setTimeout(()=>{ ps.classList.add('hidden'); ErrorMgr.dialog({title:'Питание',icon:'💥',message:'POST: проблема с питанием.',onClose:()=>IncidentMgr.stop(id)}); },2200);
   },400);
 };
-
-IncidentMgr.handlers.dataLoss=function(id){
-  try{ localStorage.removeItem('microOS.notepad.draft'); }catch(e){}
-  ErrorMgr.dialog({title:'Сохранение',icon:'📝',message:'Данные потеряны при сохранении.',detail:'Код: 0x8007000D',onClose:()=>this.stop(id)});
+IncidentMgr.handlers.bluetoothFail=function(id){ Settings.set('bluetooth',false); ErrorMgr.dialog({title:'Bluetooth',icon:'📡',message:'Адаптер не найден.',detail:'Код 43',onClose:()=>this.stop(id)}); };
+IncidentMgr.handlers.speakerDistort=function(id){
+  let n=0;
+  const distort=()=>{ AudioMgr.beep(200+Math.random()*600,0.15,'sawtooth',0.08); if(++n>=10) clearInterval(int); };
+  const int=setInterval(distort,600);
+  this.timers.get(id).push(int);
+  this.setTimeout(id,()=>this.stop(id),10000);
 };
-
+IncidentMgr.handlers.stuckKeys=function(id){
+  const insert=e=>{
+    const tgt=e.target;
+    if(tgt && (tgt.tagName==='INPUT'||tgt.tagName==='TEXTAREA'||tgt.isContentEditable)){
+      if(Math.random()<0.3){ const ch='asdfghjkl'.charAt(Math.floor(Math.random()*9)); if(tgt.isContentEditable){ tgt.textContent+=ch; } else { tgt.value=(tgt.value||'')+ch; } }
+    }
+  };
+  document.addEventListener('keydown',insert,true);
+  this.handlers['cleanup_stuckKeys']=()=>{ document.removeEventListener('keydown',insert,true); };
+  this.setTimeout(id,()=>this.stop(id),10000);
+};
+IncidentMgr.handlers.cursorRunaway=function(id){
+  const st=document.createElement('style');
+  st.id='cursorRunawayStyle';
+  st.textContent='body.cursorRunaway #desktop,body.cursorRunaway #winLayer,body.cursorRunaway #taskbar,body.cursorRunaway #controlPanel{transform:scaleX(-1)}';
+  document.head.appendChild(st);
+  document.body.classList.add('cursorRunaway');
+  this.handlers['cleanup_cursorRunaway']=()=>{ document.body.classList.remove('cursorRunaway'); const s=document.getElementById('cursorRunawayStyle'); if(s) s.remove(); };
+  this.setTimeout(id,()=>this.stop(id),10000);
+};
+IncidentMgr.handlers.memoryLeak=function(id){
+  let t=0;
+  const apps=['svchost.exe','chrome.exe','explorer.exe','dwm.exe'];
+  this.setInt(id,()=>{
+    SystemState.ramMB=Math.min(SystemState.ramMaxMB,SystemState.ramMB+U.rand(50,200)); t++;
+    if(t%3===0) Notify.push('📉 Утечка',apps[Math.floor(Math.random()*apps.length)]+' ест память','⚠️');
+    if(t>=30||SystemState.ramMB>=SystemState.ramMaxMB){ this.stop(id); ErrorMgr.bsod('MEMORY_LEAK_DETECTED',{onComplete:()=>M.Boot.restart()}); }
+  },1000);
+};
+IncidentMgr.handlers.dataLoss=function(id){ try{ localStorage.removeItem('microOS.notepad.draft'); }catch(e){} ErrorMgr.dialog({title:'Сохранение',icon:'📝',message:'Данные потеряны.',detail:'Код: 0x8007000D',onClose:()=>this.stop(id)}); };
 IncidentMgr.handlers.appCrash=function(id){
   if(!WM.wins.length){ this.stop(id); return; }
   const w=WM.wins[Math.floor(Math.random()*WM.wins.length)];
   const app=Apps.get(w.appId)||{name:w.appId};
-  setTimeout(()=>{ WM.close(w.id); ErrorMgr.dialog({title:'Сбой',icon:'🧩',message:`Приложение ${app.name} перестало работать.`,detail:'Код: 0xC0000005',onClose:()=>this.stop(id)}); },800);
+  setTimeout(()=>{ WM.close(w.id); ErrorMgr.dialog({title:'Сбой',icon:'🧩',message:`${app.name} перестало работать.`,detail:'Код: 0xC0000005',onClose:()=>this.stop(id)}); },800);
 };
-
 IncidentMgr.handlers.bootLoop=function(id){
   const ov=U.el('div');
-  ov.style.cssText='position:fixed;inset:0;z-index:800;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-family:Segoe UI';
-  ov.append(U.el('div',null,'Установка обновления 1 из 3…'));
+  ov.style.cssText='position:fixed;inset:0;z-index:800;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px';
+  ov.append(U.el('div',null,'Обновление 1 из 3…'));
   const spin=U.el('div','spinner'); ov.appendChild(spin);
   const pct=U.el('div',null,'0%'); ov.appendChild(pct);
   document.body.appendChild(ov);
   let p=0;
-  const t=setInterval(()=>{ p+=U.rand(2,7); if(p>=100){ p=0; } pct.textContent=Math.floor(p)+'%'; },300);
+  const t=setInterval(()=>{ p+=U.rand(2,7); if(p>=100) p=0; pct.textContent=Math.floor(p)+'%'; },300);
   this.timers.get(id).push(t);
   setTimeout(()=>{ clearInterval(t); ov.remove(); ErrorMgr.bsod('BOOT_LOOP_DETECTED',{onComplete:()=>M.Boot.restart()}); this.stop(id); },10000);
 };
-
-IncidentMgr.handlers.appConflict=function(id){ ErrorMgr.dialog({title:'Конфликт',icon:'🎯',message:'Программа не может быть запущена из-за конфликта.',onClose:()=>this.stop(id)}); };
-
+IncidentMgr.handlers.appConflict=function(id){ ErrorMgr.dialog({title:'Конфликт',icon:'🎯',message:'Программа не может быть запущена.',onClose:()=>this.stop(id)}); };
 IncidentMgr.handlers.recycleOverflow=function(id){
   for(let i=0;i<30;i++) FS.trash.push({node:{name:'dump_'+i+'.tmp',type:'file',content:''},from:['Загрузки'],at:Date.now()});
   FS.saveTrash();
   ErrorMgr.dialog({title:'Корзина',icon:'📦',message:'Корзина заполнена.',onClose:()=>this.stop(id)});
 };
-
-IncidentMgr.handlers.gameHang=function(id){
-  setTimeout(()=>{ ErrorMgr.dialog({title:'Игра',icon:'🕹️',message:'Игра не отвечает. Прогресс потерян.',buttons:[{label:'Завершить',primary:true,onClose:()=>IncidentMgr.stop(id)}]}); },1500);
-};
-
-IncidentMgr.handlers.codecFail=function(id){ ErrorMgr.dialog({title:'Видео',icon:'🎬',message:'Не удалось декодировать видео. Кодек не найден.',onClose:()=>this.stop(id)}); };
+IncidentMgr.handlers.gameHang=function(id){ setTimeout(()=>{ ErrorMgr.dialog({title:'Игра',icon:'🕹️',message:'Игра не отвечает.',onClose:()=>IncidentMgr.stop(id)}); },1500); };
+IncidentMgr.handlers.codecFail=function(id){ ErrorMgr.dialog({title:'Видео',icon:'🎬',message:'Кодек не найден.',onClose:()=>this.stop(id)}); };
 IncidentMgr.handlers.audioCorrupt=function(id){
   for(let i=0;i<3;i++) setTimeout(()=>AudioMgr.beep(200+i*300,0.1,'sawtooth',0.06),i*150);
   ErrorMgr.dialog({title:'Аудио',icon:'🎵',message:'Файл повреждён.',onClose:()=>this.stop(id)});
 };
-IncidentMgr.handlers.thumbnailFail=function(id){
-  U.$$('.fitem .em').forEach(em=>{ em.textContent='?'; em.style.color='#888'; });
-  ErrorMgr.dialog({title:'Миниатюры',icon:'🖼️',message:'Не удалось загрузить миниатюру.',onClose:()=>this.stop(id)});
-};
+IncidentMgr.handlers.thumbnailFail=function(id){ U.$$('.fitem .em').forEach(em=>{ em.textContent='?'; em.style.color='#888'; }); ErrorMgr.dialog({title:'Миниатюры',icon:'🖼️',message:'Не удалось загрузить.',onClose:()=>this.stop(id)}); };
 IncidentMgr.handlers.clipboardFail=function(id){
   const block=e=>{ if((e.ctrlKey||e.metaKey)&&['c','v','x'].includes(e.key)){ e.preventDefault(); e.stopImmediatePropagation(); } };
   document.addEventListener('keydown',block,true);
   ErrorMgr.dialog({title:'Буфер',icon:'📄',message:'Буфер обмена недоступен.',onClose:()=>{ document.removeEventListener('keydown',block,true); IncidentMgr.stop(id); }});
 };
-
+IncidentMgr.handlers.corruptInstaller=function(id){
+  Notify.push('🚫 Установщик','Повреждённые установщики будут падать','⚠️');
+  this._corruptInstaller=true;
+  this.setTimeout(id,()=>{ this._corruptInstaller=false; this.stop(id); },15000);
+};
+IncidentMgr.handlers.installBlocked=function(id){ ErrorMgr.dialog({title:'Блокировка',icon:'🔒',message:'Установка заблокирована администратором.',detail:'Код: 0x800704EC',onClose:()=>this.stop(id)}); };
+IncidentMgr.handlers.virusInstall=function(id){
+  Notify.push('🧬 Внимание','Подозрительная активность','⚠️');
+  this.setInt(id,()=>{
+    if(Math.random()<0.3) M.Desktop.addVirusIcon();
+    SystemState.viruses++;
+    if(SystemState.viruses>=5){ this.stop(id); ErrorMgr.bsod('VIRUS_INSTALLED',{onComplete:()=>M.Boot.restart()}); }
+  },2000);
+};
+IncidentMgr.handlers.cleanup_virusInstall=()=>{ M.Desktop.removeVirusIcons(); SystemState.viruses=0; };
+IncidentMgr.handlers.diskFullInstall=function(id){ SystemState.diskGB=SystemState.diskMaxGB-1; ErrorMgr.dialog({title:'Мало места',icon:'💾',message:'Требуется 2.4 ГБ. Освободите место.',onClose:()=>this.stop(id)}); };
+IncidentMgr.handlers.overwriteSystem=function(id){ setTimeout(()=>{ ErrorMgr.dialog({title:'Система',icon:'🔄',message:'Повреждение системных файлов.',detail:'Код: 0xC000021A',buttons:[{label:'Восстановить',primary:true,onClose:()=>{ Notify.push('✅','OK','✔'); IncidentMgr.stop(id); }},{label:'Позже',onClose:()=>IncidentMgr.stop(id)}]}); },800); };
+IncidentMgr.handlers.antivirusBlock=function(id){ Notify.push('🛡️ Defender','Блокировка установок','⚠️'); this.setTimeout(id,()=>this.stop(id),20000); };
+IncidentMgr.handlers.uninstallFail=function(id){ ErrorMgr.dialog({title:'Не удалось',icon:'💥',message:'Приложение используется.',detail:'Код: 0x800700AA',onClose:()=>this.stop(id)}); };
+IncidentMgr.handlers.registryWreck=function(id){
+  const spawn=()=>ErrorMgr.dialog({title:'Реестр',icon:'🧹',message:'Повреждены записи реестра.',detail:'Код: 0x800703F1',buttons:[{label:'Восстановить',primary:true,onClose:()=>{ Notify.push('✅','OK','✔'); IncidentMgr.stop(id); }},{label:'OK'}]});
+  spawn();
+  const int=setInterval(spawn,5000);
+  this.timers.get(id).push(int);
+};
 IncidentMgr.handlers.wifiDriverFail=function(id){
   const t=U.$('#trayWifi'); if(t){ t.textContent='📵'; t.classList.add('err'); }
   ErrorMgr.dialog({title:'Wi-Fi',icon:'🛜',message:'Адаптер Wi-Fi не найден.',onClose:()=>this.stop(id)});
 };
 IncidentMgr.handlers.cleanup_wifiDriverFail=()=>{ const t=U.$('#trayWifi'); if(t){ t.textContent='📶'; t.classList.remove('err'); } };
-
-IncidentMgr.handlers.dnsAttack=function(id){
-  ErrorMgr.dialog({title:'DNS',icon:'🌍',message:'DNS-сервер не отвечает.',buttons:[{label:'Сбросить DNS',primary:true,action:()=>{ Notify.push('✅ DNS','Кэш очищен','🌐'); IncidentMgr.stop(id); }}]});
+IncidentMgr.handlers.dnsAttack=function(id){ ErrorMgr.dialog({title:'DNS',icon:'🌍',message:'DNS-сервер не отвечает.',buttons:[{label:'Сбросить',primary:true,onClose:()=>IncidentMgr.stop(id)}]}); };
+IncidentMgr.handlers.networkCongestion=function(id){ setTimeout(()=>{ ErrorMgr.dialog({title:'Сеть',icon:'📡',message:'Задержка 2000+ мс.',onClose:()=>IncidentMgr.stop(id)}); },4000); };
+IncidentMgr.handlers.updateServerDDoS=function(id){ ErrorMgr.dialog({title:'Сервер обновлений',icon:'🔥',message:'Перегружен.',onClose:()=>this.stop(id)}); };
+IncidentMgr.handlers.dnsHijack=function(id){ ErrorMgr.dialog({title:'⚠️ Опасно',icon:'🎭',message:'Подмена DNS-ответа.',buttons:[{label:'Сбросить',primary:true,onClose:()=>IncidentMgr.stop(id)},{label:'Игнор',onClose:()=>IncidentMgr.stop(id)}]}); };
+IncidentMgr.handlers.packetLoss=function(id){
+  const t=U.$('#trayWifi'); if(t) t.textContent='📡';
+  Notify.push('📶 Сеть','Потеря пакетов 40%','⚠️');
+  this.setTimeout(id,()=>{ if(t) t.textContent='📶'; this.stop(id); },15000);
 };
-IncidentMgr.handlers.networkCongestion=function(id){
-  setTimeout(()=>{ ErrorMgr.dialog({title:'Сеть',icon:'📡',message:'Высокая задержка сети: 2000+ мс.',onClose:()=>IncidentMgr.stop(id)}); },4000);
-};
-IncidentMgr.handlers.updateServerDDoS=function(id){ ErrorMgr.dialog({title:'Обновления',icon:'🔥',message:'Сервер обновлений перегружен.',onClose:()=>this.stop(id)}); };
-
+IncidentMgr.handlers.mitmAttack=function(id){ ErrorMgr.dialog({title:'Соединение',icon:'🔐',message:'Подмена сертификата.',detail:'Код: 0x800B0109',buttons:[{label:'Назад',primary:true,onClose:()=>IncidentMgr.stop(id)},{label:'Продолжить'}]}); };
 IncidentMgr.handlers.phishing=function(id){
   const bd=U.el('div'); bd.style.display='block';
-  bd.append(U.el('div',null,'Подтвердите вход в microOS:'));
+  bd.append(U.el('div',null,'Подтвердите вход:'));
   const inp=U.el('input'); inp.type='password'; inp.placeholder='Пароль';
   inp.style.cssText='width:100%;margin-top:8px;padding:8px;border-radius:6px;background:rgba(0,0,0,.2);border:1px solid var(--border);color:inherit';
   bd.appendChild(inp);
-  ErrorMgr.dialog({title:'⚠️ Запрос пароля',icon:'🎣',html:bd,buttons:[{label:'Отмена',primary:true,action:()=>{ Notify.push('✅ Безопасность','Фишинг предотвращён','🛡'); IncidentMgr.stop(id); }},{label:'Ввести',action:()=>{ Notify.push('⚠️ ОПАСНО','Пароль скомпрометирован','🚨'); IncidentMgr.stop(id); }}]});
+  ErrorMgr.dialog({title:'⚠️ Запрос',icon:'🎣',html:bd,buttons:[{label:'Отмена',primary:true,onClose:()=>IncidentMgr.stop(id)},{label:'Ввести',action:()=>{ Notify.push('⚠️','Пароль скомпрометирован','🚨'); IncidentMgr.stop(id); }}]});
 };
-
 IncidentMgr.handlers.ransomwareFiles=function(id){
   try{ const enc=n=>{ if(n.children) n.children.forEach(c=>{ if(c.type==='file'&&!c.name.endsWith('.enc')) c.name+='.enc'; enc(c); }); }; enc(FS.root); FS.save(); }catch(e){}
-  ErrorMgr.dialog({title:'🔒 Ransomware',className:'ransomware',icon:'🔒',message:'Все файлы зашифрованы!',detail:'Отправьте 0.5 BTC',buttons:[{label:'Расшифровать (демо)',primary:true,action:()=>{ try{ const dec=n=>{ if(n.children) n.children.forEach(c=>{ if(c.name.endsWith('.enc')) c.name=c.name.slice(0,-4); dec(c); }); }; dec(FS.root); FS.save(); }catch(e){} IncidentMgr.stop(id); }}]});
+  ErrorMgr.dialog({title:'🔒 Ransomware',className:'ransomware',icon:'🔒',message:'Все файлы зашифрованы!',buttons:[{label:'Расшифровать (демо)',primary:true,action:()=>{ try{ const dec=n=>{ if(n.children) n.children.forEach(c=>{ if(c.name.endsWith('.enc')) c.name=c.name.slice(0,-4); dec(c); }); }; dec(FS.root); FS.save(); }catch(e){} IncidentMgr.stop(id); }}]});
 };
-
-IncidentMgr.handlers.spyCam=function(id){
-  ErrorMgr.dialog({title:'Камера',icon:'👁️',message:'Камера используется неизвестным приложением.',buttons:[{label:'Закрыть доступ',primary:true,onClose:()=>IncidentMgr.stop(id)}]});
-};
-
-IncidentMgr.handlers.trojan=function(id){
-  ErrorMgr.dialog({title:'Троян',icon:'🧨',message:'Обнаружен Win32.Trojan.Agent. Удалить?',buttons:[{label:'Удалить',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'Ошибка',icon:'⚠️',message:'Не удалось удалить. Файл защищён.',onClose:()=>IncidentMgr.stop(id)}); },600); }},{label:'Игнор',onClose:()=>IncidentMgr.stop(id)}]});
-};
-
+IncidentMgr.handlers.spyCam=function(id){ ErrorMgr.dialog({title:'Камера',icon:'👁️',message:'Камера используется неизвестным.',buttons:[{label:'Блок',primary:true,onClose:()=>IncidentMgr.stop(id)}]}); };
+IncidentMgr.handlers.trojan=function(id){ ErrorMgr.dialog({title:'Троян',icon:'🧨',message:'Win32.Trojan.Agent. Удалить?',buttons:[{label:'Удалить',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'Ошибка',icon:'⚠️',message:'Файл защищён.',onClose:()=>IncidentMgr.stop(id)}); },600); }},{label:'Игнор',onClose:()=>IncidentMgr.stop(id)}]}); };
 IncidentMgr.handlers.fbiRansom=function(id){
-  const bd=U.el('div'); bd.style.display='block'; bd.style.textAlign='center';
+  const bd=U.el('div'); bd.style.cssText='display:block;text-align:center';
   bd.append(U.el('div',null,'🚔 ФЕДЕРАЛЬНОЕ БЮРО'));
   const h=U.el('div',null,'ВАШ КОМПЬЮТЕР ЗАБЛОКИРОВАН'); h.style.cssText='font-size:18px;font-weight:700;color:#f33;margin:12px 0';
   bd.appendChild(h);
-  ErrorMgr.dialog({title:'🚨 Заблокировано',html:bd,buttons:[{label:'Разблокировать',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'😄 Шутка!',icon:'😄',message:'Это симуляция :)',onClose:()=>IncidentMgr.stop(id)}); },500); }}]});
+  ErrorMgr.dialog({title:'🚨 Блок',html:bd,buttons:[{label:'Разблок',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'😄 Шутка!',icon:'😄',message:'Симуляция',onClose:()=>IncidentMgr.stop(id)}); },500); }}]});
 };
-
-IncidentMgr.handlers.printSpooler=function(id){ ErrorMgr.dialog({title:'Печать',icon:'🖨️',message:'Принтер не отвечает. Очередь: 999.',buttons:[{label:'Очистить',primary:true,onClose:()=>IncidentMgr.stop(id)}]}); };
-IncidentMgr.handlers.touchpadFail=function(id){ ErrorMgr.dialog({title:'Тачпад',icon:'🖱️',message:'Тачпад работает некорректно.',onClose:()=>this.stop(id)}); };
-IncidentMgr.handlers.gamepadFail=function(id){ setTimeout(()=>{ ErrorMgr.dialog({title:'Геймпад',icon:'🎮',message:'Геймпад отключён.',onClose:()=>IncidentMgr.stop(id)}); },1000); };
-
+IncidentMgr.handlers.printSpooler=function(id){ ErrorMgr.dialog({title:'Печать',icon:'🖨️',message:'Принтер не отвечает.',buttons:[{label:'Очистить',primary:true,onClose:()=>IncidentMgr.stop(id)}]}); };
+IncidentMgr.handlers.touchpadFail=function(id){ ErrorMgr.dialog({title:'Тачпад',icon:'🖱️',message:'Работает некорректно.',onClose:()=>this.stop(id)}); };
+IncidentMgr.handlers.gamepadFail=function(id){ setTimeout(()=>{ ErrorMgr.dialog({title:'Геймпад',icon:'🎮',message:'Отключён.',onClose:()=>IncidentMgr.stop(id)}); },1000); };
 IncidentMgr.handlers.soundCardFail=function(id){
   const t=U.$('#trayVol'); if(t){ t.textContent='🔇'; t.classList.add('err'); }
   ErrorMgr.dialog({title:'Звук',icon:'🔊',message:'Звуковая карта не найдена.',onClose:()=>this.stop(id)});
 };
 IncidentMgr.handlers.cleanup_soundCardFail=()=>{ const t=U.$('#trayVol'); if(t){ t.textContent='🔊'; t.classList.remove('err'); } };
-
-IncidentMgr.handlers.taskSchedulerFail=function(id){ ErrorMgr.dialog({title:'Планировщик',icon:'⏱️',message:'Служба планировщика не запущена.',onClose:()=>this.stop(id)}); };
-
+IncidentMgr.handlers.taskSchedulerFail=function(id){ ErrorMgr.dialog({title:'Планировщик',icon:'⏱️',message:'Служба не запущена.',onClose:()=>this.stop(id)}); };
 IncidentMgr.handlers.profileCorrupt=function(id){
   const b=U.$('#icons'); if(b) b.style.opacity='0.15';
   ErrorMgr.dialog({title:'Профиль',icon:'📁',message:'Создан временный профиль.',buttons:[{label:'Восстановить',primary:true,onClose:()=>{ if(b)b.style.opacity=''; IncidentMgr.stop(id); }}]});
 };
 IncidentMgr.handlers.cleanup_profileCorrupt=()=>{ const b=U.$('#icons'); if(b) b.style.opacity=''; };
-
-IncidentMgr.handlers.activationFail=function(id){
-  ErrorMgr.dialog({title:'Активация',icon:'🔐',message:'microOS не активирована.',buttons:[{label:'Активировать',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'Сервер',icon:'⚠️',message:'Сервер недоступен.',onClose:()=>IncidentMgr.stop(id)}); },700); }},{label:'Позже',onClose:()=>IncidentMgr.stop(id)}]});
-};
-
-IncidentMgr.handlers.systemFileCorrupt=function(id){ ErrorMgr.dialog({title:'Сист. файл',icon:'🧬',message:'Системный файл повреждён. sfc /scannow.',buttons:[{label:'Запустить sfc',primary:true,action:()=>{ Notify.push('sfc','Сканирование…','⏳'); setTimeout(()=>{ Notify.push('sfc','Готово ✓','✅'); IncidentMgr.stop(id); },2500); }}]}); };
-
+IncidentMgr.handlers.activationFail=function(id){ ErrorMgr.dialog({title:'Активация',icon:'🔐',message:'microOS не активирована.',buttons:[{label:'Активировать',primary:true,action:()=>{ setTimeout(()=>{ ErrorMgr.dialog({title:'Сервер',icon:'⚠️',message:'Недоступен.',onClose:()=>IncidentMgr.stop(id)}); },700); }},{label:'Позже',onClose:()=>IncidentMgr.stop(id)}]}); };
+IncidentMgr.handlers.systemFileCorrupt=function(id){ ErrorMgr.dialog({title:'Сист. файл',icon:'🧬',message:'Повреждён.',buttons:[{label:'sfc',primary:true,action:()=>{ Notify.push('sfc','OK','✅'); IncidentMgr.stop(id); }}]}); };
 IncidentMgr.handlers.sleepFail=function(id){
   const fb=U.$('#fadeBlack'); fb.style.opacity='1';
-  setTimeout(()=>{ fb.style.opacity='0'; ErrorMgr.dialog({title:'Сон',icon:'💤',message:'Не удаётся выйти из сна.',onClose:()=>IncidentMgr.stop(id)}); },2500);
+  setTimeout(()=>{ fb.style.opacity='0'; ErrorMgr.dialog({title:'Сон',icon:'💤',message:'Не просыпается.',onClose:()=>IncidentMgr.stop(id)}); },2500);
 };
-
-IncidentMgr.handlers.registryOverflow=function(id){ ErrorMgr.dialog({title:'Реестр',icon:'🗂️',message:'Реестр переполнен.',detail:'Код: 0x8007000E',onClose:()=>this.stop(id)}); };
-
+IncidentMgr.handlers.registryOverflow=function(id){ ErrorMgr.dialog({title:'Реестр',icon:'🗂️',message:'Переполнен.',onClose:()=>this.stop(id)}); };
 IncidentMgr.handlers.slowBoot=function(id){
   const ov=U.el('div');
-  ov.style.cssText='position:fixed;inset:0;z-index:800;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-family:Segoe UI';
+  ov.style.cssText='position:fixed;inset:0;z-index:800;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px';
   ov.append(U.el('div',null,'Подготовка microOS…'));
   const bar=U.el('div'); bar.style.cssText='width:400px;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden';
   const fill=U.el('div'); fill.style.cssText='height:100%;width:0;background:#0078d4;transition:width .3s';
@@ -1543,10 +1623,33 @@ IncidentMgr.handlers.slowBoot=function(id){
     this.timers.get(id).push(t2);
   },12000);
 };
-
-/* Generic fallback */
+IncidentMgr.handlers.timezoneFail=function(id){
+  M.Boot.timeOffset=(Math.random()<0.5?1:-1)*(3+Math.random()*6)*3600*1000;
+  ErrorMgr.dialog({title:'Пояс',icon:'📅',message:'Не удалось определить часовой пояс.',buttons:[{label:'Исправить',primary:true,onClose:()=>{ M.Boot.timeOffset=0; IncidentMgr.stop(id); }},{label:'Позже',onClose:()=>IncidentMgr.stop(id)}]});
+};
+IncidentMgr.handlers.cleanup_timezoneFail=()=>{ M.Boot.timeOffset=0; };
+IncidentMgr.handlers.diskFragmentation=function(id){
+  Notify.push('🗃️ Диск','Фрагментация 90%','⚠️');
+  ErrorMgr.dialog({title:'Фрагментация',icon:'🗃️',message:'Диск C: фрагментирован на 90%.',buttons:[{label:'Дефрагментировать',primary:true,action:()=>{ setTimeout(()=>{ Notify.push('✅','OK','✔'); IncidentMgr.stop(id); },3000); }}]});
+};
+IncidentMgr.handlers.wmCrash=function(id){
+  WM.wins.forEach(w=>{
+    const left=parseFloat(w.el.style.left)||0;
+    const top=parseFloat(w.el.style.top)||0;
+    w.el.style.left=(left+U.rand(-80,80))+'px';
+    w.el.style.top=(top+U.rand(-60,60))+'px';
+  });
+  this.setTimeout(id,()=>{ ErrorMgr.dialog({title:'Explorer',icon:'🪟',message:'WM перестал отвечать.',onClose:()=>this.stop(id)}); },2000);
+};
+IncidentMgr.handlers.hibernationFail=function(id){ ErrorMgr.dialog({title:'Гибернация',icon:'💤',message:'Не удалось создать hiberfil.sys.',buttons:[{label:'Исправить',primary:true,onClose:()=>IncidentMgr.stop(id)},{label:'Отмена',onClose:()=>IncidentMgr.stop(id)}]}); };
+IncidentMgr.handlers.classicBSODSound=function(id){
+  const play=()=>{ AudioMgr.error(); setTimeout(()=>AudioMgr.alert(),500); };
+  play();
+  const int=setInterval(play,8000);
+  this.timers.get(id).push(int);
+};
 IncidentMgr.handlers._generic=function(id,meta){
-  ErrorMgr.dialog({title:'Сбой',icon:meta.em,message:meta.name,detail:'Код ошибки: '+meta.code,onClose:()=>this.stop(id)});
+  ErrorMgr.dialog({title:'Сбой',icon:meta.em,message:meta.name,detail:'Код: '+meta.code,onClose:()=>this.stop(id)});
 };
 
 const UserSession = M.UserSession = {
@@ -1556,16 +1659,12 @@ const UserSession = M.UserSession = {
     if(s){ this.name=s.name||'Пользователь'; this.computerName=s.computerName||'DESKTOP-PC'; this.avatar=s.avatar||null; this.avatarIdx=s.avatarIdx||0; this.passwordHash=s.passwordHash||null; this.hint=s.hint||''; }
   },
   save(){ U.lsSet('user',{name:this.name,computerName:this.computerName,avatar:this.avatar,avatarIdx:this.avatarIdx,passwordHash:this.passwordHash,hint:this.hint}); },
-  setName(n){ this.name=n||'Пользователь'; this.save(); if(M.Taskbar)M.Taskbar.render(); if(M.StartMenu)M.StartMenu.render(); },
   async hash(pw){
     try{
       const buf=new TextEncoder().encode(pw);
       const h=await crypto.subtle.digest('SHA-256',buf);
       return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    }catch(e){
-      let h=0; for(let i=0;i<pw.length;i++) h=(h*31+pw.charCodeAt(i))|0;
-      return 'fb_'+Math.abs(h).toString(16);
-    }
+    }catch(e){ let h=0; for(let i=0;i<pw.length;i++) h=(h*31+pw.charCodeAt(i))|0; return 'fb_'+Math.abs(h).toString(16); }
   },
   async checkPassword(pw){ if(!this.passwordHash) return true; const h=await this.hash(pw); return h===this.passwordHash; },
   getAvatarHTML(){
@@ -1587,7 +1686,7 @@ const SYSTEM_ICONS = [
 ];
 const Desktop = M.Desktop = {
   positions:{},virusIcons:[],
-  init(){ this.positions=U.lsGet('iconPos',{}); this.render(); this.bind(); },
+  init(){ this.positions=U.lsGet('iconPos',{}); this.render(); this.bind(); this.restoreInstalled(); },
   render(){
     const box=U.$('#icons'); if(!box)return;
     box.innerHTML='';
@@ -1622,6 +1721,59 @@ const Desktop = M.Desktop = {
     this.virusIcons.push(d);
   },
   removeVirusIcons(){ this.virusIcons.forEach(v=>v.remove()); this.virusIcons=[]; },
+  addInstalled(appId,label,icon){
+    const box=U.$('#icons'); if(!box)return;
+    const key='installed_'+appId;
+    if(this.positions[key]) return;
+    const idx=U.$$('.dicon').length;
+    const col=Math.floor(idx/7),row=idx%7;
+    const pos={x:18+col*92+480,y:18+row*100};
+    const d=U.el('div','dicon');
+    d.dataset.key=key; d.dataset.appId=appId;
+    d.style.left=pos.x+'px'; d.style.top=pos.y+'px';
+    d.append(U.el('div','em',icon),U.el('div','lb',label));
+    d.addEventListener('click',e=>{ e.stopPropagation(); U.$$('.dicon').forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); });
+    d.addEventListener('dblclick',()=>Apps.open(appId));
+    d.addEventListener('mousedown',e=>this.startDrag(e,d,key));
+    d.addEventListener('contextmenu',e=>{
+      e.preventDefault(); e.stopPropagation();
+      showCtx(e.clientX,e.clientY,[
+        {icon:'🚀',label:'Открыть',action:()=>Apps.open(appId)},
+        {icon:'📂',label:'Расположение',action:()=>Apps.open('explorer',['Program Files',label])},
+        {icon:'🗑',label:'Удалить',action:()=>{
+          if(!confirm('Удалить «'+label+'»?')) return;
+          const installed=U.lsGet('installedApps',[]);
+          U.lsSet('installedApps',installed.filter(a=>a.id!==appId));
+          try{ delete Apps.registry[appId]; }catch(err){}
+          d.remove();
+          M.Taskbar.render(); M.StartMenu.render();
+          Notify.push('Удалено',label,'🗑');
+        }}
+      ]);
+    });
+    box.appendChild(d);
+  },
+  restoreInstalled(){
+    const installed=U.lsGet('installedApps',[]);
+    installed.forEach(rec=>{
+      if(!Apps.get(rec.id)){
+        Apps.register({
+          id:rec.id, name:rec.name, icon:rec.icon, pinned:false, installed:true,
+          open(){
+            const win=WM.create({appId:rec.id,title:rec.name,icon:rec.icon,width:520,height:340});
+            const b=win.body;
+            b.style.cssText='padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;background:var(--win-solid)';
+            const em=U.el('div',null,rec.icon); em.style.fontSize='72px';
+            const h=U.el('h2',null,rec.name); h.style.fontWeight='500';
+            const p=U.el('div',null,'Приложение запущено. Это симуляция.');
+            p.style.cssText='color:var(--dim);font-size:13px';
+            b.append(em,h,p);
+          }
+        });
+      }
+      this.addInstalled(rec.id,rec.name,rec.icon);
+    });
+  },
   bind(){
     const desk=U.$('#desktop'); if(!desk)return;
     desk.addEventListener('click',()=>{ U.$$('.dicon').forEach(x=>x.classList.remove('sel')); hideCtx(); });
@@ -1633,7 +1785,7 @@ const Desktop = M.Desktop = {
         {icon:'📁',label:'Создать папку',action:()=>{ const n=prompt('Имя:'); if(n) FS.mkdir(['Рабочий стол'],n); }},
         {icon:'🎨',label:'Персонализация',action:()=>Apps.open('settings')},
         {icon:'⌨️',label:'Терминал',action:()=>Apps.open('terminal')},
-        {icon:'💠',label:'Свойства системы',action:()=>ErrorMgr.dialog({title:'Свойства',icon:'💠',message:'microOS '+Edition.get().ver+' ('+Edition.get().build+')',detail:'ПК: '+UserSession.computerName+'\nПроцессор: '+(navigator.hardwareConcurrency||4)+' ядер'})}
+        {icon:'💠',label:'Свойства',action:()=>ErrorMgr.dialog({title:'Свойства',icon:'💠',message:'microOS '+Edition.get().ver+' ('+Edition.get().build+')',detail:'ПК: '+UserSession.computerName})}
       ]);
     });
   }
@@ -1847,6 +1999,10 @@ const ControlPanel = M.ControlPanel = {
       b.addEventListener('click',it.action);
       c.appendChild(b);
     });
+    const total=INCIDENTS.filter(i=>Edition.isIncidentAllowed(i)).length;
+    const counter=U.el('div',null,'Доступно: '+total+' из '+INCIDENTS.length);
+    counter.style.cssText='font-size:10.5px;color:var(--dim);text-align:center;padding-top:6px';
+    c.appendChild(counter);
   },
   renderActiveState(){ U.$$('.cp-btn[data-incident]').forEach(b=>{ b.classList.toggle('active',IncidentMgr.has(b.dataset.incident)); }); },
   bind(){
@@ -1873,7 +2029,291 @@ const ControlPanel = M.ControlPanel = {
   }
 };
 
-/* APPS */
+/* ===== FILE TYPE HANDLER ===== */
+const FileTypeHandler = M.FileTypeHandler = {
+  EXT: {
+    exe:{type:'program',cat:'install',name:'Приложение microOS',icon:'💻'},
+    msi:{type:'installer',cat:'install',name:'Установочный пакет',icon:'📦'},
+    dio:{type:'dioApp',cat:'install',name:'Приложение microOS (.dio)',icon:'💠'},
+    app:{type:'dioApp',cat:'install',name:'Пакет приложения microOS',icon:'💠'},
+    txt:{type:'text',cat:'document',name:'Текстовый документ',icon:'📄'},
+    md:{type:'text',cat:'document',name:'Markdown',icon:'📄'},
+    doc:{type:'document',cat:'document',name:'Документ Word',icon:'📘'},
+    pdf:{type:'pdf',cat:'document',name:'PDF-документ',icon:'📕'},
+    log:{type:'text',cat:'document',name:'Лог-файл',icon:'📄'},
+    jpg:{type:'image',cat:'image',name:'JPEG',icon:'🖼️'},
+    jpeg:{type:'image',cat:'image',name:'JPEG',icon:'🖼️'},
+    png:{type:'image',cat:'image',name:'PNG',icon:'🖼️'},
+    gif:{type:'image',cat:'image',name:'GIF',icon:'🖼️'},
+    webp:{type:'image',cat:'image',name:'WebP',icon:'🖼️'},
+    svg:{type:'image',cat:'image',name:'SVG',icon:'🖼️'},
+    mp3:{type:'audio',cat:'media',name:'MP3',icon:'🎵'},
+    wav:{type:'audio',cat:'media',name:'WAV',icon:'🎵'},
+    ogg:{type:'audio',cat:'media',name:'OGG',icon:'🎵'},
+    mp4:{type:'video',cat:'media',name:'MP4',icon:'🎬'},
+    webm:{type:'video',cat:'media',name:'WebM',icon:'🎬'},
+    avi:{type:'video',cat:'media',name:'AVI',icon:'🎬'},
+    zip:{type:'archive',cat:'archive',name:'ZIP',icon:'🗜️'},
+    rar:{type:'archive',cat:'archive',name:'RAR',icon:'🗜️'},
+    '7z':{type:'archive',cat:'archive',name:'7z',icon:'🗜️'},
+    bat:{type:'script',cat:'script',name:'BAT',icon:'⚙️'},
+    cmd:{type:'script',cat:'script',name:'CMD',icon:'⚙️'},
+    ps1:{type:'script',cat:'script',name:'PowerShell',icon:'⚙️'},
+    sh:{type:'script',cat:'script',name:'Shell',icon:'⚙️'},
+    sys:{type:'system',cat:'system',name:'Системный',icon:'🧬'},
+    dll:{type:'system',cat:'system',name:'DLL',icon:'🧬'}
+  },
+  getExt(name){ const p=String(name).split('.'); return p.length>1?p.pop().toLowerCase():''; },
+  getInfo(name){ const ext=this.getExt(name); return this.EXT[ext]||{type:'unknown',cat:'unknown',name:'Неизвестный файл',icon:'❓'}; },
+  formatSize(bytes){
+    if(!bytes||bytes<1024) return (bytes||0)+' Б';
+    if(bytes<1048576) return (bytes/1024).toFixed(1)+' КБ';
+    if(bytes<1073741824) return (bytes/1048576).toFixed(2)+' МБ';
+    return (bytes/1073741824).toFixed(2)+' ГБ';
+  },
+  open(name, content, blobUrl){
+    const info=this.getInfo(name);
+    if(info.cat==='install') return InstallerDialog.start(name, content);
+    if(info.type==='text'){
+      NotepadApp.open({name, path:['Документы'], content: content||''});
+      return;
+    }
+    if(info.type==='document'||info.type==='pdf'){
+      ErrorMgr.dialog({title:'Открыть',icon:info.icon,message:`Файл «${name}» (${info.name})`,detail:'Приложение не установлено.',buttons:[{label:'Отмена'},{label:'Магазин',primary:true,action:()=>Apps.open('store')}]});
+      return;
+    }
+    if(info.type==='image'){ GalleryApp.open({name,url:blobUrl}); return; }
+    if(info.type==='audio'||info.type==='video'){ MediaApp.open({name,url:blobUrl,type:info.type}); return; }
+    if(info.type==='archive'){ this.showArchive(name); return; }
+    if(info.type==='script'){ Apps.open('terminal'); setTimeout(()=>Notify.push('Скрипт','Файл НЕ исполняется','⚙️'),300); return; }
+    if(info.type==='system'){ ErrorMgr.dialog({title:'Системный',icon:info.icon,message:`«${name}» — системный файл.`,buttons:[{label:'Отмена'},{label:'Скопировать',primary:true,action:()=>{ FS.writeFile(['Program Files'],name,content||''); Notify.push('Файл',name+' скопирован','✅'); }}]}); return; }
+    ErrorMgr.dialog({title:'Не открыть',icon:'❓',message:`microOS не может открыть «${name}».`,detail:'Неизвестный тип файла.'});
+  },
+  showArchive(name){
+    ErrorMgr.dialog({title:'Архив',icon:'🗜️',message:`Архив «${name}»`,detail:'Содержимое: readme.txt, setup.exe, data.bin',buttons:[{label:'Закрыть'},{label:'Извлечь',primary:true,action:()=>{ FS.mkdir(['Загрузки'],name.replace(/\.[^.]+$/,'')); Notify.push('Архив','Распаковано','🗜️'); }}]});
+  }
+};
+
+/* ===== INSTALLER DIALOG ===== */
+const InstallerDialog = M.InstallerDialog = {
+  current:null,
+  start(name, content){
+    const info=FileTypeHandler.getInfo(name);
+    if(!['program','installer','dioApp'].includes(info.type)) return FileTypeHandler.open(name, content);
+    if(Edition.getId()==='w10-base' && info.type!=='dioApp'){
+      ErrorMgr.dialog({title:'Недоступно',icon:'🔒',message:'В редакции «Базовая» установка программ недоступна.',buttons:[{label:'ОК',primary:true}]});
+      return;
+    }
+    const size=content?content.length:Math.round(U.rand(500000,15000000));
+    const signed=Math.random()>0.4;
+    const publishers=['MicroSoft','DioidSoft','Yandex','OpenSoft','Неизвестный разработчик'];
+    const publisher=signed?publishers[Math.floor(U.rand(0,4))]:'Неизвестный разработчик';
+    const displayName=name.replace(/\.(exe|msi|dio|app)$/i,'').replace(/[_-]/g,' ');
+    this.current={name,displayName,size,signed,publisher,info,content};
+    this.step1();
+  },
+  step1(){
+    const f=this.current;
+    const ov=U.el('div','inst-overlay');
+    const dlg=U.el('div','inst-dialog');
+    const head=U.el('div','inst-head');
+    head.append(U.el('div','em',f.info.icon),U.el('h3',null,'Установка программы'));
+    const body=U.el('div','inst-body');
+    const fileInfo=U.el('div','inst-file-info');
+    fileInfo.append(U.el('div','em',f.info.icon));
+    const meta=U.el('div','meta');
+    meta.append(U.el('div','nm',f.name));
+    meta.append(U.el('div','sub',f.info.name));
+    meta.append(U.el('div','sub','Размер: '+FileTypeHandler.formatSize(f.size)));
+    meta.append(U.el('div','sub','Издатель: '+f.publisher));
+    const sig=U.el('div','sub');
+    sig.classList.add(f.signed?'sig-ok':'sig-bad');
+    sig.textContent=f.signed?'✅ Цифровая подпись действительна':'⚠️ Файл не подписан';
+    meta.appendChild(sig);
+    fileInfo.appendChild(meta);
+    body.appendChild(fileInfo);
+    const notice=U.el('div',null,'Приложение будет установлено в C:\\Program Files\\'+f.displayName+'.');
+    notice.style.cssText='font-size:12px;color:var(--dim);padding:4px 0';
+    body.appendChild(notice);
+    const foot=U.el('div','inst-foot');
+    const cancel=U.el('button',null,'Отмена');
+    const next=U.el('button','primary','Установить');
+    cancel.addEventListener('click',()=>{ ov.remove(); this.done(false,'Отменено'); });
+    next.addEventListener('click',()=>{ ov.remove(); this.step2(); });
+    foot.append(cancel,next);
+    dlg.append(head,body,foot);
+    ov.appendChild(dlg);
+    document.body.appendChild(ov);
+  },
+  step2(){
+    const f=this.current;
+    if(M.IncidentMgr.has('virusInstall')&&Math.random()<0.7){
+      ErrorMgr.dialog({title:'Defender',icon:'🛡️',message:'Обнаружена угроза Trojan:Win32/Agent.',detail:'Файл в карантине.',buttons:[{label:'ОК',primary:true,action:()=>this.done(false,'Defender')}]});
+      return;
+    }
+    if(M.IncidentMgr.has('antivirusBlock')){
+      ErrorMgr.dialog({title:'Антивирус',icon:'🛡️',message:'Defender заблокировал установку.',buttons:[{label:'ОК',primary:true,action:()=>this.done(false,'Заблокировано')}]});
+      return;
+    }
+    if(M.IncidentMgr.has('installBlocked')){
+      ErrorMgr.dialog({title:'Блок',icon:'🔒',message:'Установка заблокирована политикой.',buttons:[{label:'ОК',primary:true,action:()=>this.done(false,'Политика')}]});
+      return;
+    }
+    const isDio=f.info.type==='dioApp';
+    if(isDio||f.signed){
+      if(!isDio){
+        ErrorMgr.uacPrompt({signed:true,name:f.displayName,publisher:f.publisher,onAllow:()=>this.step3(),onDeny:()=>this.done(false,'Отклонено')});
+      } else this.step3();
+    } else {
+      ErrorMgr.uacPrompt({signed:false,name:f.displayName,publisher:f.publisher,onAllow:()=>this.step3(),onDeny:()=>this.done(false,'Отклонено')});
+    }
+  },
+  step3(){
+    const f=this.current;
+    const ov=U.el('div','inst-overlay');
+    const dlg=U.el('div','inst-dialog');
+    const head=U.el('div','inst-head');
+    head.append(U.el('div','em',f.info.icon),U.el('h3',null,'Установка…'));
+    const body=U.el('div','inst-body');
+    const prog=U.el('div','inst-progress'); const fill=U.el('div'); prog.appendChild(fill);
+    const pct=U.el('div','inst-pct','0%');
+    const steps=U.el('ul','inst-steps');
+    const stepNames=['Проверка целостности…','Распаковка…','Регистрация…','Создание ярлыка…','Добавление в меню…','Завершение…'];
+    const stepEls=stepNames.map(s=>{ const li=U.el('li',null,s); steps.appendChild(li); return li; });
+    body.append(prog,pct,steps);
+    dlg.append(head,body);
+    ov.appendChild(dlg);
+    document.body.appendChild(ov);
+    if(M.IncidentMgr.has('corruptInstaller') && Math.random()<0.7){
+      setTimeout(()=>{ ov.remove(); this.handleFailure('corrupt'); },1200);
+      return;
+    }
+    let failType=null;
+    if(Math.random()<0.2){ const types=['diskFull','corrupt','access','stability']; failType=types[Math.floor(Math.random()*types.length)]; }
+    let p=0,step=0;
+    const int=setInterval(()=>{
+      p+=U.rand(3,9); if(p>100) p=100;
+      fill.style.width=p+'%'; pct.textContent=Math.floor(p)+'%';
+      const newStep=Math.min(stepEls.length-1,Math.floor(p/(100/stepEls.length)));
+      while(step<newStep){ stepEls[step].classList.add('done'); stepEls[step].classList.remove('active'); step++; stepEls[step].classList.add('active'); }
+      if(p>=100){
+        clearInterval(int);
+        stepEls.forEach(el=>{ el.classList.add('done'); el.classList.remove('active'); });
+        ov.remove();
+        if(failType) this.handleFailure(failType);
+        else this.finishSuccess();
+      }
+    },180);
+    stepEls[0].classList.add('active');
+  },
+  handleFailure(type){
+    const errors={
+      diskFull:{code:'0x80070070',msg:'Недостаточно места на диске C:'},
+      corrupt:{code:'0x80070570',msg:'Файл повреждён. Контрольная сумма не совпадает.'},
+      access:{code:'0x80070005',msg:'Отказано в доступе.'},
+      stability:{code:'0xC0000142',msg:'Установка прервана из-за нестабильности.'}
+    };
+    const e=errors[type];
+    this.done(false,e.msg,e.code);
+  },
+  finishSuccess(){ this.done(true); },
+  done(success,errorMsg,errorCode){
+    const f=this.current;
+    const ov=U.el('div','inst-overlay');
+    const dlg=U.el('div','inst-dialog');
+    const head=U.el('div','inst-head');
+    head.append(U.el('div','em',success?'✅':'❌'),U.el('h3',null,success?'Установка завершена':'Установка не удалась'));
+    const body=U.el('div','inst-body');
+    const result=U.el('div','inst-result');
+    result.append(U.el('div','em',success?'🎉':'⚠️'));
+    result.append(U.el('h3',null,success?f.displayName+' установлено':(errorMsg||'Ошибка')));
+    if(success) result.append(U.el('p',null,'Приложение добавлено в меню Пуск и на рабочий стол.'));
+    else if(errorCode) result.append(U.el('p',null,'Код ошибки: '+errorCode));
+    body.appendChild(result);
+    const foot=U.el('div','inst-foot');
+    if(success){
+      const run=U.el('button','primary','Запустить');
+      const close=U.el('button',null,'Закрыть');
+      run.addEventListener('click',()=>{ ov.remove(); this.launchInstalled(); });
+      close.addEventListener('click',()=>ov.remove());
+      foot.append(close,run);
+    } else {
+      const close=U.el('button','primary','Закрыть');
+      close.addEventListener('click',()=>ov.remove());
+      foot.appendChild(close);
+    }
+    dlg.append(head,body,foot);
+    ov.appendChild(dlg);
+    document.body.appendChild(ov);
+    if(success) this.registerApp();
+    else this.logHistory(f,false,errorMsg,errorCode);
+    this.current=null;
+  },
+  registerApp(){
+    const f=this.current;
+    const appId='installed_'+Date.now()+'_'+Math.random().toString(36).substring(2,6);
+    const displayName=f.displayName, icon=f.info.icon;
+    Apps.register({
+      id:appId, name:displayName, icon, pinned:false, installed:true,
+      open(){
+        const win=WM.create({appId,title:displayName,icon,width:520,height:340});
+        const b=win.body;
+        b.style.cssText='padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;background:var(--win-solid)';
+        const em=U.el('div',null,icon); em.style.fontSize='72px';
+        const h=U.el('h2',null,displayName); h.style.fontWeight='500';
+        const p=U.el('div',null,'Приложение запущено. Это симуляция.');
+        p.style.cssText='color:var(--dim);font-size:13px';
+        b.append(em,h,p);
+      }
+    });
+    const installed=U.lsGet('installedApps',[]);
+    installed.push({id:appId,name:displayName,fileName:f.name,icon,size:f.size,publisher:f.publisher,signed:f.signed,installedAt:Date.now(),folder:'Program Files'});
+    U.lsSet('installedApps',installed);
+    FS.mkdir(['Program Files'],displayName);
+    FS.writeFile(['Program Files',displayName],f.name,'[установленный файл]');
+    Desktop.addInstalled(appId,displayName,icon);
+    this.logHistory(f,true);
+    M.Taskbar.render(); M.StartMenu.render(); M.Desktop.render();
+    Notify.push('Установлено',displayName,icon);
+  },
+  launchInstalled(){
+    const installed=U.lsGet('installedApps',[]);
+    if(!installed.length) return;
+    Apps.open(installed[installed.length-1].id);
+  },
+  logHistory(file,success,errorMsg,errorCode){
+    const hist=U.lsGet('installHistory',[]);
+    hist.unshift({name:file.name,displayName:file.displayName,size:file.size,at:Date.now(),status:success?'success':'fail',errorMsg:errorMsg||null,errorCode:errorCode||null});
+    if(hist.length>50) hist.length=50;
+    U.lsSet('installHistory',hist);
+  }
+};
+
+M.installFile=function(file){
+  return new Promise((resolve,reject)=>{
+    if(!file){ reject('no file'); return; }
+    const info=FileTypeHandler.getInfo(file.name);
+    if(info.cat==='install'){
+      const reader=new FileReader();
+      reader.onload=()=>{ InstallerDialog.start(file.name,reader.result); resolve(); };
+      reader.onerror=()=>reject(reader.error);
+      reader.readAsArrayBuffer(file);
+    } else if(['image','audio','video'].includes(info.type)){
+      const url=URL.createObjectURL(file);
+      FileTypeHandler.open(file.name,null,url);
+      resolve();
+    } else if(['text','document','pdf'].includes(info.type)){
+      const reader=new FileReader();
+      reader.onload=()=>{ FileTypeHandler.open(file.name,reader.result); resolve(); };
+      reader.readAsText(file);
+    } else {
+      FileTypeHandler.open(file.name,'');
+      resolve();
+    }
+  });
+};
+
+/* ===== APPS ===== */
 Apps.register({id:'explorer',name:'Проводник',icon:'📁',pinned:true,open(startPath){
   let path=startPath||[];
   const win=WM.create({appId:'explorer',title:'Проводник',icon:'📁',width:800,height:520});
@@ -1904,18 +2344,27 @@ Apps.register({id:'explorer',name:'Проводник',icon:'📁',pinned:true,o
     if(!items.length){ grid.appendChild(U.el('div','exp-empty','Пусто')); return; }
     items.forEach(c=>{
       const it=U.el('div','fitem');
-      it.append(U.el('div','em',c.type==='folder'?'📁':'📄'),U.el('div','nm',c.name));
+      const icon=c.type==='folder'?'📁':FileTypeHandler.getInfo(c.name).icon;
+      it.append(U.el('div','em',icon),U.el('div','nm',c.name));
       it.addEventListener('dblclick',()=>{
         if(c.type==='folder'){ path=[...path,c.name]; render(); }
-        else Apps.open('notepad',{path:[...path],name:c.name});
+        else{
+          const ext=c.name.split('.').pop().toLowerCase();
+          if(['exe','msi','dio','app'].includes(ext)) InstallerDialog.start(c.name,c.content||'');
+          else if(['txt','md','log'].includes(ext)) NotepadApp.open({path:[...path],name:c.name,content:c.content||''});
+          else FileTypeHandler.open(c.name,c.content);
+        }
       });
       it.addEventListener('contextmenu',e=>{
         e.preventDefault(); e.stopPropagation();
-        showCtx(e.clientX,e.clientY,[
+        const ext=c.name.split('.').pop().toLowerCase();
+        const items=[
           {icon:'📂',label:'Открыть',action:()=>{ if(c.type==='folder'){path=[...path,c.name];render();} }},
           {icon:'✏️',label:'Переименовать',action:()=>{ const n=prompt('Новое:',c.name); if(n){ c.name=n; FS.save(); render(); } }},
           {icon:'🗑',label:'Удалить',action:()=>{ FS.remove([...path,c.name]); render(); }}
-        ]);
+        ];
+        if(['exe','msi','dio','app'].includes(ext)) items.unshift({icon:'📥',label:'Установить',action:()=>InstallerDialog.start(c.name,c.content||'')});
+        showCtx(e.clientX,e.clientY,items);
       });
       grid.appendChild(it);
     });
@@ -1942,7 +2391,11 @@ const NotepadApp = M.NotepadApp = {id:'notepad',name:'Блокнот',icon:'📝
   const stL=U.el('span',null,'Черновик'); const stR=U.el('span',null,'0');
   st.append(stL,stR); b.append(tb,ed,st);
   let current=fileRef||null;
-  if(fileRef){ const c=FS.readFile([...fileRef.path,fileRef.name]); if(c!=null) ed.textContent=c; stL.textContent=fileRef.name; }
+  if(fileRef){ 
+    const c=fileRef.content!=null?fileRef.content:FS.readFile([...fileRef.path,fileRef.name]); 
+    if(c!=null) ed.textContent=c; 
+    stL.textContent=fileRef.name; 
+  }
   else { const d=U.lsGet('notepad.draft',''); if(d) ed.textContent=d; }
   const upd=()=>{ stR.textContent=ed.textContent.length+' символов'; };
   upd();
@@ -1958,6 +2411,53 @@ const NotepadApp = M.NotepadApp = {id:'notepad',name:'Блокнот',icon:'📝
 }};
 Apps.register(NotepadApp);
 
+/* Gallery */
+const GalleryApp = M.GalleryApp = {id:'gallery',name:'Галерея',icon:'🖼️',pinned:false,open(arg){
+  const win=WM.create({appId:'gallery',title:'Галерея',icon:'🖼️',width:700,height:500});
+  const b=win.body; b.classList.add('gal');
+  b.style.cssText='display:flex;flex-direction:column';
+  if(arg&&arg.url){
+    const stage=U.el('div'); stage.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;background:#000';
+    const img=U.el('img'); img.src=arg.url; img.style.cssText='max-width:100%;max-height:100%;object-fit:contain';
+    stage.appendChild(img); b.appendChild(stage);
+    win.setTitle('Галерея — '+arg.name);
+    win.close=((orig)=>function(){ try{ URL.revokeObjectURL(arg.url); }catch(e){} orig(); })(win.close);
+  } else {
+    const d=U.el('div'); d.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:13px';
+    d.textContent='Нет изображений';
+    b.appendChild(d);
+  }
+}};
+Apps.register(GalleryApp);
+
+/* Media */
+const MediaApp = M.MediaApp = {id:'mediaplayer',name:'Медиаплеер',icon:'🎵',pinned:false,open(arg){
+  const win=WM.create({appId:'mediaplayer',title:'Медиаплеер',icon:'🎵',width:600,height:480});
+  const b=win.body;
+  b.style.cssText='display:flex;flex-direction:column';
+  const stage=U.el('div'); stage.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;background:#000;overflow:hidden';
+  b.appendChild(stage);
+  if(arg&&arg.url){
+    if(arg.type==='video'){
+      const v=U.el('video'); v.src=arg.url; v.controls=true; v.autoplay=true;
+      v.style.cssText='max-width:100%;max-height:100%';
+      stage.appendChild(v);
+      win.close=((orig)=>function(){ try{ v.pause(); URL.revokeObjectURL(arg.url); }catch(e){} orig(); })(win.close);
+    } else {
+      const d=U.el('div'); d.style.cssText='display:flex;flex-direction:column;align-items:center;gap:16px;color:#fff';
+      const em=U.el('div',null,'🎵'); em.style.fontSize='64px';
+      const nm=U.el('div',null,arg.name); nm.style.fontSize='14px';
+      const a=U.el('audio'); a.src=arg.url; a.controls=true; a.autoplay=true;
+      d.append(em,nm,a); stage.appendChild(d);
+      win.close=((orig)=>function(){ try{ a.pause(); URL.revokeObjectURL(arg.url); }catch(e){} orig(); })(win.close);
+    }
+    win.setTitle('Медиаплеер — '+arg.name);
+  } else {
+    stage.style.color='var(--dim)'; stage.textContent='Нет медиа';
+  }
+}};
+Apps.register(MediaApp);
+
 function CalcEval(s){
   s=String(s).replace(/\s+/g,''); let i=0;
   const num=()=>{ let t=''; while(i<s.length&&/[0-9.]/.test(s[i]))t+=s[i++]; if(!t)throw new Error(); return parseFloat(t); };
@@ -1967,7 +2467,7 @@ function CalcEval(s){
     if(/[a-zA-Z]/.test(s[i]||'')){
       let name=''; while(i<s.length&&/[a-zA-Z]/.test(s[i]))name+=s[i++];
       if(s[i]==='('){ i++; const a=expr(); if(s[i]===')')i++;
-        switch(name.toLowerCase()){ case 'sqrt':return Math.sqrt(a); case 'sin':return Math.sin(a); case 'cos':return Math.cos(a); case 'tan':return Math.tan(a); case 'log':return Math.log10(a); case 'ln':return Math.log(a); default:throw new Error(); }
+        switch(name.toLowerCase()){ case 'sqrt':return Math.sqrt(a); case 'sin':return Math.sin(a); case 'cos':return Math.cos(a); case 'tan':return Math.tan(a); default:throw new Error(); }
       }
       if(name==='pi')return Math.PI; if(name==='e')return Math.E; throw new Error();
     }
@@ -2045,7 +2545,7 @@ Apps.register({id:'terminal',name:'Терминал',icon:'⌨️',pinned:true,o
     const cmd=(parts[0]||'').toLowerCase();
     const args=parts.slice(1); const arg=args.join(' ');
     if(mode==='limited'&&!['help','dir','ls','date','time','cls','clear'].includes(cmd)){
-      write('Команда недоступна в вашей редакции.','err'); return;
+      write('Недоступно в вашей редакции.','err'); return;
     }
     switch(cmd){
       case '': break;
@@ -2073,10 +2573,8 @@ Apps.register({id:'terminal',name:'Терминал',icon:'⌨️',pinned:true,o
     }
   }
   write('microOS Terminal v11.0','ok');
-  if(mode==='limited') write('Редакция: ограниченный набор команд.');
-  write('Введите help.');
-  write('');
-  writePrompt();
+  if(mode==='limited') write('Редакция: ограниченный набор.');
+  write('Введите help.'); write(''); writePrompt();
   term.addEventListener('click',()=>{ const l=term.querySelector('.term-input:not([disabled])'); if(l)l.focus(); });
 }});
 
@@ -2101,10 +2599,10 @@ Apps.register({id:'browser',name:'Браузер',icon:'🌐',pinned:true,open()
     h.append(inp,links); stage.appendChild(h);
   };
   const go=input=>{
-    if(M.IncidentMgr.has('netLoss')||M.IncidentMgr.has('ddos')){
+    if(M.IncidentMgr.has('netLoss')||M.IncidentMgr.has('ddos')||M.IncidentMgr.has('dnsHijack')||M.IncidentMgr.has('mitmAttack')){
       stage.innerHTML='';
       const d=U.el('div','br-home');
-      d.append(U.el('h1',null,'🌐'),U.el('div',null,'Нет подключения'));
+      d.append(U.el('h1',null,'🌐'),U.el('div',null,'Нет безопасного подключения'));
       stage.appendChild(d); return;
     }
     let url=(input||'').trim(); if(!url){ home(); return; }
@@ -2147,7 +2645,7 @@ Apps.register({id:'taskmgr',name:'Диспетчер',icon:'📊',pinned:true,op
       row.append(nm,U.el('div','pct',cpu+'%'),U.el('div','pct',ram+' МБ'),kill);
       list.appendChild(row);
     });
-    info.textContent=`Процессов: ${WM.wins.length}`+(lite?' (lite)':'');
+    info.textContent='Процессов: '+WM.wins.length+(lite?' (lite)':'');
   }
   render();
   const int=setInterval(render,1500);
@@ -2208,8 +2706,9 @@ Apps.register({id:'settings',name:'Настройки',icon:'⚙️',pinned:true
   const sections=[
     {id:'system',icon:'🖥',name:'Система'},
     {id:'personal',icon:'🎨',name:'Персонализация'},
+    {id:'apps',icon:'📦',name:'Приложения'},
     {id:'about',icon:'💠',name:'Об устройстве'},
-    {id:'reset',icon:'⚠️',name:'Сброс системы'}
+    {id:'reset',icon:'⚠️',name:'Сброс'}
   ];
   let cur='system';
   function renderNav(){
@@ -2262,9 +2761,64 @@ Apps.register({id:'settings',name:'Настройки',icon:'⚙️',pinned:true
       });
       content.appendChild(tg);
     }
+    if(cur==='apps'){
+      const installed=U.lsGet('installedApps',[]);
+      const hist=U.lsGet('installHistory',[]);
+      content.appendChild(U.el('h3',null,'Установленные ('+installed.length+')'));
+      if(!installed.length){
+        const e=U.el('div',null,'Нет установленных приложений');
+        e.style.cssText='color:var(--dim);padding:12px;font-size:12.5px';
+        content.appendChild(e);
+      } else {
+        installed.forEach(app=>{
+          const row=U.el('div','row');
+          const info=U.el('div');
+          info.append(U.el('div',null,app.icon+'  '+app.name));
+          const sub=U.el('div',null,'Установлено: '+new Date(app.installedAt).toLocaleDateString('ru-RU')+' · '+FileTypeHandler.formatSize(app.size||0));
+          sub.style.cssText='font-size:11px;color:var(--dim);margin-top:2px';
+          info.appendChild(sub);
+          const del=U.el('button','btn sec','Удалить');
+          del.style.fontSize='11.5px';
+          del.addEventListener('click',()=>{
+            if(!confirm('Удалить «'+app.name+'»?')) return;
+            del.disabled=true; del.textContent='Удаление…';
+            setTimeout(()=>{
+              const rem=installed.filter(a=>a.id!==app.id);
+              U.lsSet('installedApps',rem);
+              try{ delete Apps.registry[app.id]; }catch(e){}
+              const icon=U.$('.dicon[data-app-id="'+app.id+'"]');
+              if(icon) icon.remove();
+              FS.remove(['Program Files',app.name]);
+              M.Taskbar.render(); M.StartMenu.render();
+              Notify.push('Удалено',app.name,'🗑');
+              renderContent();
+            },1000);
+          });
+          row.append(info,del);
+          content.appendChild(row);
+        });
+      }
+      content.appendChild(U.el('h3',null,'История установок'));
+      if(!hist.length){
+        const e=U.el('div',null,'Нет установок');
+        e.style.cssText='color:var(--dim);padding:12px;font-size:12.5px';
+        content.appendChild(e);
+      } else {
+        hist.slice(0,20).forEach(h=>{
+          const row=U.el('div','row');
+          const info=U.el('div');
+          info.append(U.el('div',null,(h.status==='success'?'✅':'❌')+'  '+h.name));
+          const sub=U.el('div',null,new Date(h.at).toLocaleString('ru-RU')+(h.status==='fail'?' · '+(h.errorMsg||'Ошибка'):''));
+          sub.style.cssText='font-size:11px;color:var(--dim);margin-top:2px';
+          info.appendChild(sub);
+          row.appendChild(info);
+          content.appendChild(row);
+        });
+      }
+    }
     if(cur==='about'){
       const info=U.el('div','card');
-      [`microOS ${Edition.get().ver} (build ${Edition.get().build})`,Edition.get().name,'Kernel: microJS 6.0','UI: Fluent Design'].forEach(t=>{
+      [`microOS ${Edition.get().ver} (build ${Edition.get().build})`,Edition.get().name,'Kernel: microJS 6.0'].forEach(t=>{
         info.appendChild(U.el('div','row',t));
       });
       content.appendChild(info);
@@ -2272,14 +2826,14 @@ Apps.register({id:'settings',name:'Настройки',icon:'⚙️',pinned:true
     if(cur==='reset'){
       const card=U.el('div','card');
       card.append(U.el('div',null,'Сброс microOS'));
-      const w=U.el('div',null,'Все данные и настройки будут удалены. Вы вернётесь к выбору редакции.');
+      const w=U.el('div',null,'Все данные будут удалены. Вы вернётесь к выбору редакции.');
       w.style.cssText='font-size:12.5px;color:var(--dim);margin:10px 0;line-height:1.5';
       card.appendChild(w);
       const btn=U.el('button','btn','🔄 Сбросить');
       btn.style.background='#e81123';
       btn.addEventListener('click',()=>{
         if(!confirm('Сбросить? Необратимо.'))return;
-        ['installed','user','settings','fs','trash','iconPos','term.history','notepad.draft','edition'].forEach(k=>{ try{ localStorage.removeItem('microOS.'+k); }catch(e){} });
+        ['installed','user','settings','fs','trash','iconPos','term.history','notepad.draft','edition','installedApps','installHistory'].forEach(k=>{ try{ localStorage.removeItem('microOS.'+k); }catch(e){} });
         location.reload();
       });
       card.appendChild(btn); content.appendChild(card);
@@ -2329,7 +2883,7 @@ const LockScreen = M.LockScreen = {
   }
 };
 
-/* OOBE */
+/* OOBE — с исправленной навигацией */
 const OOBE = M.OOBE = {
   step:-1, maxStep:7, onDone:null, $root:null,
   data:{edition:'w11-pro',lang:'ru',region:'RU',keyboard:'ru',network:null,accepted:false,userName:'',computerName:'',avatarIdx:0,avatarData:null,password:'',confirmPassword:'',hint:'',theme:'dark',wallpaper:'a',accent:'#0078d4',privacy:{diagnostics:true,ads:true,speech:true,location:true,sync:true}},
@@ -2348,27 +2902,24 @@ const OOBE = M.OOBE = {
 
   buildScreens(){
     const c=U.$('#oobeScreens'); c.innerHTML='';
-    // Экран -1: Выбор редакции
     c.appendChild(this.mkScreen(-1,`
       <h1 style="font-size:28px">Выберите редакцию microOS</h1>
       <p style="font-size:14px">Каждая редакция имеет свои возможности и стиль</p>
       <div class="edition-grid" id="editionGrid"></div>
     `));
-    // Экран 0: Приветствие
     c.appendChild(this.mkScreen(0,`
       <div class="oobe-logo"><svg width="120" height="120" viewBox="0 0 100 100"><rect x="10" y="10" width="38" height="38" rx="4" fill="#4aa3ff"/><rect x="52" y="10" width="38" height="38" rx="4" fill="#7cc4ff"/><rect x="10" y="52" width="38" height="38" rx="4" fill="#7cc4ff"/><rect x="52" y="52" width="38" height="38" rx="4" fill="#4aa3ff"/></svg></div>
-      <h1 id="oobeWelcomeTitle">Добро пожаловать в microOS 11</h1>
+      <h1 id="oobeWelcomeTitle">Добро пожаловать в microOS 11 Pro</h1>
       <p>Давайте настроим вашу систему</p>
       <button class="oobe-btn primary" id="oobeStartBtn">Начать →</button>
     `));
-    // Экран 1: Язык
     c.appendChild(this.mkScreen(1,`
       <h1>Язык и регион</h1>
       <div class="oobe-form">
         <label>Язык</label>
-        <select id="oobeLang"><option value="ru">Русский</option><option value="en">English</option><option value="uk">Українська</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option></select>
+        <select id="oobeLang"><option value="ru">Русский</option><option value="en">English</option><option value="uk">Українська</option><option value="de">Deutsch</option></select>
         <label>Регион</label>
-        <select id="oobeRegion"><option value="RU">Россия</option><option value="KZ">Казахстан</option><option value="BY">Беларусь</option><option value="UA">Украина</option><option value="US">США</option><option value="DE">Германия</option><option value="FR">Франция</option></select>
+        <select id="oobeRegion"><option value="RU">Россия</option><option value="KZ">Казахстан</option><option value="BY">Беларусь</option><option value="UA">Украина</option><option value="US">США</option></select>
         <label>Раскладка</label>
         <div class="oobe-radios">
           <label><input type="radio" name="oobeKb" value="ru" checked> Русская</label>
@@ -2377,20 +2928,17 @@ const OOBE = M.OOBE = {
         </div>
       </div>
     `));
-    // Экран 2: Wi-Fi
     c.appendChild(this.mkScreen(2,`
       <h1>Подключение к сети</h1>
       <p>Выберите Wi-Fi</p>
       <div class="oobe-wifi-list" id="oobeWifiList"></div>
       <button class="oobe-link" id="oobeSkipNet">Пропустить</button>
     `));
-    // Экран 3: EULA
     c.appendChild(this.mkScreen(3,`
       <h1>Условия использования</h1>
       <div class="oobe-eula" id="oobeEula"></div>
       <label class="oobe-checkbox"><input type="checkbox" id="oobeAccept"> Я принимаю условия</label>
     `));
-    // Экран 4: Аккаунт
     c.appendChild(this.mkScreen(4,`
       <h1>Учётная запись</h1>
       <div class="oobe-form oobe-form-wide">
@@ -2413,14 +2961,13 @@ const OOBE = M.OOBE = {
         <input type="text" id="oobeHint" maxlength="64">
       </div>
     `));
-    // Экран 5: Персонализация
     c.appendChild(this.mkScreen(5,`
       <h1>Персонализация</h1>
       <div class="oobe-form oobe-form-wide">
         <label>Тема</label>
         <div class="oobe-themes">
-          <div class="oobe-theme" data-theme="light"><div class="oobe-theme-prev" style="background:#f3f3f3"><div style="background:#fff;width:60%;height:8px;border-radius:2px;margin:10px auto"></div><div style="background:#0078d4;width:30%;height:6px;border-radius:2px;margin:6px auto"></div></div><span>Светлая</span></div>
-          <div class="oobe-theme active" data-theme="dark"><div class="oobe-theme-prev" style="background:#1a1a1a"><div style="background:#333;width:60%;height:8px;border-radius:2px;margin:10px auto"></div><div style="background:#0078d4;width:30%;height:6px;border-radius:2px;margin:6px auto"></div></div><span>Тёмная</span></div>
+          <div class="oobe-theme" data-theme="light"><div class="oobe-theme-prev" style="background:#f3f3f3"><div style="background:#fff;width:60%;height:8px;border-radius:2px;margin:10px auto"></div></div><span>Светлая</span></div>
+          <div class="oobe-theme active" data-theme="dark"><div class="oobe-theme-prev" style="background:#1a1a1a"><div style="background:#333;width:60%;height:8px;border-radius:2px;margin:10px auto"></div></div><span>Тёмная</span></div>
         </div>
         <label>Обои</label>
         <div class="oobe-wallpapers" id="oobeWallpapers"></div>
@@ -2428,7 +2975,6 @@ const OOBE = M.OOBE = {
         <div class="oobe-accents" id="oobeAccents"></div>
       </div>
     `));
-    // Экран 6: Приватность
     c.appendChild(this.mkScreen(6,`
       <h1>Конфиденциальность</h1>
       <div class="oobe-form oobe-form-wide">
@@ -2439,7 +2985,6 @@ const OOBE = M.OOBE = {
         <div class="oobe-switch-row"><div><b>Синхронизация</b></div><div class="switch on" data-priv="sync"></div></div>
       </div>
     `));
-    // Экран 7: Финал
     c.appendChild(this.mkScreen(7,`
       <div class="oobe-logo"><svg width="80" height="80" viewBox="0 0 100 100"><rect x="10" y="10" width="38" height="38" rx="4" fill="#4aa3ff"/><rect x="52" y="10" width="38" height="38" rx="4" fill="#7cc4ff"/><rect x="10" y="52" width="38" height="38" rx="4" fill="#7cc4ff"/><rect x="52" y="52" width="38" height="38" rx="4" fill="#4aa3ff"/></svg></div>
       <h1>Всё готово!</h1>
@@ -2447,12 +2992,9 @@ const OOBE = M.OOBE = {
       <div class="oobe-summary" id="oobeSummary"></div>
       <button class="oobe-btn primary big" id="oobeLaunch">🚀 Запустить</button>
     `));
-    // Dots
     const dots=U.$('#oobeDots'); dots.innerHTML='';
     for(let i=-1;i<=this.maxStep;i++){ const d=U.el('div','oobe-dot'); d.dataset.i=i; dots.appendChild(d); }
-    // Edition cards
     const eg=U.$('#editionGrid');
-    eg.innerHTML='';
     Object.keys(EDITIONS).forEach(id=>{
       const ed=EDITIONS[id];
       const card=U.el('div','edition-card'+(id==='w11-pro'?' selected':''));
@@ -2474,21 +3016,19 @@ const OOBE = M.OOBE = {
         U.$$('.edition-card',eg).forEach(c=>c.classList.remove('selected'));
         card.classList.add('selected');
         this.data.edition=id;
+        U.$('#oobeNext').disabled=false;
         const t=U.$('#oobeWelcomeTitle');
         if(t) t.textContent='Добро пожаловать в '+ed.name;
       });
       eg.appendChild(card);
     });
-    // PC name
     U.$('#oobePC').value='DESKTOP-'+Math.random().toString(36).substring(2,8).toUpperCase();
-    // EULA
     const eula=U.$('#oobeEula');
-    [{h:'1. Общие',p:'Настоящее соглашение регулирует использование microOS.'},{h:'2. Лицензия',p:'Неисключительная лицензия.'},{h:'3. Данные',p:'Диагностические данные хранятся локально.'},{h:'4. Обновления',p:'Система может загружать обновления.'},{h:'5. Гарантии',p:'Программа предоставляется «как есть».'}].forEach(s=>{
+    [{h:'1. Общие',p:'Соглашение регулирует использование microOS.'},{h:'2. Лицензия',p:'Неисключительная лицензия.'},{h:'3. Данные',p:'Диагностика хранится локально.'},{h:'4. Гарантии',p:'«Как есть».'}].forEach(s=>{
       eula.append(U.el('h4',null,s.h),U.el('p',null,s.p));
     });
-    // Wi-Fi
     const wl=U.$('#oobeWifiList');
-    ['HomeWiFi_5G','MTS_Router','Beeline_A1B2','FREE_WIFI','OfficeNetwork'].forEach(n=>{
+    ['HomeWiFi_5G','MTS_Router','FREE_WIFI','OfficeNetwork'].forEach(n=>{
       const item=U.el('div','oobe-wifi');
       item.append(U.el('span','em','📶'),U.el('span','nm',n),U.el('span','st','Подключиться'));
       item.addEventListener('click',()=>{
@@ -2500,7 +3040,6 @@ const OOBE = M.OOBE = {
       wl.appendChild(item);
     });
     U.$('#oobeSkipNet').addEventListener('click',()=>this.goTo(this.step+1));
-    // Avatars
     const ab=U.$('#oobeAvatars');
     const emojis=['👤','😀','🐱','🐶','🦊','🐼','🦉','🐢','🐸'];
     const colors=['#4aa3ff','#8e46b8','#1e9078','#e08a2e','#e81123','#3fbf6a','#a06bff','#ff6b9d','#00bcd4'];
@@ -2522,15 +3061,11 @@ const OOBE = M.OOBE = {
       inp.click();
     });
     ab.appendChild(up);
-    // Pass confirm toggle
     U.$('#oobePass').addEventListener('input',e=>{ U.$('#oobePassConfirmWrap').classList.toggle('hidden',!e.target.value); });
-    // Accept
     U.$('#oobeAccept').addEventListener('change',e=>{ this.data.accepted=e.target.checked; U.$('#oobeNext').disabled=!e.target.checked; });
-    // Themes
     U.$$('.oobe-theme').forEach(t=>{
       t.addEventListener('click',()=>{ U.$$('.oobe-theme').forEach(x=>x.classList.remove('active')); t.classList.add('active'); this.data.theme=t.dataset.theme; });
     });
-    // Wallpapers
     const wpb=U.$('#oobeWallpapers');
     Object.keys(WALLPAPERS).forEach(k=>{
       const w=U.el('div','oobe-wallpaper'+(k==='a'?' sel':''));
@@ -2538,7 +3073,6 @@ const OOBE = M.OOBE = {
       w.addEventListener('click',()=>{ U.$$('.oobe-wallpaper',wpb).forEach(x=>x.classList.remove('sel')); w.classList.add('sel'); this.data.wallpaper=k; });
       wpb.appendChild(w);
     });
-    // Accents
     const accb=U.$('#oobeAccents');
     ['#0078d4','#4aa3ff','#8e46b8','#1e9078','#e81123','#e08a2e','#3fbf6a','#a06bff','#ff6b9d','#00bcd4'].forEach(c=>{
       const a=U.el('div','oobe-accent'+(c==='#0078d4'?' sel':''));
@@ -2546,12 +3080,10 @@ const OOBE = M.OOBE = {
       a.addEventListener('click',()=>{ U.$$('.oobe-accent',accb).forEach(x=>x.classList.remove('sel')); a.classList.add('sel'); this.data.accent=c; });
       accb.appendChild(a);
     });
-    // Privacy
     U.$$('.oobe-switch-row .switch').forEach(sw=>{
       sw.addEventListener('click',()=>{ sw.classList.toggle('on'); this.data.privacy[sw.dataset.priv]=sw.classList.contains('on'); });
     });
-    // Buttons
-    U.$('#oobeStartBtn').addEventListener('click',()=>this.goTo(0));
+    U.$('#oobeStartBtn').addEventListener('click',()=>this.goTo(1));
     U.$('#oobeLaunch').addEventListener('click',()=>this.launch());
   },
 
@@ -2560,13 +3092,7 @@ const OOBE = M.OOBE = {
     const c=U.el('div','oobe-center'); c.innerHTML=inner;
     s.appendChild(c); return s;
   },
-
-  start(onDone){
-    this.onDone=onDone;
-    this.$root.classList.remove('hidden');
-    this.goTo(-1);
-  },
-
+  start(onDone){ this.onDone=onDone; this.$root.classList.remove('hidden'); this.goTo(-1); },
   goTo(step){
     if(step<-1||step>this.maxStep)return;
     this.step=step;
@@ -2575,7 +3101,7 @@ const OOBE = M.OOBE = {
     if(t) t.classList.add('active');
     U.$$('.oobe-dot').forEach((d,i)=>{ d.classList.toggle('active',parseInt(d.dataset.i)===step); d.classList.toggle('done',parseInt(d.dataset.i)<step); });
     U.$('#oobeBack').disabled=step===-1;
-    U.$('#oobeNext').disabled=step===-1||(step===3&&!this.data.accepted);
+    U.$('#oobeNext').disabled=(step===-1 && !this.data.edition) || (step===3 && !this.data.accepted);
     U.$('#oobeNext').textContent=step===this.maxStep?'Запустить ✓':'Далее →';
     if(step===0){
       const ed=EDITIONS[this.data.edition];
@@ -2584,11 +3110,8 @@ const OOBE = M.OOBE = {
     }
     if(step===7) this.fillSummary();
   },
-
   validate(step){
-    if(step===-1){
-      if(!this.data.edition){ alert('Выберите редакцию'); return false; }
-    }
+    if(step===-1){ if(!this.data.edition){ alert('Выберите редакцию'); return false; } }
     if(step===3&&!this.data.accepted) return false;
     if(step===4){
       const ue=U.$('#oobeUserErr'),pe=U.$('#oobePassErr'),ce=U.$('#oobePassConfirmErr');
@@ -2599,14 +3122,13 @@ const OOBE = M.OOBE = {
       this.data.userName=name;
       this.data.computerName=U.$('#oobePC').value.trim()||'DESKTOP-PC';
       const pw=U.$('#oobePass').value; const cf=U.$('#oobePassConfirm').value;
-      if(pw&&pw.length<4){ pe.textContent='Минимум 4 символа'; return false; }
+      if(pw&&pw.length<4){ pe.textContent='Минимум 4'; return false; }
       if(pw&&pw!==cf){ ce.textContent='Не совпадают'; return false; }
       this.data.password=pw;
       this.data.hint=U.$('#oobeHint').value.trim();
     }
     return true;
   },
-
   fillSummary(){
     const box=U.$('#oobeSummary'); box.innerHTML='';
     [
@@ -2614,15 +3136,13 @@ const OOBE = M.OOBE = {
       ['👤 Пользователь',this.data.userName||'Пользователь'],
       ['💻 Компьютер',this.data.computerName||'DESKTOP-PC'],
       ['🎨 Тема',this.data.theme==='dark'?'Тёмная':'Светлая'],
-      ['🖼️ Обои',this.data.wallpaper.toUpperCase()],
-      ['🔐 Пароль',this.data.password?'Установлен':'Не установлен']
+      ['🔐 Пароль',this.data.password?'Установлен':'Нет']
     ].forEach(([k,v])=>{
       const d=U.el('div');
       d.append(U.el('span',null,k),U.el('span','v',v));
       box.appendChild(d);
     });
   },
-
   quickSetup(){
     this.data={
       edition:'w11-pro',lang:'ru',region:'RU',keyboard:'ru',network:null,accepted:true,
@@ -2634,13 +3154,11 @@ const OOBE = M.OOBE = {
     };
     this.applyAndFinish();
   },
-
   launch(){
     if(!this.data.userName) this.data.userName=U.$('#oobeUser').value.trim()||'Пользователь';
     if(!this.data.computerName) this.data.computerName=U.$('#oobePC').value.trim()||'DESKTOP-PC';
     this.applyAndFinish();
   },
-
   async applyAndFinish(){
     let passwordHash=null;
     if(this.data.password) passwordHash=await UserSession.hash(this.data.password);
@@ -2676,6 +3194,7 @@ const Boot = M.Boot = {
       if(e.altKey&&e.key==='Tab'){ e.preventDefault(); WM.cycle(); }
       if(e.key==='Escape'){ hideCtx(); StartMenu.close(); }
     });
+    this.initInstaller();
     const installed=U.lsGet('installed',false);
     if(!installed){
       U.$('#controlPanel').classList.add('hidden');
@@ -2691,6 +3210,42 @@ const Boot = M.Boot = {
       U.$('#taskbar').classList.add('hidden');
       LockScreen.show();
     }
+  },
+  initInstaller(){
+    const btn=U.$('#trayInstall');
+    if(btn){ btn.addEventListener('click',()=>{ const inp=U.$('#installFileInput'); if(inp){ inp.value=''; inp.click(); } }); }
+    const inp=U.$('#installFileInput');
+    if(inp){
+      inp.addEventListener('change',async()=>{
+        const file=inp.files[0];
+        if(!file) return;
+        if(file.size>5*1024*1024) Notify.push('Большой файл',file.name+' ('+FileTypeHandler.formatSize(file.size)+')','⚠️');
+        try{ await M.installFile(file); }
+        catch(e){ Notify.push('Ошибка','Не удалось обработать','⚠️'); }
+      });
+    }
+    const desk=U.$('#desktop');
+    const overlay=U.$('#dropOverlay');
+    ['dragenter','dragover'].forEach(ev=>{
+      desk.addEventListener(ev,e=>{
+        e.preventDefault(); e.stopPropagation();
+        if(!e.dataTransfer) return;
+        if(e.dataTransfer.types && e.dataTransfer.types.indexOf('Files')!==-1){
+          if(overlay) overlay.classList.remove('hidden');
+        }
+      });
+    });
+    desk.addEventListener('dragleave',e=>{ if(e.target===desk){ if(overlay) overlay.classList.add('hidden'); } });
+    desk.addEventListener('drop',async e=>{
+      e.preventDefault(); e.stopPropagation();
+      if(overlay) overlay.classList.add('hidden');
+      const files=e.dataTransfer && e.dataTransfer.files;
+      if(!files||!files.length) return;
+      for(const file of files){
+        try{ await M.installFile(file); }
+        catch(err){ console.warn('Drop error:',err); }
+      }
+    });
   },
   showDesktop(){
     U.$('#controlPanel').classList.remove('hidden');
